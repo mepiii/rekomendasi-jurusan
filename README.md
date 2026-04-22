@@ -250,3 +250,215 @@ python -m compileall backend/app
 - SHAP explanation tidak blocking response utama. Frontend poll endpoint explanations sampai ready.
 - Retrain endpoint start proses background. Model deploy hanya jika gate metric + fairness lolos.
 - Jika Supabase env kosong, endpoint tetap jalan dengan fallback data untuk majors/interests, tapi logging DB non-aktif.
+
+---
+
+## Deploy ke Production
+
+### 1) Backend (Railway — recommended)
+
+Backend needs Python runtime + environment variables.
+
+**Step 1a: Buat project Railway**
+
+```bash
+# Interactive — butuh browser OAuth
+railway login
+railway init
+# Pilih GitHub repo "rekomendasi-jurusan"
+# Pilih "Python" runtime
+```
+
+**Step 1b: Set environment variables di Railway Dashboard**
+
+Pergi ke https://railway.app/project/[project-id]/variables
+
+Set:
+
+| Variable | Value |
+|----------|-------|
+| `SUPABASE_URL` | `https://vojenrktbsoowsvpjraw.supabase.co` |
+| `SUPABASE_SERVICE_KEY` | (dari Supabase dashboard → Settings → API → service_role key) |
+| `ALLOWED_ORIGINS` | `https://rekomendasi-jursosan.vercel.app,http://localhost:5173` |
+| `MODEL_PATH` | `ml/models/rf_v1.0.pkl` |
+| `LABEL_ENCODER_PATH` | `ml/models/label_encoder.pkl` |
+| `MODEL_VERSION` | `rf_v1.0` |
+| `START_CMD` | `uvicorn app.main:app --host 0.0.0.0 --port $PORT` |
+
+**Step 1c: Deploy command**
+
+Di Railway Dashboard → Deploy:
+- Build Command: `pip install -r requirements.txt`
+- Start Command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+
+Atau via `railway.toml` di repo root:
+
+```toml
+[build]
+command = "pip install -r backend/requirements.txt"
+
+[deploy]
+startCommand = "cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+```
+
+**Step 1d: Catat backend URL**
+
+Setelah deploy, Railway give URL seperti `https://rekomendasi-jurusan-production.up.railway.app`. Copy ini.
+
+---
+
+### 2) Frontend (Vercel)
+
+Vercel sudah terkoneksi ke GitHub repo dengan `vercel.json` di root.
+
+**Step 2a: Set environment variables**
+
+Pergi ke https://vercel.com/dashboard/mepi/projects/rekomendasi-jurusan/settings/environment-variables
+
+Add:
+
+| Variable | Value |
+|----------|-------|
+| `VITE_API_URL` | (URL Railway dari Step 1d) |
+| `VITE_APP_NAME` | `RekomendasiJurusan` |
+
+**Step 2b: Deploy**
+
+```bash
+vercel --prod
+```
+
+Atau push ke GitHub — Vercel auto-deploy dari branch `main`.
+
+**Frontend URL:**
+- Preview: `https://rekomendasi-jurusan.vercel.app`
+- Production: sama kalo sudah promote
+
+---
+
+### 3) Verifikasi
+
+```bash
+# Backend health
+curl https://your-railway-url.up.railway.app/health
+
+# Frontend
+curl https://your-vercel-url.vercel.app
+```
+
+---
+
+## Troubleshooting
+
+| Error | Fix |
+|-------|-----|
+| `vite: command not found` | Build machine tidak run npm install. Pastikan `vercel.json` ada dengan `"installCommand": "npm install"`. |
+| CORS error | Tambah URL frontend ke `ALLOWED_ORIGINS` di backend env. |
+| 500 di `/predict` | Model files belum ter-train. Run `train_pipeline.py` locally, commit ke repo, atau generate di Railway. |
+| `psycopg2` error | Install `psycopg2-binary` bukan system psycopg2. Udah ada di `requirements.txt`. |
+
+---
+
+## Deploy ke Production
+
+### 1) Backend (Railway — recommended)
+
+Backend needs Python runtime + environment variables.
+
+**Step 1a: Buat project Railway**
+
+```bash
+# Interactive — butuh browser OAuth
+railway login
+railway init
+# Pilih GitHub repo "rekomendasi-jurusan"
+# Pilih "Python" runtime
+```
+
+**Step 1b: Set environment variables di Railway Dashboard**
+
+Pergi ke https://railway.app/project/[project-id]/variables
+
+Set:
+
+| Variable | Value |
+|----------|-------|
+| `SUPABASE_URL` | `https://vojenrktbsoowsvpjraw.supabase.co` |
+| `SUPABASE_SERVICE_KEY` | (dari Supabase dashboard → Settings → API → service_role key) |
+| `ALLOWED_ORIGINS` | `https://rekomendasi-jursosan.vercel.app,http://localhost:5173` |
+| `MODEL_PATH` | `ml/models/rf_v1.0.pkl` |
+| `LABEL_ENCODER_PATH` | `ml/models/label_encoder.pkl` |
+| `MODEL_VERSION` | `rf_v1.0` |
+| `START_CMD` | `uvicorn app.main:app --host 0.0.0.0 --port $PORT` |
+
+**Step 1c: Deploy command**
+
+Di Railway Dashboard → Deploy:
+- Build Command: `pip install -r requirements.txt`
+- Start Command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+
+Atau via `railway.toml` di repo root:
+
+```toml
+[build]
+command = "pip install -r backend/requirements.txt"
+
+[deploy]
+startCommand = "cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+```
+
+**Step 1d: Catat backend URL**
+
+Setelah deploy, Railway give URL seperti `https://rekomendasi-jurusan-production.up.railway.app`. Copy ini.
+
+---
+
+### 2) Frontend (Vercel)
+
+Vercel sudah terkoneksi ke GitHub repo dengan `vercel.json` di root.
+
+**Step 2a: Set environment variables**
+
+Pergi ke https://vercel.com/dashboard/mepi/projects/rekomendasi-jurusan/settings/environment-variables
+
+Add:
+
+| Variable | Value |
+|----------|-------|
+| `VITE_API_URL` | (URL Railway dari Step 1d) |
+| `VITE_APP_NAME` | `RekomendasiJurusan` |
+
+**Step 2b: Deploy**
+
+```bash
+vercel --prod
+```
+
+Atau push ke GitHub — Vercel auto-deploy dari branch `main`.
+
+**Frontend URL:**
+- Preview: `https://rekomendasi-jurusan.vercel.app`
+- Production: sama kalo sudah promote
+
+---
+
+### 3) Verifikasi
+
+```bash
+# Backend health
+curl https://your-railway-url.up.railway.app/health
+
+# Frontend
+curl https://your-vercel-url.vercel.app
+```
+
+---
+
+## Troubleshooting
+
+| Error | Fix |
+|-------|-----|
+| `vite: command not found` | Build machine tidak run npm install. Pastikan `vercel.json` ada dengan `"installCommand": "npm install"`. |
+| CORS error | Tambah URL frontend ke `ALLOWED_ORIGINS` di backend env. |
+| 500 di `/predict` | Model files belum ter-train. Run `train_pipeline.py` locally, commit ke repo, atau generate di Railway. |
+| `psycopg2` error | Install `psycopg2-binary` bukan system psycopg2. Udah ada di `requirements.txt`. |
