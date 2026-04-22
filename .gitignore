@@ -41,3 +41,4 @@ backend/ml/data/*.csv
 5_api_contract.md
 design.md
 thoughts/
+.vercel
