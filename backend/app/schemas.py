@@ -11,18 +11,18 @@ from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field, field_validator
 
-VALID_SMA_TRACKS = {"IPA", "IPS", "Bahasa"}
+VALID_SMA_TRACKS = {"Science", "Social Studies", "Language"}
 VALID_INTERESTS = {
-    "Teknologi",
+    "Technology",
     "Data & AI",
-    "Rekayasa",
-    "Sosial/Manusia",
-    "Komunikasi",
-    "Hukum/Politik",
-    "Alam/Kesehatan",
-    "Bisnis/Manajemen",
-    "Seni/Kreatif",
-    "Pendidikan/Bahasa",
+    "Engineering",
+    "Social Sciences & Humanities",
+    "Communication",
+    "Law & Politics",
+    "Science & Health",
+    "Business & Management",
+    "Arts & Creativity",
+    "Education & Languages",
 }
 
 
@@ -38,7 +38,7 @@ class ScoreInput(BaseModel):
 
 class PredictRequest(BaseModel):
     session_id: Optional[UUID] = Field(default_factory=uuid4)
-    sma_track: str = Field(..., description="IPA, IPS, atau Bahasa")
+    sma_track: str = Field(..., description="Science, Social Studies, or Language")
     scores: ScoreInput
     interests: list[str] = Field(..., min_length=1, max_length=5)
     top_n: int = Field(default=3, ge=3, le=5)
@@ -47,7 +47,7 @@ class PredictRequest(BaseModel):
     @classmethod
     def validate_sma_track(cls, value: str) -> str:
         if value not in VALID_SMA_TRACKS:
-            raise ValueError(f"sma_track harus salah satu dari: {sorted(VALID_SMA_TRACKS)}")
+            raise ValueError(f"sma_track must be one of: {sorted(VALID_SMA_TRACKS)}")
         return value
 
     @field_validator("interests")
@@ -57,7 +57,7 @@ class PredictRequest(BaseModel):
         cleaned: list[str] = []
         for interest in values:
             if interest not in VALID_INTERESTS:
-                raise ValueError(f"Minat '{interest}' tidak dikenali.")
+                raise ValueError(f"Interest '{interest}' is not recognized.")
             if interest not in seen:
                 seen.add(interest)
                 cleaned.append(interest)

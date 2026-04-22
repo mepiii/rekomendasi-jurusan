@@ -15,7 +15,7 @@ from app.api.routes import router
 from app.config import settings
 from app.services.ml_service import ml_service
 
-app = FastAPI(title="Rekomendasi Jurusan API", version="2.0.0")
+app = FastAPI(title="College Major Recommendation API", version="2.0.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -44,7 +44,7 @@ async def validation_exception_handler(_: Request, exc: RequestValidationError) 
         status_code=422,
         content={
             "error": "validation_error",
-            "message": "Input tidak valid.",
+            "message": "Invalid input.",
             "details": details,
         },
     )

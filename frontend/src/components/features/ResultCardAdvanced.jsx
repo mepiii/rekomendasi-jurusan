@@ -109,7 +109,7 @@ export default function ResultCardAdvanced({ recommendation, highlight }) {
         <div className="flex items-center gap-4">
           {highlight ? (
             <span className="rounded-full border border-accent/40 bg-accent/15 px-2 py-1 text-[10px] uppercase text-accent">
-              Rekomendasi Utama
+              Top Recommendation
             </span>
           ) : null}
           <Gauge score={recommendation.suitability_score} />
@@ -160,7 +160,7 @@ export default function ResultCardAdvanced({ recommendation, highlight }) {
                   </div>
                 ))
               ) : (
-                <p className="text-xs text-textMuted">Menunggu explainability data...</p>
+                <p className="text-xs text-textMuted">Waiting for explainability data...</p>
               )}
             </div>
           </motion.div>

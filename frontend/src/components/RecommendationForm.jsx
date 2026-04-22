@@ -6,29 +6,29 @@
 import { useMemo, useState } from 'react';
 
 const SUBJECT_FIELDS = [
-  { key: 'math', label: 'Matematika' },
-  { key: 'physics', label: 'Fisika' },
-  { key: 'chemistry', label: 'Kimia' },
-  { key: 'biology', label: 'Biologi' },
-  { key: 'economics', label: 'Ekonomi' },
-  { key: 'indonesian', label: 'Bahasa Indonesia' },
-  { key: 'english', label: 'Bahasa Inggris' }
+  { key: 'math', label: 'Mathematics' },
+  { key: 'physics', label: 'Physics' },
+  { key: 'chemistry', label: 'Chemistry' },
+  { key: 'biology', label: 'Biology' },
+  { key: 'economics', label: 'Economics' },
+  { key: 'indonesian', label: 'Indonesian Language' },
+  { key: 'english', label: 'English Language' }
 ];
 
 const INTERESTS = [
-  'Teknologi',
+  'Technology',
   'Data & AI',
-  'Rekayasa',
-  'Sosial/Manusia',
-  'Komunikasi',
-  'Hukum/Politik',
-  'Alam/Kesehatan',
-  'Bisnis/Manajemen',
-  'Seni/Kreatif',
-  'Pendidikan/Bahasa'
+  'Engineering',
+  'Social Sciences & Humanities',
+  'Communication',
+  'Law & Politics',
+  'Science & Health',
+  'Business & Management',
+  'Arts & Creativity',
+  'Education & Languages'
 ];
 
-const TRACKS = ['IPA', 'IPS', 'Bahasa'];
+const TRACKS = ['Science', 'Social Studies', 'Language'];
 
 function generateSessionId() {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
@@ -72,18 +72,18 @@ export default function RecommendationForm({ onSubmit, loading, error }) {
     SUBJECT_FIELDS.forEach(({ key, label }) => {
       const raw = scores[key];
       if (raw === '') {
-        nextErrors[key] = `Nilai ${label} wajib diisi`;
+        nextErrors[key] = `${label} score is required`;
         return;
       }
       const parsed = Number(raw);
       if (Number.isNaN(parsed) || parsed < 0 || parsed > 100) {
-        nextErrors[key] = `Nilai ${label} harus 0–100`;
+        nextErrors[key] = `${label} score must be between 0 and 100`;
       }
     });
 
-    if (!smaTrack) nextErrors.smaTrack = 'Jurusan SMA wajib dipilih';
-    if (interests.length < 1) nextErrors.interests = 'Pilih minimal 1 minat';
-    if (interests.length > 5) nextErrors.interests = 'Maksimal 5 minat';
+    if (!smaTrack) nextErrors.smaTrack = 'High school track is required';
+    if (interests.length < 1) nextErrors.interests = 'Select at least 1 interest';
+    if (interests.length > 5) nextErrors.interests = 'You can select up to 5 interests';
 
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
@@ -113,10 +113,10 @@ export default function RecommendationForm({ onSubmit, loading, error }) {
     >
       <div className="mb-6">
         <h1 className="text-2xl font-semibold tracking-tight text-textPrimary">
-          Temukan Jurusan yang Tepat untuk Kamu
+          Find the Right College Major for You
         </h1>
         <p className="mt-2 text-sm text-textMuted">
-          Masukkan nilai rapor dan minatmu, sistem akan memberi rekomendasi jurusan.
+          Enter your grades and interests, and the system will generate tailored major recommendations.
         </p>
       </div>
 
@@ -140,7 +140,7 @@ export default function RecommendationForm({ onSubmit, loading, error }) {
       </div>
 
       <div className="mt-5">
-        <p className="text-sm text-textSecondary">Minat</p>
+        <p className="text-sm text-textSecondary">Interests</p>
         <div className="mt-2 flex flex-wrap gap-2">
           {INTERESTS.map((interest) => {
             const active = interests.includes(interest);
@@ -165,13 +165,13 @@ export default function RecommendationForm({ onSubmit, loading, error }) {
         </div>
         <div className="mt-1 flex items-center justify-between">
           {errors.interests ? <span className="text-xs text-red-400">{errors.interests}</span> : <span />}
-          <span className="text-xs text-textSubtle">{selectedCount} dipilih</span>
+          <span className="text-xs text-textSubtle">{selectedCount} selected</span>
         </div>
       </div>
 
       <div className="mt-5 flex flex-col gap-1">
         <label className="text-sm text-textSecondary" htmlFor="sma-track">
-          Jurusan SMA
+          High School Track
         </label>
         <select
           id="sma-track"
@@ -181,7 +181,7 @@ export default function RecommendationForm({ onSubmit, loading, error }) {
             errors.smaTrack ? 'border-red-500' : 'border-standard focus:border-accent'
           }`}
         >
-          <option value="">Pilih jurusan SMA</option>
+          <option value="">Select your high school track</option>
           {TRACKS.map((track) => (
             <option key={track} value={track}>
               {track}
@@ -202,12 +202,12 @@ export default function RecommendationForm({ onSubmit, loading, error }) {
         disabled={loading || hasErrors}
         className="mt-6 inline-flex w-full items-center justify-center rounded-md bg-cta px-4 py-2 text-sm font-medium text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {loading ? 'Sedang menganalisis profilmu...' : 'Lihat Rekomendasi →'}
+        {loading ? 'Analyzing your profile...' : 'See Recommendations →'}
       </button>
 
       <div className="mt-5 rounded-md border border-subtle bg-white/[0.02] px-4 py-3 text-xs leading-relaxed text-textSubtle">
-        Hasil ini adalah alat bantu pengambilan keputusan berdasarkan data yang kamu masukkan. Rekomendasi ini
-        bukan pengganti diskusi dengan guru BK, orang tua, atau konselor pendidikan.
+        These results are decision support based on the data you entered. They should not replace a conversation
+        with a counselor, parent, or education advisor.
       </div>
     </form>
   );

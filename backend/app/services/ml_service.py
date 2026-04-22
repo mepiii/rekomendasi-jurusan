@@ -17,26 +17,26 @@ from app.config import settings
 from app.schemas import PredictRequest, ProfileSummary, RecommendationItem
 
 DISCLAIMER_TEXT = (
-    "Hasil ini adalah alat bantu pengambilan keputusan, bukan penentu final. "
-    "Diskusikan dengan guru BK atau orang tua."
+    "These results support decision-making, not final judgment. "
+    "Discuss them with a counselor, teacher, or parent."
 )
 
 MAJOR_CLUSTER_MAP = {
-    "Teknik Informatika": "STEM",
-    "Sistem Informasi": "STEM",
-    "Teknik Sipil": "STEM",
-    "Teknik Elektro": "STEM",
-    "Kedokteran": "Health",
-    "Farmasi": "Health",
-    "Biologi": "Health",
-    "Matematika": "STEM",
-    "Psikologi": "Social",
-    "Ilmu Komunikasi": "Social",
-    "Hukum": "Social",
-    "Pendidikan Bahasa Inggris": "Social",
-    "Manajemen": "Business",
-    "Akuntansi": "Business",
-    "Desain Komunikasi Visual": "Arts",
+    "Computer Science": "STEM",
+    "Information Systems": "STEM",
+    "Civil Engineering": "STEM",
+    "Electrical Engineering": "STEM",
+    "Medicine": "Health",
+    "Pharmacy": "Health",
+    "Biology": "Health",
+    "Mathematics": "STEM",
+    "Psychology": "Social",
+    "Communication Studies": "Social",
+    "Law": "Social",
+    "English Education": "Social",
+    "Management": "Business",
+    "Accounting": "Business",
+    "Visual Communication Design": "Arts",
 }
 
 FEATURE_COLUMNS = [
@@ -69,44 +69,44 @@ FEATURE_COLUMNS = [
 ]
 
 INTEREST_TO_COLUMN = {
-    "Teknologi": "interest_tech",
+    "Technology": "interest_tech",
     "Data & AI": "interest_data_ai",
-    "Rekayasa": "interest_engineering",
-    "Sosial/Manusia": "interest_social",
-    "Komunikasi": "interest_communication",
-    "Hukum/Politik": "interest_law_politics",
-    "Alam/Kesehatan": "interest_nature_health",
-    "Bisnis/Manajemen": "interest_business",
-    "Seni/Kreatif": "interest_arts",
-    "Pendidikan/Bahasa": "interest_education_language",
+    "Engineering": "interest_engineering",
+    "Social Sciences & Humanities": "interest_social",
+    "Communication": "interest_communication",
+    "Law & Politics": "interest_law_politics",
+    "Science & Health": "interest_nature_health",
+    "Business & Management": "interest_business",
+    "Arts & Creativity": "interest_arts",
+    "Education & Languages": "interest_education_language",
 }
 
 SHAP_FEATURE_LABELS = {
-    "math": "Matematika",
-    "physics": "Fisika",
-    "chemistry": "Kimia",
-    "biology": "Biologi",
-    "economics": "Ekonomi",
-    "indonesian": "Bahasa Indonesia",
-    "english": "Bahasa Inggris",
-    "interest_tech": "Minat Teknologi",
-    "interest_data_ai": "Minat Data & AI",
-    "interest_engineering": "Minat Rekayasa",
-    "interest_social": "Minat Sosial/Manusia",
-    "interest_communication": "Minat Komunikasi",
-    "interest_law_politics": "Minat Hukum/Politik",
-    "interest_nature_health": "Minat Alam/Kesehatan",
-    "interest_business": "Minat Bisnis/Manajemen",
-    "interest_arts": "Minat Seni/Kreatif",
-    "interest_education_language": "Minat Pendidikan/Bahasa",
-    "avg_sains": "Rata-rata Sains",
-    "avg_sosial": "Rata-rata Sosial",
-    "avg_bahasa": "Rata-rata Bahasa",
-    "gap_sains_sosial": "Gap Sains-Sosial",
-    "max_subject_score": "Nilai Tertinggi",
-    "min_subject_score": "Nilai Terendah",
-    "subject_score_spread": "Sebaran Nilai",
-    "interest_count": "Jumlah Minat",
+    "math": "Mathematics",
+    "physics": "Physics",
+    "chemistry": "Chemistry",
+    "biology": "Biology",
+    "economics": "Economics",
+    "indonesian": "Indonesian Language",
+    "english": "English Language",
+    "interest_tech": "Interest: Technology",
+    "interest_data_ai": "Interest: Data & AI",
+    "interest_engineering": "Interest: Engineering",
+    "interest_social": "Interest: Social Sciences & Humanities",
+    "interest_communication": "Interest: Communication",
+    "interest_law_politics": "Interest: Law & Politics",
+    "interest_nature_health": "Interest: Science & Health",
+    "interest_business": "Interest: Business & Management",
+    "interest_arts": "Interest: Arts & Creativity",
+    "interest_education_language": "Interest: Education & Languages",
+    "avg_sains": "Average Science Score",
+    "avg_sosial": "Average Social Studies Score",
+    "avg_bahasa": "Average Language Score",
+    "gap_sains_sosial": "Science vs Social Studies Gap",
+    "max_subject_score": "Highest Subject Score",
+    "min_subject_score": "Lowest Subject Score",
+    "subject_score_spread": "Score Spread",
+    "interest_count": "Number of Interests",
 }
 
 
@@ -143,13 +143,13 @@ class MLService:
     @staticmethod
     def _scores_dict(req: PredictRequest) -> dict[str, float]:
         return {
-            "Matematika": req.scores.math,
-            "Fisika": req.scores.physics,
-            "Kimia": req.scores.chemistry,
-            "Biologi": req.scores.biology,
-            "Ekonomi": req.scores.economics,
-            "Bahasa Indonesia": req.scores.indonesian,
-            "Bahasa Inggris": req.scores.english,
+            "Mathematics": req.scores.math,
+            "Physics": req.scores.physics,
+            "Chemistry": req.scores.chemistry,
+            "Biology": req.scores.biology,
+            "Economics": req.scores.economics,
+            "Indonesian Language": req.scores.indonesian,
+            "English Language": req.scores.english,
         }
 
     @staticmethod
@@ -218,7 +218,7 @@ class MLService:
         avg_sains = (req.scores.math + req.scores.physics + req.scores.chemistry + req.scores.biology) / 4
         avg_sosial = (req.scores.economics + req.scores.indonesian) / 2
         avg_bahasa = (req.scores.indonesian + req.scores.english) / 2
-        group_scores = {"sains": avg_sains, "sosial": avg_sosial, "bahasa": avg_bahasa}
+        group_scores = {"science": avg_sains, "social studies": avg_sosial, "language": avg_bahasa}
         strongest_group = max(group_scores, key=group_scores.get)
 
         return ProfileSummary(
@@ -230,17 +230,17 @@ class MLService:
     @staticmethod
     def _generic_explanation(major: str, req: PredictRequest) -> str:
         scores = {
-            "Matematika": req.scores.math,
-            "Fisika": req.scores.physics,
-            "Kimia": req.scores.chemistry,
-            "Biologi": req.scores.biology,
-            "Ekonomi": req.scores.economics,
-            "Bahasa Indonesia": req.scores.indonesian,
-            "Bahasa Inggris": req.scores.english,
+            "Mathematics": req.scores.math,
+            "Physics": req.scores.physics,
+            "Chemistry": req.scores.chemistry,
+            "Biology": req.scores.biology,
+            "Economics": req.scores.economics,
+            "Indonesian Language": req.scores.indonesian,
+            "English Language": req.scores.english,
         }
         top_subject = max(scores, key=scores.get)
-        top_interest = req.interests[0] if req.interests else "profil akademik"
-        return f"{major} direkomendasikan karena {top_subject} kuat dan minat {top_interest} konsisten."
+        top_interest = req.interests[0] if req.interests else "academic profile"
+        return f"{major} is recommended because {top_subject} is one of your strongest areas and your interest in {top_interest} is consistent."
 
     def _to_feature_row(self, req: PredictRequest) -> pd.DataFrame:
         avg_sains = (req.scores.math + req.scores.physics + req.scores.chemistry + req.scores.biology) / 4
@@ -358,7 +358,7 @@ class MLService:
                 RecommendationItem(
                     rank=rank,
                     major=major,
-                    cluster=MAJOR_CLUSTER_MAP.get(major, "Lainnya"),
+                    cluster=MAJOR_CLUSTER_MAP.get(major, "Other"),
                     suitability_score=score,
                     explanation=self._generic_explanation(major, req),
                     shap_values={},

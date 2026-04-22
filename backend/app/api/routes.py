@@ -42,34 +42,34 @@ from app.services.telemetry_service import compute_bias_score, compute_drift_sco
 router = APIRouter()
 
 DEFAULT_MAJORS = [
-    {"id": 1, "name": "Teknik Informatika", "cluster": "STEM"},
-    {"id": 2, "name": "Sistem Informasi", "cluster": "STEM"},
-    {"id": 3, "name": "Teknik Sipil", "cluster": "STEM"},
-    {"id": 4, "name": "Teknik Elektro", "cluster": "STEM"},
-    {"id": 5, "name": "Kedokteran", "cluster": "Health"},
-    {"id": 6, "name": "Farmasi", "cluster": "Health"},
-    {"id": 7, "name": "Biologi", "cluster": "Health"},
-    {"id": 8, "name": "Matematika", "cluster": "STEM"},
-    {"id": 9, "name": "Psikologi", "cluster": "Social"},
-    {"id": 10, "name": "Ilmu Komunikasi", "cluster": "Social"},
-    {"id": 11, "name": "Hukum", "cluster": "Social"},
-    {"id": 12, "name": "Pendidikan Bahasa Inggris", "cluster": "Social"},
-    {"id": 13, "name": "Manajemen", "cluster": "Business"},
-    {"id": 14, "name": "Akuntansi", "cluster": "Business"},
-    {"id": 15, "name": "Desain Komunikasi Visual", "cluster": "Arts"},
+    {"id": 1, "name": "Computer Science", "cluster": "STEM"},
+    {"id": 2, "name": "Information Systems", "cluster": "STEM"},
+    {"id": 3, "name": "Civil Engineering", "cluster": "STEM"},
+    {"id": 4, "name": "Electrical Engineering", "cluster": "STEM"},
+    {"id": 5, "name": "Medicine", "cluster": "Health"},
+    {"id": 6, "name": "Pharmacy", "cluster": "Health"},
+    {"id": 7, "name": "Biology", "cluster": "Health"},
+    {"id": 8, "name": "Mathematics", "cluster": "STEM"},
+    {"id": 9, "name": "Psychology", "cluster": "Social"},
+    {"id": 10, "name": "Communication Studies", "cluster": "Social"},
+    {"id": 11, "name": "Law", "cluster": "Social"},
+    {"id": 12, "name": "English Education", "cluster": "Social"},
+    {"id": 13, "name": "Management", "cluster": "Business"},
+    {"id": 14, "name": "Accounting", "cluster": "Business"},
+    {"id": 15, "name": "Visual Communication Design", "cluster": "Arts"},
 ]
 
 DEFAULT_INTERESTS = [
-    {"id": 1, "name": "Teknologi"},
+    {"id": 1, "name": "Technology"},
     {"id": 2, "name": "Data & AI"},
-    {"id": 3, "name": "Rekayasa"},
-    {"id": 4, "name": "Sosial/Manusia"},
-    {"id": 5, "name": "Komunikasi"},
-    {"id": 6, "name": "Hukum/Politik"},
-    {"id": 7, "name": "Alam/Kesehatan"},
-    {"id": 8, "name": "Bisnis/Manajemen"},
-    {"id": 9, "name": "Seni/Kreatif"},
-    {"id": 10, "name": "Pendidikan/Bahasa"},
+    {"id": 3, "name": "Engineering"},
+    {"id": 4, "name": "Social Sciences & Humanities"},
+    {"id": 5, "name": "Communication"},
+    {"id": 6, "name": "Law & Politics"},
+    {"id": 7, "name": "Science & Health"},
+    {"id": 8, "name": "Business & Management"},
+    {"id": 9, "name": "Arts & Creativity"},
+    {"id": 10, "name": "Education & Languages"},
 ]
 
 
@@ -111,7 +111,7 @@ def predict(req: PredictRequest, background_tasks: BackgroundTasks) -> PredictRe
         elapsed_ms = (perf_counter() - started) * 1000
 
         top_major = prediction.recommendations[0].major if prediction.recommendations else None
-        top_cluster = MAJOR_CLUSTER_MAP.get(top_major or "", "Lainnya")
+        top_cluster = MAJOR_CLUSTER_MAP.get(top_major or "", "Other")
         bias_score = compute_bias_score(req.sma_track, top_cluster)
         drift = compute_drift_score(prediction.features)
         majors = [item.major for item in prediction.recommendations]
@@ -143,7 +143,7 @@ def predict(req: PredictRequest, background_tasks: BackgroundTasks) -> PredictRe
             disclaimer=(
                 prediction.disclaimer
                 if not drift.alerted
-                else f"{prediction.disclaimer} Input terdeteksi berbeda dari distribusi data training."
+                else f"{prediction.disclaimer} Input appears different from the training data distribution."
             ),
             latency_ms=round(elapsed_ms, 2),
         )
@@ -152,7 +152,7 @@ def predict(req: PredictRequest, background_tasks: BackgroundTasks) -> PredictRe
             status_code=500,
             content={
                 "error": "model_error",
-                "message": "Terjadi kesalahan pada sistem. Coba lagi beberapa saat.",
+                "message": "A system error occurred. Please try again shortly.",
             },
         )
 
@@ -171,7 +171,7 @@ def get_explanations(session_id: UUID) -> ExplanationResponse:
 @router.post("/feedback", response_model=FeedbackResponse)
 def submit_feedback(payload: FeedbackRequest, background_tasks: BackgroundTasks) -> FeedbackResponse:
     background_tasks.add_task(log_feedback, payload)
-    return FeedbackResponse(accepted=True, message="Feedback tersimpan")
+    return FeedbackResponse(accepted=True, message="Feedback saved")
 
 
 @router.get("/metrics", response_model=MetricsResponse)

@@ -7,29 +7,29 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
 
 const SUBJECT_FIELDS = [
-  { key: 'math', label: 'Matematika' },
-  { key: 'physics', label: 'Fisika' },
-  { key: 'chemistry', label: 'Kimia' },
-  { key: 'biology', label: 'Biologi' },
-  { key: 'economics', label: 'Ekonomi' },
-  { key: 'indonesian', label: 'Bahasa Indonesia' },
-  { key: 'english', label: 'Bahasa Inggris' }
+  { key: 'math', label: 'Mathematics' },
+  { key: 'physics', label: 'Physics' },
+  { key: 'chemistry', label: 'Chemistry' },
+  { key: 'biology', label: 'Biology' },
+  { key: 'economics', label: 'Economics' },
+  { key: 'indonesian', label: 'Indonesian Language' },
+  { key: 'english', label: 'English Language' }
 ];
 
 const INTERESTS = [
-  'Teknologi',
+  'Technology',
   'Data & AI',
-  'Rekayasa',
-  'Sosial/Manusia',
-  'Komunikasi',
-  'Hukum/Politik',
-  'Alam/Kesehatan',
-  'Bisnis/Manajemen',
-  'Seni/Kreatif',
-  'Pendidikan/Bahasa'
+  'Engineering',
+  'Social Sciences & Humanities',
+  'Communication',
+  'Law & Politics',
+  'Science & Health',
+  'Business & Management',
+  'Arts & Creativity',
+  'Education & Languages'
 ];
 
-const TRACKS = ['IPA', 'IPS', 'Bahasa'];
+const TRACKS = ['Science', 'Social Studies', 'Language'];
 
 const stepMotion = {
   initial: { opacity: 0, x: 30, filter: 'blur(8px)' },
@@ -52,7 +52,7 @@ function GlassCard({ children }) {
 }
 
 function StepIndicator({ step }) {
-  const labels = ['Nilai', 'Minat', 'Konfirmasi'];
+  const labels = ['Scores', 'Interests', 'Review'];
   return (
     <div className="mb-6 flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-textSubtle">
       {labels.map((label, idx) => {
@@ -98,12 +98,12 @@ export default function RecommendationJourney({ onSubmit, loading, error }) {
     SUBJECT_FIELDS.forEach(({ key, label }) => {
       const raw = scores[key];
       if (raw === '') {
-        nextErrors[key] = `Nilai ${label} wajib diisi`;
+        nextErrors[key] = `${label} score is required`;
         return;
       }
       const parsed = Number(raw);
       if (Number.isNaN(parsed) || parsed < 0 || parsed > 100) {
-        nextErrors[key] = `Nilai ${label} harus 0–100`;
+        nextErrors[key] = `${label} score must be between 0 and 100`;
       }
     });
 
@@ -113,9 +113,9 @@ export default function RecommendationJourney({ onSubmit, loading, error }) {
 
   const validateInterests = () => {
     const nextErrors = {};
-    if (!smaTrack) nextErrors.smaTrack = 'Jurusan SMA wajib dipilih';
-    if (interests.length < 1) nextErrors.interests = 'Pilih minimal 1 minat';
-    if (interests.length > 5) nextErrors.interests = 'Maksimal 5 minat';
+    if (!smaTrack) nextErrors.smaTrack = 'High school track is required';
+    if (interests.length < 1) nextErrors.interests = 'Select at least 1 interest';
+    if (interests.length > 5) nextErrors.interests = 'You can select up to 5 interests';
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
@@ -180,7 +180,7 @@ export default function RecommendationJourney({ onSubmit, loading, error }) {
           {step === 2 ? (
             <motion.div key="step-2" {...stepMotion} className="space-y-5">
               <div>
-                <p className="text-sm text-textSecondary">Minat</p>
+                <p className="text-sm text-textSecondary">Interests</p>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {INTERESTS.map((interest) => {
                     const active = interests.includes(interest);
@@ -205,13 +205,13 @@ export default function RecommendationJourney({ onSubmit, loading, error }) {
                 </div>
                 <div className="mt-1 flex items-center justify-between">
                   {errors.interests ? <span className="text-xs text-red-300">{errors.interests}</span> : <span />}
-                  <span className="text-xs text-textSubtle">{interests.length} dipilih</span>
+                  <span className="text-xs text-textSubtle">{interests.length} selected</span>
                 </div>
               </div>
 
               <div className="flex flex-col gap-1">
                 <label className="text-sm text-textSecondary" htmlFor="sma-track">
-                  Jurusan SMA
+                  High School Track
                 </label>
                 <select
                   id="sma-track"
@@ -221,7 +221,7 @@ export default function RecommendationJourney({ onSubmit, loading, error }) {
                     errors.smaTrack ? 'border-red-500' : 'border-white/20 focus:border-accent'
                   }`}
                 >
-                  <option value="">Pilih jurusan SMA</option>
+                  <option value="">Select your high school track</option>
                   {TRACKS.map((track) => (
                     <option key={track} value={track}>
                       {track}
@@ -236,11 +236,11 @@ export default function RecommendationJourney({ onSubmit, loading, error }) {
           {step === 3 ? (
             <motion.div key="step-3" {...stepMotion} className="space-y-4">
               <div className="rounded-xl border border-white/15 bg-white/5 p-4 text-sm text-textMuted">
-                <p className="mb-2 text-textSecondary">Konfirmasi Profil</p>
+                <p className="mb-2 text-textSecondary">Profile Review</p>
                 <p>Track: {smaTrack || '-'}</p>
-                <p>Minat: {interests.join(', ') || '-'}</p>
+                <p>Interests: {interests.join(', ') || '-'}</p>
                 <p>
-                  Rata-rata nilai:{' '}
+                  Average score:{' '}
                   {Math.round(
                     Object.values(scores).reduce((acc, value) => acc + Number(value || 0), 0) /
                       SUBJECT_FIELDS.length
@@ -249,7 +249,7 @@ export default function RecommendationJourney({ onSubmit, loading, error }) {
               </div>
 
               <div className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-xs leading-relaxed text-textSubtle">
-                Hasil ini alat bantu. Tetap validasi dengan guru BK, mentor, atau konselor.
+                These results are decision support, not a final answer. Confirm them with a counselor, mentor, or trusted teacher.
               </div>
             </motion.div>
           ) : null}
@@ -264,7 +264,7 @@ export default function RecommendationJourney({ onSubmit, loading, error }) {
             disabled={step === 1 || loading}
             className="rounded-xl border border-white/20 px-4 py-2 text-sm text-textSecondary transition hover:border-accent/60 disabled:opacity-40"
           >
-            Kembali
+            Back
           </button>
 
           {step < 3 ? (
@@ -273,7 +273,7 @@ export default function RecommendationJourney({ onSubmit, loading, error }) {
               onClick={goNext}
               className="rounded-xl bg-cta px-4 py-2 text-sm font-medium text-white transition hover:brightness-110"
             >
-              Lanjut
+              Continue
             </button>
           ) : (
             <button
@@ -281,7 +281,7 @@ export default function RecommendationJourney({ onSubmit, loading, error }) {
               disabled={loading || hasErrors}
               className="rounded-xl bg-cta px-4 py-2 text-sm font-medium text-white transition hover:brightness-110 disabled:opacity-50"
             >
-              {loading ? 'Menganalisis...' : 'Lihat Rekomendasi'}
+              {loading ? 'Analyzing...' : 'See Recommendations'}
             </button>
           )}
         </div>

@@ -40,7 +40,7 @@ export default function ResultCard({ recommendation, highlight }) {
         <div className="flex flex-col items-end gap-2">
           {highlight ? (
             <span className="rounded-full border border-accent/40 px-2 py-1 text-[10px] uppercase text-accent">
-              Rekomendasi Utama
+              Top Recommendation
             </span>
           ) : null}
           <span className={`rounded-full border px-3 py-1 text-sm ${style.badge}`}>

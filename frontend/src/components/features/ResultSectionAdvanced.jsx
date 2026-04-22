@@ -50,22 +50,22 @@ export default function ResultSectionAdvanced({
         animate={{ opacity: 1, y: 0 }}
         className="text-3xl font-semibold tracking-tight text-textPrimary"
       >
-        Rekomendasi Jurusan untuk Kamu
+        Your Best-Fit College Major Recommendations
       </motion.h2>
 
       <div className="glass-panel rounded-2xl border border-white/15 p-4">
         <p className="text-xs uppercase tracking-wide text-textSubtle">Profile Summary</p>
         <div className="mt-3 grid gap-3 sm:grid-cols-3">
           <div>
-            <p className="text-xs text-textSubtle">Mapel Terkuat</p>
+            <p className="text-xs text-textSubtle">Strongest Subject</p>
             <p className="mt-1 text-sm text-textPrimary">{result.profile_summary?.strongest_subject || '-'}</p>
           </div>
           <div>
-            <p className="text-xs text-textSubtle">Kelompok Terkuat</p>
+            <p className="text-xs text-textSubtle">Strongest Group</p>
             <p className="mt-1 text-sm capitalize text-textPrimary">{result.profile_summary?.strongest_group || '-'}</p>
           </div>
           <div>
-            <p className="text-xs text-textSubtle">Rata-rata Nilai</p>
+            <p className="text-xs text-textSubtle">Average Score</p>
             <p className="mt-1 text-sm text-textPrimary">{result.profile_summary?.avg_score ?? '-'}</p>
           </div>
         </div>
@@ -94,7 +94,7 @@ export default function ResultSectionAdvanced({
               onChange={() => setAligns(true)}
               className="accent-accent"
             />
-            Ya, sesuai
+            Yes, it matches
           </label>
           <label className="flex items-center gap-2 text-sm text-textSecondary">
             <input
@@ -103,7 +103,7 @@ export default function ResultSectionAdvanced({
               onChange={() => setAligns(false)}
               className="accent-accent"
             />
-            Belum sesuai
+            Not yet
           </label>
 
           <select
@@ -111,7 +111,7 @@ export default function ResultSectionAdvanced({
             onChange={(event) => setSelectedMajor(event.target.value)}
             className="glass-input rounded-xl border border-white/20 px-3 py-2 text-sm text-textPrimary"
           >
-            <option value="">Pilih jurusan aktual (opsional)</option>
+            <option value="">Select your actual major (optional)</option>
             {recommendationItems.map((item) => (
               <option key={item.major} value={item.major}>
                 {item.major}
@@ -134,7 +134,7 @@ export default function ResultSectionAdvanced({
           value={notes}
           onChange={(event) => setNotes(event.target.value)}
           className="glass-input mt-3 h-20 w-full rounded-xl border border-white/20 px-3 py-2 text-sm text-textPrimary"
-          placeholder="Catatan tambahan..."
+          placeholder="Additional notes..."
         />
 
         <div className="mt-3 flex items-center justify-between gap-3">
@@ -143,14 +143,14 @@ export default function ResultSectionAdvanced({
             disabled={feedbackState.loading}
             className="rounded-xl bg-cta px-4 py-2 text-sm font-medium text-white transition hover:brightness-110 disabled:opacity-60"
           >
-            {feedbackState.loading ? 'Menyimpan...' : 'Kirim Feedback'}
+            {feedbackState.loading ? 'Saving...' : 'Send Feedback'}
           </button>
           <button
             type="button"
             onClick={onReset}
             className="rounded-xl border border-white/20 px-4 py-2 text-sm text-textSecondary transition hover:border-accent/50"
           >
-            Coba Input Lain
+            Try Different Inputs
           </button>
         </div>
 
@@ -159,7 +159,7 @@ export default function ResultSectionAdvanced({
 
       <div className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-xs leading-relaxed text-textSubtle">
         {result.disclaimer ||
-          'Hasil ini alat bantu pengambilan keputusan, bukan penentu final. Diskusikan dengan guru BK atau orang tua.'}
+          'These results are decision support, not a final verdict. Discuss them with a counselor, teacher, or parent.'}
       </div>
     </section>
   );

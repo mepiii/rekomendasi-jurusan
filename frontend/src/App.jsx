@@ -39,13 +39,13 @@ export default function App() {
       setResult(enriched);
     } catch (err) {
       if (err.name === 'AbortError') {
-        setError('Sistem sedang sibuk, coba lagi sebentar');
+        setError('System is busy right now. Please try again in a moment.');
       } else if (err.status === 422) {
-        setError('Input tidak valid, periksa kembali nilai yang kamu masukkan');
+        setError('Invalid input. Please review the scores and interests you entered.');
       } else if (err.status === 500) {
-        setError('Terjadi kesalahan pada sistem');
+        setError('A system error occurred.');
       } else {
-        setError('Terjadi kesalahan. Coba lagi beberapa saat.');
+        setError('Something went wrong. Please try again shortly.');
       }
     } finally {
       setLoading(false);
@@ -61,9 +61,9 @@ export default function App() {
         session_id: result.session_id,
         ...payload
       });
-      setFeedbackState({ loading: false, message: 'Feedback tersimpan. Terima kasih!' });
+      setFeedbackState({ loading: false, message: 'Feedback saved. Thank you.' });
     } catch {
-      setFeedbackState({ loading: false, message: 'Gagal menyimpan feedback. Coba lagi.' });
+      setFeedbackState({ loading: false, message: 'Failed to save feedback. Please try again.' });
     }
   };
 

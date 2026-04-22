@@ -18,8 +18,11 @@ frontend/.env
 *.env.local
 
 # ML Models & Data
-backend/ml/models/*.pkl
-backend/ml/data/*.csv
+backend/ml/models/*
+backend/ml/data/*                                                                                                                                                                      
+!backend/ml/models/rf_v1.0.pkl
+!backend/ml/models/label_encoder.pkl                                                                                                                                                   
+!backend/ml/data/*.csv   
 
 # IDE & OS
 .vscode/
