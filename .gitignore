@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+.venv/
+backend/.venv/
+frontend/node_modules/
+
+# Build outputs
+dist/
+frontend/dist/
+build/
+*.pyc
+__pycache__/
+
+# Environment & Secrets
+.env
+backend/.env
+frontend/.env
+*.env.local
+
+# ML Models & Data
+backend/ml/models/*.pkl
+backend/ml/data/*.csv
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*.bak
+~*
+
+# Tool specific
+.claude/
+.tldr/
+.tldrignore
+
+1_mvp.md
+2_prd.md
+3_erd.md
+4_prompt.md
+5_api_contract.md
+design.md
+thoughts/

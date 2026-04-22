@@ -1,0 +1,16 @@
+# Purpose: Backend runtime dependencies for FastAPI + ML inference service.
+# Callers: pip install -r requirements.txt, Render build pipeline.
+# Deps: Python 3.11+.
+# API: Package pin list consumed by pip.
+# Side effects: Locks baseline package versions for reproducible backend builds.
+fastapi
+uvicorn[standard]
+pydantic
+scikit-learn
+pandas
+numpy
+joblib
+supabase
+python-dotenv
+shap
+prometheus-client
