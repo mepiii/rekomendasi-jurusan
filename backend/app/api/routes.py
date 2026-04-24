@@ -61,15 +61,18 @@ DEFAULT_MAJORS = [
 
 DEFAULT_INTERESTS = [
     {"id": 1, "name": "Technology"},
-    {"id": 2, "name": "Data & AI"},
-    {"id": 3, "name": "Engineering"},
-    {"id": 4, "name": "Social Sciences & Humanities"},
-    {"id": 5, "name": "Communication"},
-    {"id": 6, "name": "Law & Politics"},
-    {"id": 7, "name": "Science & Health"},
-    {"id": 8, "name": "Business & Management"},
-    {"id": 9, "name": "Arts & Creativity"},
-    {"id": 10, "name": "Education & Languages"},
+    {"id": 2, "name": "Engineering"},
+    {"id": 3, "name": "Health"},
+    {"id": 4, "name": "Business"},
+    {"id": 5, "name": "Social"},
+    {"id": 6, "name": "Law"},
+    {"id": 7, "name": "Education"},
+    {"id": 8, "name": "Psychology"},
+    {"id": 9, "name": "Media"},
+    {"id": 10, "name": "Design"},
+    {"id": 11, "name": "Language"},
+    {"id": 12, "name": "Environment"},
+    {"id": 13, "name": "Data / AI"},
 ]
 
 

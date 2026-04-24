@@ -1,46 +1,26 @@
 # Purpose: Define validated request/response models for recommendation API.
 # Callers: FastAPI endpoint handlers and ML service layer.
-# Deps: pydantic v2.
+# Deps: pydantic v2, recommendation config.
 # API: PredictRequest, PredictResponse, retrain and feedback schemas.
 # Side effects: Enforces API input constraints at runtime.
 
 from __future__ import annotations
 
-from typing import Optional
 from uuid import UUID, uuid4
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
-VALID_SMA_TRACKS = {"Science", "Social Studies", "Language"}
-VALID_INTERESTS = {
-    "Technology",
-    "Data & AI",
-    "Engineering",
-    "Social Sciences & Humanities",
-    "Communication",
-    "Law & Politics",
-    "Science & Health",
-    "Business & Management",
-    "Arts & Creativity",
-    "Education & Languages",
-}
-
-
-class ScoreInput(BaseModel):
-    math: float = Field(..., ge=0, le=100)
-    physics: float = Field(..., ge=0, le=100)
-    chemistry: float = Field(..., ge=0, le=100)
-    biology: float = Field(..., ge=0, le=100)
-    economics: float = Field(..., ge=0, le=100)
-    indonesian: float = Field(..., ge=0, le=100)
-    english: float = Field(..., ge=0, le=100)
+from app.recommendation_config import TRACK_SUBJECT_RULES, VALID_INTERESTS, VALID_PREFERENCE_VALUES, VALID_SMA_TRACKS
 
 
 class PredictRequest(BaseModel):
-    session_id: Optional[UUID] = Field(default_factory=uuid4)
-    sma_track: str = Field(..., description="Science, Social Studies, or Language")
-    scores: ScoreInput
-    interests: list[str] = Field(..., min_length=1, max_length=5)
+    session_id: UUID = Field(default_factory=uuid4)
+    sma_track: str = Field(..., description="IPA, IPS, Bahasa, or Merdeka")
+    curriculum_type: str = Field(..., min_length=2)
+    scores: dict[str, float] = Field(..., min_length=6)
+    selected_electives: list[str] = Field(default_factory=list, max_length=5)
+    interests: list[str] = Field(..., min_length=3, max_length=6)
+    preferences: dict[str, str] = Field(..., min_length=3, max_length=3)
     top_n: int = Field(default=3, ge=3, le=5)
 
     @field_validator("sma_track")
@@ -63,13 +43,66 @@ class PredictRequest(BaseModel):
                 cleaned.append(interest)
         return cleaned
 
+    @field_validator("preferences")
+    @classmethod
+    def validate_preferences(cls, values: dict[str, str]) -> dict[str, str]:
+        required = {"orientation", "approach", "style"}
+        if set(values) != required:
+            raise ValueError("preferences must contain orientation, approach, and style")
+        for value in values.values():
+            if value not in VALID_PREFERENCE_VALUES:
+                raise ValueError(f"Preference value '{value}' is not recognized.")
+        return values
+
+    @field_validator("scores")
+    @classmethod
+    def validate_scores(cls, values: dict[str, float]) -> dict[str, float]:
+        for key, value in values.items():
+            if value < 0 or value > 100:
+                raise ValueError(f"Score for '{key}' must be between 0 and 100.")
+        return values
+
+    @model_validator(mode="after")
+    def validate_track_subject_rules(self) -> "PredictRequest":
+        rules = TRACK_SUBJECT_RULES[self.sma_track]
+        score_keys = set(self.scores)
+        missing_required = sorted(rules["required"] - score_keys)
+        if missing_required:
+            raise ValueError(f"Missing required subjects: {missing_required}")
+
+        optional = rules.get("optional", set())
+        elective_pool = rules.get("electives", set())
+        allowed_keys = rules["required"] | optional | elective_pool
+        unknown = sorted(score_keys - allowed_keys)
+        if unknown:
+            raise ValueError(f"Scores contain unsupported subjects for {self.sma_track}: {unknown}")
+
+        if self.sma_track == "Merdeka":
+            min_elective, max_elective = rules["elective_range"]
+            if not (min_elective <= len(self.selected_electives) <= max_elective):
+                raise ValueError(f"selected_electives must contain between {min_elective} and {max_elective} items")
+            if not set(self.selected_electives).issubset(elective_pool):
+                raise ValueError("selected_electives contain unsupported values")
+            if not set(self.selected_electives).issubset(score_keys):
+                raise ValueError("selected_electives must have corresponding scores")
+        elif self.selected_electives:
+            raise ValueError("selected_electives are only supported for Merdeka track")
+
+        return self
+
 
 class RecommendationItem(BaseModel):
     rank: int
     major: str
     cluster: str
     suitability_score: int
+    confidence_label: str
     explanation: str
+    fit_summary: list[str] = Field(default_factory=list)
+    strength_signals: list[str] = Field(default_factory=list)
+    tradeoffs: list[str] = Field(default_factory=list)
+    career_paths: list[str] = Field(default_factory=list)
+    alternative_majors: list[str] = Field(default_factory=list)
     shap_values: dict[str, float] = Field(default_factory=dict)
     major_requirements: dict[str, float] = Field(default_factory=dict)
 
@@ -78,6 +111,7 @@ class ProfileSummary(BaseModel):
     strongest_subject: str
     strongest_group: str
     avg_score: float
+    confidence_label: str
 
 
 class PredictResponse(BaseModel):

@@ -1,7 +1,7 @@
 // Purpose: Present advanced recommendation results, explainability status, and user feedback capture.
 // Callers: App component.
 // Deps: ResultCardAdvanced, framer-motion.
-// API: Props result, explanations, onReset, onSubmitFeedback, feedbackState.
+// API: Props result, locale, copy, explanations, onReset, onSubmitFeedback, feedbackState.
 // Side effects: Submits feedback payload.
 import { motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
@@ -16,13 +16,7 @@ function mergeRecommendationWithExplanations(recommendations, explanations) {
   }));
 }
 
-export default function ResultSectionAdvanced({
-  result,
-  explanations,
-  onReset,
-  onSubmitFeedback,
-  feedbackState
-}) {
+export default function ResultSectionAdvanced({ result, locale = 'en', copy, explanations, onReset, onSubmitFeedback, feedbackState }) {
   const [aligns, setAligns] = useState(true);
   const [selectedMajor, setSelectedMajor] = useState('');
   const [rating, setRating] = useState(5);
@@ -45,73 +39,60 @@ export default function ResultSectionAdvanced({
 
   return (
     <section className="w-full max-w-5xl space-y-4">
-      <motion.h2
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-3xl font-semibold tracking-tight text-textPrimary"
-      >
-        Your Best-Fit College Major Recommendations
-      </motion.h2>
+      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
+        <p className="editorial-kicker text-xs font-medium uppercase">{copy.appName} recommendations</p>
+        <h2 className="text-3xl font-semibold tracking-tight text-textPrimary">{copy.topRecommendations}</h2>
+        <p className="max-w-3xl text-sm leading-6 text-textMuted">{copy.resultIntro}</p>
+      </motion.div>
 
-      <div className="glass-panel rounded-2xl border border-white/15 p-4">
-        <p className="text-xs uppercase tracking-wide text-textSubtle">Profile Summary</p>
-        <div className="mt-3 grid gap-3 sm:grid-cols-3">
+      <div className="glass-panel editorial-shell rounded-[24px] border p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-xs uppercase tracking-[0.24em] text-textSubtle">{copy.profileReview}</p>
+          <span className="editorial-chip rounded-full px-3 py-1 text-[11px] uppercase tracking-[0.18em]">Latency {result.latency_ms ?? '-'} ms</span>
+        </div>
+        <div className="mt-3 grid gap-3 sm:grid-cols-4">
           <div>
-            <p className="text-xs text-textSubtle">Strongest Subject</p>
+            <p className="text-xs text-textSubtle">{copy.strongestSubject}</p>
             <p className="mt-1 text-sm text-textPrimary">{result.profile_summary?.strongest_subject || '-'}</p>
           </div>
           <div>
-            <p className="text-xs text-textSubtle">Strongest Group</p>
+            <p className="text-xs text-textSubtle">{copy.strongestGroup}</p>
             <p className="mt-1 text-sm capitalize text-textPrimary">{result.profile_summary?.strongest_group || '-'}</p>
           </div>
           <div>
-            <p className="text-xs text-textSubtle">Average Score</p>
+            <p className="text-xs text-textSubtle">{copy.averageScore}</p>
             <p className="mt-1 text-sm text-textPrimary">{result.profile_summary?.avg_score ?? '-'}</p>
           </div>
+          <div>
+            <p className="text-xs text-textSubtle">{copy.confidence}</p>
+            <p className="mt-1 text-sm text-textPrimary">{result.profile_summary?.confidence_label || '-'}</p>
+          </div>
         </div>
-        <div className="mt-3 text-xs text-textMuted">Latency: {result.latency_ms ?? '-'} ms</div>
       </div>
 
       <div className="space-y-3">
         {recommendationItems.map((recommendation) => (
-          <ResultCardAdvanced
-            key={`${recommendation.rank}-${recommendation.major}`}
-            recommendation={recommendation}
-            highlight={recommendation.rank === 1}
-          />
+          <ResultCardAdvanced key={`${recommendation.rank}-${recommendation.major}`} recommendation={recommendation} highlight={recommendation.rank === 1} copy={copy} locale={locale} />
         ))}
       </div>
 
-      <form onSubmit={handleFeedback} className="glass-panel rounded-2xl border border-white/15 p-4">
-        <p className="text-sm font-medium text-textPrimary">Verification</p>
-        <p className="mt-1 text-xs text-textMuted">Does this align with your goals? Submit real outcome for active learning.</p>
+      <form onSubmit={handleFeedback} className="glass-panel editorial-shell rounded-[24px] border p-5">
+        <p className="editorial-kicker text-xs font-medium uppercase">{copy.reflection}</p>
+        <p className="mt-2 text-sm font-medium text-textPrimary">{copy.reflectionPrompt}</p>
+        <p className="mt-1 max-w-2xl text-xs leading-6 text-textMuted">{copy.reflectionHelper}</p>
 
         <div className="mt-3 grid gap-3 sm:grid-cols-2">
           <label className="flex items-center gap-2 text-sm text-textSecondary">
-            <input
-              type="radio"
-              checked={aligns === true}
-              onChange={() => setAligns(true)}
-              className="accent-accent"
-            />
-            Yes, it matches
+            <input type="radio" checked={aligns === true} onChange={() => setAligns(true)} className="accent-accent" />
+            {copy.yesMatch}
           </label>
           <label className="flex items-center gap-2 text-sm text-textSecondary">
-            <input
-              type="radio"
-              checked={aligns === false}
-              onChange={() => setAligns(false)}
-              className="accent-accent"
-            />
-            Not yet
+            <input type="radio" checked={aligns === false} onChange={() => setAligns(false)} className="accent-accent" />
+            {copy.notYet}
           </label>
 
-          <select
-            value={selectedMajor}
-            onChange={(event) => setSelectedMajor(event.target.value)}
-            className="glass-input rounded-xl border border-white/20 px-3 py-2 text-sm text-textPrimary"
-          >
-            <option value="">Select your actual major (optional)</option>
+          <select value={selectedMajor} onChange={(event) => setSelectedMajor(event.target.value)} className="glass-input rounded-xl px-3 py-2 text-sm text-textPrimary">
+            <option value="">{copy.actualMajor}</option>
             {recommendationItems.map((item) => (
               <option key={item.major} value={item.major}>
                 {item.major}
@@ -119,48 +100,25 @@ export default function ResultSectionAdvanced({
             ))}
           </select>
 
-          <input
-            type="number"
-            min="1"
-            max="5"
-            value={rating}
-            onChange={(event) => setRating(Number(event.target.value || 5))}
-            className="glass-input rounded-xl border border-white/20 px-3 py-2 text-sm text-textPrimary"
-            placeholder="Rating 1-5"
-          />
+          <input type="number" min="1" max="5" value={rating} onChange={(event) => setRating(Number(event.target.value || 5))} className="glass-input rounded-xl px-3 py-2 text-sm text-textPrimary" placeholder={copy.rating} />
         </div>
 
-        <textarea
-          value={notes}
-          onChange={(event) => setNotes(event.target.value)}
-          className="glass-input mt-3 h-20 w-full rounded-xl border border-white/20 px-3 py-2 text-sm text-textPrimary"
-          placeholder="Additional notes..."
-        />
+        <textarea value={notes} onChange={(event) => setNotes(event.target.value)} className="glass-input mt-3 h-20 w-full rounded-xl px-3 py-2 text-sm text-textPrimary" placeholder={copy.notes} />
 
         <div className="mt-3 flex items-center justify-between gap-3">
-          <button
-            type="submit"
-            disabled={feedbackState.loading}
-            className="rounded-xl bg-cta px-4 py-2 text-sm font-medium text-white transition hover:brightness-110 disabled:opacity-60"
-          >
-            {feedbackState.loading ? 'Saving...' : 'Send Feedback'}
+          <button type="submit" disabled={feedbackState.loading} className="apti-primary-button px-5 py-2.5 text-sm font-semibold disabled:opacity-60">
+            {feedbackState.loading ? <span className="apti-button-spinner" aria-hidden="true" /> : null}
+            {feedbackState.loading ? copy.saving : copy.sendFeedback}
           </button>
-          <button
-            type="button"
-            onClick={onReset}
-            className="rounded-xl border border-white/20 px-4 py-2 text-sm text-textSecondary transition hover:border-accent/50"
-          >
-            Try Different Inputs
+          <button type="button" onClick={onReset} className="apti-secondary-button rounded-xl px-4 py-2 text-sm transition">
+            {copy.tryDifferentInputs}
           </button>
         </div>
 
         {feedbackState.message ? <p className="mt-2 text-xs text-textMuted">{feedbackState.message}</p> : null}
       </form>
 
-      <div className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-xs leading-relaxed text-textSubtle">
-        {result.disclaimer ||
-          'These results are decision support, not a final verdict. Discuss them with a counselor, teacher, or parent.'}
-      </div>
+      <div className="editorial-shell rounded-[22px] border px-4 py-4 text-xs leading-relaxed text-textSubtle">{result.disclaimer || copy.disclaimer}</div>
     </section>
   );
 }

@@ -102,16 +102,17 @@ def log_prediction(req: PredictRequest, recs: list[RecommendationItem], source: 
         return
 
     try:
+        score_map = req.scores
         payload = {
             "session_id": str(req.session_id),
             "sma_track": req.sma_track,
-            "math_score": req.scores.math,
-            "physics_score": req.scores.physics,
-            "chemistry_score": req.scores.chemistry,
-            "biology_score": req.scores.biology,
-            "economics_score": req.scores.economics,
-            "indonesian_score": req.scores.indonesian,
-            "english_score": req.scores.english,
+            "math_score": score_map.get("math") or score_map.get("general_math") or score_map.get("basic_math"),
+            "physics_score": score_map.get("physics"),
+            "chemistry_score": score_map.get("chemistry"),
+            "biology_score": score_map.get("biology"),
+            "economics_score": score_map.get("economics"),
+            "indonesian_score": score_map.get("indonesian") or score_map.get("indonesian_literature"),
+            "english_score": score_map.get("english") or score_map.get("english_literature"),
             "interests": req.interests,
             "top_1_major": recs[0].major if len(recs) > 0 else None,
             "top_1_score": (recs[0].suitability_score / 100) if len(recs) > 0 else None,

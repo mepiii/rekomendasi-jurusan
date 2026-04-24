@@ -1,19 +1,47 @@
-// Purpose: Coordinate journey submit, prediction lifecycle, explainability polling, and feedback submission.
+// Purpose: Coordinate intro-state orchestration, theme persistence, journey submit, prediction lifecycle, and feedback submission.
 // Callers: React root entrypoint.
-// Deps: RecommendationJourney, ResultSectionAdvanced, API helpers, explainability hook.
+// Deps: Apti shell components, recommendation flow, API helpers, explainability hook, introState and themeState helpers.
 // API: Default exported App component.
-// Side effects: Performs prediction, feedback, and explanation polling requests.
-import { useEffect, useMemo, useState } from 'react';
+// Side effects: Performs prediction, feedback, explanation polling, and intro/theme-state persistence.
+import { useEffect, useState } from 'react';
+import AptiIntroFlow from './components/features/AptiIntroFlow';
+import AptiShell from './components/features/AptiShell';
 import RecommendationJourney from './components/features/RecommendationJourney';
 import ResultSectionAdvanced from './components/features/ResultSectionAdvanced';
 import useExplainabilityPoll from './hooks/useExplainabilityPoll';
 import { pingHealth, predict, submitFeedback } from './lib/api';
+import { clearIntroState, getHelperCopy, loadIntroState, saveIntroState } from './lib/introState';
+import { copy, loadLocale, saveLocale } from './lib/i18n';
+import { loadTheme, saveTheme, toggleTheme } from './lib/themeState';
+
+const getShellContent = (introState, onRestartIntro, localeCopy) => {
+  if (!introState.completed) return { title: '', subtitle: '', actions: null };
+
+  return {
+    title:
+      introState.name && localeCopy.introFallbackTitle !== 'Selamat datang kembali'
+        ? `Welcome back, ${introState.name}`
+        : introState.name
+          ? `Selamat datang kembali, ${introState.name}`
+          : localeCopy.introFallbackTitle,
+    subtitle: localeCopy.goals[introState.goal] || localeCopy.goals['find-fit'],
+    actions: (
+      <button type="button" onClick={onRestartIntro} className="apti-secondary-button rounded-xl px-4 py-2 text-sm text-textSecondary">
+        {localeCopy.restartIntro}
+      </button>
+    )
+  };
+};
 
 export default function App() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [feedbackState, setFeedbackState] = useState({ loading: false, message: '' });
+  const [introState, setIntroState] = useState(() => loadIntroState());
+  const [theme, setTheme] = useState(() => loadTheme());
+  const [locale, setLocale] = useState(() => loadLocale());
+  const localeCopy = copy[locale];
 
   const sessionId = result?.session_id || null;
   const explainability = useExplainabilityPoll(sessionId);
@@ -21,6 +49,32 @@ export default function App() {
   useEffect(() => {
     pingHealth();
   }, []);
+
+  const handleIntroComplete = (nextState) => {
+    saveIntroState(nextState);
+    setIntroState(nextState);
+  };
+
+  const handleRestartIntro = () => {
+    clearIntroState();
+    explainability.stop();
+    setIntroState(loadIntroState());
+    setResult(null);
+    setError('');
+    setFeedbackState({ loading: false, message: '' });
+  };
+
+  const handleThemeToggle = () => {
+    const nextTheme = toggleTheme(theme);
+    saveTheme(nextTheme);
+    setTheme(nextTheme);
+  };
+
+  const handleLocaleToggle = () => {
+    const nextLocale = locale === 'en' ? 'id' : 'en';
+    saveLocale(nextLocale);
+    setLocale(nextLocale);
+  };
 
   const submitForm = async (payload) => {
     setLoading(true);
@@ -39,13 +93,13 @@ export default function App() {
       setResult(enriched);
     } catch (err) {
       if (err.name === 'AbortError') {
-        setError('System is busy right now. Please try again in a moment.');
+        setError(localeCopy.busyError);
       } else if (err.status === 422) {
-        setError('Invalid input. Please review the scores and interests you entered.');
+        setError(localeCopy.invalidError);
       } else if (err.status === 500) {
-        setError('A system error occurred.');
+        setError(localeCopy.systemError);
       } else {
-        setError('Something went wrong. Please try again shortly.');
+        setError(localeCopy.genericError);
       }
     } finally {
       setLoading(false);
@@ -61,40 +115,52 @@ export default function App() {
         session_id: result.session_id,
         ...payload
       });
-      setFeedbackState({ loading: false, message: 'Feedback saved. Thank you.' });
+      setFeedbackState({ loading: false, message: localeCopy.feedbackSaved });
     } catch {
-      setFeedbackState({ loading: false, message: 'Failed to save feedback. Please try again.' });
+      setFeedbackState({ loading: false, message: localeCopy.feedbackFailed });
     }
   };
 
-  const wrapperClass = useMemo(
-    () => 'min-h-screen w-full bg-bg px-4 py-10 text-textPrimary sm:px-6 lg:px-8',
-    []
-  );
+  const shellContent = getShellContent(introState, handleRestartIntro, localeCopy);
+  const helperCopy = getHelperCopy();
 
   return (
-    <main className={wrapperClass}>
-      <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-6">
-        {!result ? (
-          <RecommendationJourney onSubmit={submitForm} loading={loading} error={error} />
-        ) : (
-          <ResultSectionAdvanced
-            result={result}
-            explanations={{
-              ready: explainability.ready,
-              explanations: explainability.explanations
-            }}
-            onReset={() => {
-              explainability.stop();
-              setResult(null);
-              setError('');
-              setFeedbackState({ loading: false, message: '' });
-            }}
-            onSubmitFeedback={handleFeedbackSubmit}
-            feedbackState={feedbackState}
-          />
-        )}
-      </div>
-    </main>
+    <AptiShell
+      theme={theme}
+      onToggleTheme={handleThemeToggle}
+      locale={locale}
+      onToggleLocale={handleLocaleToggle}
+      copy={localeCopy}
+      title={shellContent.title}
+      subtitle={shellContent.subtitle}
+      actions={shellContent.actions}
+    >
+      {!introState.completed ? (
+        <AptiIntroFlow
+          onComplete={handleIntroComplete}
+          onSkip={() => handleIntroComplete({ completed: true, name: '', goal: 'find-fit', confidence: '' })}
+        />
+      ) : !result ? (
+        <RecommendationJourney onSubmit={submitForm} loading={loading} error={error} helperCopy={helperCopy} locale={locale} copy={localeCopy} />
+      ) : (
+        <ResultSectionAdvanced
+          result={result}
+          locale={locale}
+          copy={localeCopy}
+          explanations={{
+            ready: explainability.ready,
+            explanations: explainability.explanations
+          }}
+          onReset={() => {
+            explainability.stop();
+            setResult(null);
+            setError('');
+            setFeedbackState({ loading: false, message: '' });
+          }}
+          onSubmitFeedback={handleFeedbackSubmit}
+          feedbackState={feedbackState}
+        />
+      )}
+    </AptiShell>
   );
 }
