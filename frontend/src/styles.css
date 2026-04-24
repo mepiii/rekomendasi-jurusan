@@ -5,6 +5,19 @@
 :root {
   font-family: "Manrope", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
   font-feature-settings: 'cv01', 'ss03';
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 .apti-shell::before {
@@ -18,6 +31,16 @@
     linear-gradient(to bottom, rgba(124, 128, 138, 0.09) 1px, transparent 1px);
   background-size: 30px 30px;
   opacity: 1;
+  animation: apti-grid-drift 18s var(--ease-out-quart) infinite alternate;
+}
+
+@keyframes apti-grid-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(0, -12px, 0);
+  }
 }
 
 .apti-shell[data-theme='dark']::before {
@@ -54,11 +77,11 @@
   background: linear-gradient(135deg, color-mix(in srgb, var(--shell-accent) 90%, white 10%), color-mix(in srgb, var(--shell-accent) 72%, black 8%));
   color: white;
   box-shadow: 0 14px 30px color-mix(in srgb, var(--shell-accent) 24%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.18);
-  transition: transform 220ms ease, filter 220ms ease, box-shadow 220ms ease;
+  transition: transform 220ms var(--ease-out-quart), filter 220ms var(--ease-out-quart), box-shadow 220ms var(--ease-out-quart);
 }
 
 .apti-primary-button:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px) scale(1.01);
   filter: brightness(1.05);
   box-shadow: 0 18px 34px color-mix(in srgb, var(--shell-accent) 28%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.24);
 }
@@ -67,10 +90,141 @@
   transform: translateY(0) scale(0.985);
 }
 
+.apti-primary-button:focus-visible,
+.apti-secondary-button:focus-visible,
+.editorial-chip:focus-visible,
+.glass-input:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--shell-accent) 18%, transparent);
+}
+
 .apti-primary-button:disabled {
   opacity: 0.55;
   box-shadow: none;
   transform: none;
+}
+
+.apti-secondary-button,
+.editorial-chip,
+.glass-panel,
+.editorial-shell,
+.apti-shell-header {
+  transition:
+    transform 220ms var(--ease-out-quart),
+    border-color 220ms var(--ease-out-quart),
+    background-color 220ms var(--ease-out-quart),
+    color 220ms var(--ease-out-quart),
+    box-shadow 220ms var(--ease-out-quart),
+    filter 220ms var(--ease-out-quart);
+}
+
+.apti-secondary-button:hover {
+  transform: translateY(-1px);
+  color: var(--shell-ink);
+  border-color: color-mix(in srgb, var(--shell-accent) 30%, var(--shell-border));
+  box-shadow: 0 10px 22px color-mix(in srgb, var(--shell-accent) 10%, transparent);
+}
+
+.editorial-chip:hover {
+  transform: translateY(-1px);
+  color: var(--shell-ink);
+  border-color: color-mix(in srgb, var(--shell-accent) 32%, var(--shell-border));
+  box-shadow: 0 8px 18px color-mix(in srgb, var(--shell-accent) 10%, transparent);
+}
+
+.glass-panel:hover,
+.editorial-shell:hover,
+.apti-shell-header:hover {
+  border-color: color-mix(in srgb, var(--shell-accent) 18%, var(--shell-border));
+  box-shadow: 0 18px 38px color-mix(in srgb, var(--shell-accent) 8%, transparent);
+}
+
+.apti-interactive-lift {
+  transition: transform 240ms var(--ease-out-expo), box-shadow 240ms var(--ease-out-expo), border-color 240ms var(--ease-out-expo);
+}
+
+.apti-interactive-lift:hover {
+  transform: translateY(-3px);
+}
+
+.apti-interactive-press:active {
+  transform: scale(0.985);
+}
+
+.apti-fade-up {
+  animation: apti-fade-up 480ms var(--ease-out-expo) both;
+}
+
+@keyframes apti-fade-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.apti-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.apti-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 20%, rgba(255, 255, 255, 0.16) 50%, transparent 80%);
+  transform: translateX(-140%);
+  transition: transform 520ms var(--ease-out-expo);
+}
+
+.apti-shimmer:hover::after {
+  transform: translateX(140%);
+}
+
+.apti-choice-active {
+  color: var(--shell-accent) !important;
+}
+
+.apti-choice-idle {
+  color: var(--shell-muted) !important;
+}
+
+.apti-choice-idle:hover {
+  color: var(--shell-ink) !important;
+}
+
+.apti-section-divider {
+  transform-origin: left center;
+  animation: apti-divider-grow 700ms var(--ease-out-expo) both;
+}
+
+@keyframes apti-divider-grow {
+  from {
+    opacity: 0;
+    transform: scaleX(0.65);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+.apti-field-enter {
+  animation: apti-field-enter 320ms var(--ease-out-quart) both;
+}
+
+@keyframes apti-field-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
 }
 
 .apti-button-spinner {
@@ -193,7 +347,26 @@ body {
 
 .glass-input:focus {
   border-color: var(--shell-accent);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--shell-accent) 14%, transparent);
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--shell-accent) 14%, transparent), 0 14px 30px color-mix(in srgb, var(--shell-accent) 8%, transparent);
+}
+
+.glass-input,
+textarea.glass-input,
+select.glass-input {
+  transition: transform 200ms var(--ease-out-quart), border-color 200ms var(--ease-out-quart), box-shadow 200ms var(--ease-out-quart), background-color 200ms var(--ease-out-quart);
+}
+
+.glass-input:hover,
+textarea.glass-input:hover,
+select.glass-input:hover {
+  border-color: color-mix(in srgb, var(--shell-accent) 18%, var(--shell-border-strong));
+}
+
+.glass-input:not(:focus),
+textarea.glass-input:not(:focus),
+select.glass-input:not(:focus) {
+  transform: none;
 }
 
 .apti-secondary-button {

@@ -8,10 +8,37 @@ import { useMemo, useState } from 'react';
 import { buildInitialScores, interestOptions, preferenceGroups, trackConfig } from '../../lib/recommendationConfig';
 
 const stepMotion = {
-  initial: { opacity: 0, x: 30, filter: 'blur(8px)' },
-  animate: { opacity: 1, x: 0, filter: 'blur(0px)' },
-  exit: { opacity: 0, x: -30, filter: 'blur(8px)' },
-  transition: { duration: 0.35, ease: 'easeInOut' }
+  initial: { opacity: 0, y: 26, scale: 0.985, filter: 'blur(10px)' },
+  animate: { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' },
+  exit: { opacity: 0, y: -18, scale: 0.99, filter: 'blur(8px)' },
+  transition: { duration: 0.42, ease: [0.16, 1, 0.3, 1] }
+};
+
+const staggerMotion = {
+  animate: {
+    transition: {
+      staggerChildren: 0.06,
+      delayChildren: 0.04
+    }
+  }
+};
+
+const itemMotion = {
+  initial: { opacity: 0, y: 14 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.28, ease: [0.25, 1, 0.5, 1] }
+};
+
+const buttonTap = { whileTap: { scale: 0.985 } };
+
+const cardHover = {
+  whileHover: { y: -3 },
+  transition: { duration: 0.22, ease: [0.25, 1, 0.5, 1] }
+};
+
+const chipHover = {
+  whileHover: { y: -2, scale: 1.01 },
+  transition: { duration: 0.18, ease: [0.25, 1, 0.5, 1] }
 };
 
 const groupLabels = {
@@ -56,7 +83,7 @@ function StepIndicator({ step, labels }) {
 
 function SubjectField({ label, value, onChange, error, optional }) {
   return (
-    <label className="flex flex-col gap-1">
+    <label className="apti-field-enter flex flex-col gap-1">
       <span className="text-sm text-textSecondary">
         {label}
         {optional ? <span className="ml-1 text-textSubtle">(optional)</span> : null}
@@ -218,27 +245,30 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
         <div className="mb-8 space-y-3">
           <h1 className="text-2xl font-semibold tracking-tight text-textPrimary sm:text-3xl">{copy.journeyTitle}</h1>
           <p className="max-w-2xl text-sm leading-6 text-textMuted">{helperCopy || copy.journeyHelper}</p>
-          <div className="editorial-rule" />
+          <div className="editorial-rule apti-section-divider" />
         </div>
 
         <AnimatePresence mode="wait">
           {step === 1 ? (
-            <motion.div key="step-1" {...stepMotion} className="space-y-6">
+            <motion.div key="step-1" {...stepMotion} variants={staggerMotion} initial="initial" animate="animate" className="space-y-6">
               <div className="space-y-3">
                 <p className="text-sm text-textSecondary">{copy.track}</p>
                 <div className="grid gap-3 sm:grid-cols-2">
                   {Object.entries(trackConfig).map(([key, config]) => {
                     const active = key === trackKey;
                     return (
-                      <button
+                      <motion.button
                         key={key}
                         type="button"
                         onClick={() => handleTrackChange(key)}
-                        className={`editorial-chip rounded-2xl px-4 py-4 text-left text-sm transition ${active ? 'border-accent/30 bg-accent/10 text-accent' : 'hover:border-accent/40 hover:text-textPrimary'}`}
+                        className={`editorial-chip apti-interactive-lift rounded-2xl px-4 py-4 text-left text-sm transition ${active ? 'apti-choice-active border-accent/30 bg-accent/10 text-accent' : 'apti-choice-idle hover:border-accent/40 hover:text-textPrimary'}`}
+                        variants={itemMotion}
+                        {...cardHover}
+                        {...buttonTap}
                       >
                         <span className="block font-medium">{config.label[locale] || config.label.en}</span>
                         <span className="mt-1 block text-xs text-textMuted">{config.requiredSubjects.length} {copy.subjects.toLowerCase()}</span>
-                      </button>
+                      </motion.button>
                     );
                   })}
                 </div>
@@ -255,14 +285,16 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
                       const active = selectedElectives.includes(key);
                       const blocked = !active && selectedElectives.length >= 5;
                       return (
-                        <button
+                        <motion.button
                           key={key}
                           type="button"
                           onClick={() => !blocked && toggleElective(key)}
-                          className={`editorial-chip rounded-full px-3 py-1 text-xs transition ${active ? 'border-accent/30 bg-accent/10 text-accent' : 'text-textMuted hover:border-accent/40 hover:text-textPrimary'} ${blocked ? 'cursor-not-allowed opacity-40' : ''}`}
+                          className={`editorial-chip apti-interactive-lift rounded-full px-3 py-1 text-xs transition ${active ? 'apti-choice-active border-accent/30 bg-accent/10 text-accent' : 'apti-choice-idle hover:border-accent/40 hover:text-textPrimary'} ${blocked ? 'cursor-not-allowed opacity-40' : ''}`}
+                          {...chipHover}
+                          {...buttonTap}
                         >
                           {label}
-                        </button>
+                        </motion.button>
                       );
                     })}
                   </div>
@@ -273,7 +305,7 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
           ) : null}
 
           {step === 2 ? (
-            <motion.div key="step-2" {...stepMotion} className="space-y-6">
+            <motion.div key="step-2" {...stepMotion} variants={staggerMotion} initial="initial" animate="animate" className="space-y-6">
               <div className="space-y-3">
                 <p className="text-sm text-textSecondary">{copy.subjects}</p>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -302,14 +334,16 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
                     const active = interests.includes(interest);
                     const blocked = !active && interests.length >= 6;
                     return (
-                      <button
+                      <motion.button
                         key={interest}
                         type="button"
                         onClick={() => !blocked && toggleInterest(interest)}
-                        className={`editorial-chip rounded-full px-3 py-1 text-xs transition ${active ? 'border-accent/30 bg-accent/10 text-accent' : 'text-textMuted hover:border-accent/40 hover:text-textPrimary'} ${blocked ? 'cursor-not-allowed opacity-40' : ''}`}
+                        className={`editorial-chip apti-interactive-lift rounded-full px-3 py-1 text-xs transition ${active ? 'apti-choice-active border-accent/30 bg-accent/10 text-accent' : 'apti-choice-idle hover:border-accent/40 hover:text-textPrimary'} ${blocked ? 'cursor-not-allowed opacity-40' : ''}`}
+                        {...chipHover}
+                        {...buttonTap}
                       >
                         {interest}
-                      </button>
+                      </motion.button>
                     );
                   })}
                 </div>
@@ -320,25 +354,27 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
                 <p className="text-sm text-textSecondary">{copy.preferences}</p>
                 <div className="grid gap-4 lg:grid-cols-3">
                   {Object.entries(preferenceGroups).map(([groupKey, options]) => (
-                    <div key={groupKey} className="editorial-shell rounded-2xl border p-4">
+                    <motion.div key={groupKey} variants={itemMotion} className="editorial-shell apti-interactive-lift rounded-2xl border p-4">
                       <p className="text-xs uppercase tracking-[0.18em] text-textSubtle">{localizedGroupLabels[groupKey]}</p>
                       <div className="mt-3 flex flex-wrap gap-2">
                         {options.map((option) => {
                           const active = preferences[groupKey] === option;
                           return (
-                            <button
+                            <motion.button
                               key={option}
                               type="button"
                               onClick={() => setPreferences((prev) => ({ ...prev, [groupKey]: option }))}
-                              className={`editorial-chip rounded-full px-3 py-1 text-xs transition ${active ? 'border-accent/30 bg-accent/10 text-accent' : 'text-textMuted hover:border-accent/40 hover:text-textPrimary'}`}
+                              className={`editorial-chip apti-interactive-lift rounded-full px-3 py-1 text-xs transition ${active ? 'apti-choice-active border-accent/30 bg-accent/10 text-accent' : 'apti-choice-idle hover:border-accent/40 hover:text-textPrimary'}`}
+                              {...chipHover}
+                              {...buttonTap}
                             >
                               {option}
-                            </button>
+                            </motion.button>
                           );
                         })}
                       </div>
                       {errors[groupKey] ? <span className="mt-2 block text-xs text-danger">{errors[groupKey]}</span> : null}
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               </div>

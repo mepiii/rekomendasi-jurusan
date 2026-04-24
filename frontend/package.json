@@ -1,8 +1,8 @@
 {
-  "name": "rekomendasi-jurusan-frontend",
+  "name": "apti-frontend",
   "private": true,
   "version": "1.0.0",
-  "description": "React + Tailwind frontend for rekomendasi jurusan MVP",
+  "description": "React + Tailwind frontend for Apti recommendation workspace",
   "type": "module",
   "scripts": {
     "dev": "vite",

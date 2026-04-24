@@ -131,8 +131,8 @@ Main endpoints:
 ## Deployment
 
 ### Vercel
-- Project: `major-recommendation`
-- Domain in use: `major-rec.vercel.app`
+- Project: `apti`
+- Domain in use: `apti-mepi.vercel.app`
 - Root directory: `frontend`
 
 ### Railway

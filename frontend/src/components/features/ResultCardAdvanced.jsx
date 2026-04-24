@@ -113,7 +113,14 @@ export default function ResultCardAdvanced({ recommendation, highlight, copy }) 
   const shapEntries = Object.entries(recommendation.shap_values || {}).sort((a, b) => b[1] - a[1]);
 
   return (
-    <article className={`glass-panel rounded-2xl border p-5 ${highlight ? 'border-accent/60' : 'border-white/15'}`}>
+    <motion.article
+      initial={{ opacity: 0, y: 22 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -4 }}
+      viewport={{ once: true, amount: 0.18 }}
+      transition={{ duration: 0.38, ease: [0.16, 1, 0.3, 1] }}
+      className={`glass-panel apti-interactive-lift rounded-2xl border p-5 ${highlight ? 'border-accent/60' : 'border-white/15'}`}
+    >
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="space-y-3">
           <div>
@@ -135,7 +142,7 @@ export default function ResultCardAdvanced({ recommendation, highlight, copy }) 
         </div>
       </div>
 
-      <div className="mt-4 h-64 w-full rounded-xl border border-white/10 p-2">
+      <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }} className="mt-4 h-64 w-full rounded-xl border border-white/10 p-2 apti-shimmer">
         <ResponsiveContainer width="100%" height="100%">
           <RadarChart data={radarData} outerRadius="72%">
             <PolarGrid stroke="rgba(140,140,140,0.22)" />
@@ -146,7 +153,7 @@ export default function ResultCardAdvanced({ recommendation, highlight, copy }) 
             <Tooltip />
           </RadarChart>
         </ResponsiveContainer>
-      </div>
+      </motion.div>
 
       <div className="mt-4 grid gap-3 lg:grid-cols-2">
         <RichList title={copy.strengths} items={recommendation.strength_signals} />
@@ -155,12 +162,12 @@ export default function ResultCardAdvanced({ recommendation, highlight, copy }) 
         <RichList title={copy.alternateMajors} items={recommendation.alternative_majors} />
       </div>
 
-      <button type="button" className="apti-secondary-button mt-4 inline-flex items-center gap-2 rounded-lg px-3 py-2 text-xs text-textSecondary" onClick={() => setOpen((prev) => !prev)}>
+      <motion.button type="button" className="apti-secondary-button apti-interactive-lift mt-4 inline-flex items-center gap-2 rounded-lg px-3 py-2 text-xs text-textSecondary" onClick={() => setOpen((prev) => !prev)} whileTap={{ scale: 0.985 }}>
         {copy.whyThis}
         <motion.span animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2 }}>
           <ChevronDown size={14} />
         </motion.span>
-      </button>
+      </motion.button>
 
       <AnimatePresence initial={false}>
         {open ? (
@@ -183,6 +190,6 @@ export default function ResultCardAdvanced({ recommendation, highlight, copy }) 
           </motion.div>
         ) : null}
       </AnimatePresence>
-    </article>
+    </motion.article>
   );
 }

@@ -45,7 +45,7 @@ export default function ResultSectionAdvanced({ result, locale = 'en', copy, exp
         <p className="max-w-3xl text-sm leading-6 text-textMuted">{copy.resultIntro}</p>
       </motion.div>
 
-      <div className="glass-panel editorial-shell rounded-[24px] border p-5">
+      <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.38, ease: [0.16, 1, 0.3, 1] }} className="glass-panel editorial-shell apti-interactive-lift rounded-[24px] border p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-xs uppercase tracking-[0.24em] text-textSubtle">{copy.profileReview}</p>
           <span className="editorial-chip rounded-full px-3 py-1 text-[11px] uppercase tracking-[0.18em]">Latency {result.latency_ms ?? '-'} ms</span>
@@ -68,7 +68,7 @@ export default function ResultSectionAdvanced({ result, locale = 'en', copy, exp
             <p className="mt-1 text-sm text-textPrimary">{result.profile_summary?.confidence_label || '-'}</p>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       <div className="space-y-3">
         {recommendationItems.map((recommendation) => (
@@ -76,7 +76,7 @@ export default function ResultSectionAdvanced({ result, locale = 'en', copy, exp
         ))}
       </div>
 
-      <form onSubmit={handleFeedback} className="glass-panel editorial-shell rounded-[24px] border p-5">
+      <motion.form onSubmit={handleFeedback} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.25 }} transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }} className="glass-panel editorial-shell apti-interactive-lift rounded-[24px] border p-5 apti-shimmer">
         <p className="editorial-kicker text-xs font-medium uppercase">{copy.reflection}</p>
         <p className="mt-2 text-sm font-medium text-textPrimary">{copy.reflectionPrompt}</p>
         <p className="mt-1 max-w-2xl text-xs leading-6 text-textMuted">{copy.reflectionHelper}</p>
@@ -116,9 +116,9 @@ export default function ResultSectionAdvanced({ result, locale = 'en', copy, exp
         </div>
 
         {feedbackState.message ? <p className="mt-2 text-xs text-textMuted">{feedbackState.message}</p> : null}
-      </form>
+      </motion.form>
 
-      <div className="editorial-shell rounded-[22px] border px-4 py-4 text-xs leading-relaxed text-textSubtle">{result.disclaimer || copy.disclaimer}</div>
+      <motion.div initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.4 }} transition={{ duration: 0.34, ease: [0.16, 1, 0.3, 1] }} className="editorial-shell apti-interactive-lift rounded-[22px] border px-4 py-4 text-xs leading-relaxed text-textSubtle">{result.disclaimer || copy.disclaimer}</motion.div>
     </section>
   );
 }

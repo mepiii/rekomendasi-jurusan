@@ -13,8 +13,8 @@ export default function AptiShell({ theme, onToggleTheme, locale, onToggleLocale
       data-theme={theme}
       className="apti-shell min-h-screen w-full px-4 py-10 sm:px-6 lg:px-8"
     >
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
-        <header className="apti-shell-header flex flex-col gap-4 rounded-3xl p-6 sm:flex-row sm:items-start sm:justify-between">
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 apti-fade-up">
+        <header className="apti-shell-header apti-shimmer flex flex-col gap-4 rounded-3xl p-6 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-2">
             <p className="text-xs uppercase tracking-[0.2em] text-textSubtle">{copy.appName}</p>
             {title ? <h1 className="text-3xl font-semibold tracking-tight text-textPrimary">{title}</h1> : null}
