@@ -6,6 +6,7 @@
 
 from __future__ import annotations
 
+import logging
 from datetime import datetime, timezone
 from time import perf_counter
 from uuid import UUID
@@ -42,6 +43,7 @@ from app.services.retrain_service import retrain_service
 from app.services.telemetry_service import compute_bias_score, compute_drift_score, snapshot_metrics
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 DEFAULT_MAJORS = [
     {"id": 1, "name": "Computer Science", "cluster": "STEM"},
@@ -182,6 +184,7 @@ def predict(req: PredictRequest, background_tasks: BackgroundTasks) -> PredictRe
             latency_ms=round(elapsed_ms),
         )
     except Exception:
+        logger.exception("Prediction request failed")
         return JSONResponse(
             status_code=500,
             content={
