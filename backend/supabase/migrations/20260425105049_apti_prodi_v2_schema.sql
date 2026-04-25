@@ -1,0 +1,159 @@
+-- Purpose: Supabase PostgreSQL schema for Apti prodi recommendation telemetry and feedback.
+-- Callers: Supabase CLI migration runner.
+-- Deps: PostgreSQL with pgcrypto extension.
+-- API: DDL + seed inserts for master, telemetry, feedback, and prediction explanation tables.
+-- Side effects: Creates/updates production database tables and indexes.
+
+create extension if not exists pgcrypto;
+
+create table if not exists sma_tracks (
+  id serial primary key,
+  name varchar(50) not null unique,
+  is_active boolean default true,
+  created_at timestamptz default now()
+);
+
+insert into sma_tracks (name)
+values ('IPA'), ('IPS'), ('Bahasa'), ('Merdeka')
+on conflict (name) do nothing;
+
+create table if not exists majors (
+  id serial primary key,
+  name varchar(150) not null unique,
+  cluster varchar(50),
+  description text,
+  is_active boolean default true,
+  created_at timestamptz default now()
+);
+
+insert into majors (name, cluster)
+values
+  ('Teknik Informatika', 'STEM'),
+  ('Sistem Informasi', 'STEM'),
+  ('Teknik Sipil', 'STEM'),
+  ('Teknik Elektro', 'STEM'),
+  ('Kedokteran', 'Health'),
+  ('Farmasi', 'Health'),
+  ('Biologi', 'Health'),
+  ('Matematika', 'STEM'),
+  ('Psikologi', 'Social'),
+  ('Ilmu Komunikasi', 'Social'),
+  ('Hukum', 'Social'),
+  ('Pendidikan Bahasa Inggris', 'Social'),
+  ('Manajemen', 'Business'),
+  ('Akuntansi', 'Business'),
+  ('Desain Komunikasi Visual', 'Arts')
+on conflict (name) do nothing;
+
+create table if not exists interests (
+  id serial primary key,
+  name varchar(100) not null unique,
+  description text,
+  is_active boolean default true,
+  created_at timestamptz default now()
+);
+
+insert into interests (name)
+values
+  ('Teknologi'),
+  ('Data & AI'),
+  ('Rekayasa'),
+  ('Sosial/Manusia'),
+  ('Komunikasi'),
+  ('Hukum/Politik'),
+  ('Alam/Kesehatan'),
+  ('Bisnis/Manajemen'),
+  ('Seni/Kreatif'),
+  ('Pendidikan/Bahasa')
+on conflict (name) do nothing;
+
+create table if not exists prediction_log (
+  id uuid primary key default gen_random_uuid(),
+  session_id uuid,
+  sma_track varchar(50),
+  math_score numeric(5,2),
+  physics_score numeric(5,2),
+  chemistry_score numeric(5,2),
+  biology_score numeric(5,2),
+  economics_score numeric(5,2),
+  indonesian_score numeric(5,2),
+  english_score numeric(5,2),
+  interests text[],
+  top_1_major varchar(150),
+  top_1_score numeric(5,4),
+  top_2_major varchar(150),
+  top_2_score numeric(5,4),
+  top_3_major varchar(150),
+  top_3_score numeric(5,4),
+  model_version varchar(30),
+  source varchar(30) default 'web',
+  created_at timestamptz default now()
+);
+
+create table if not exists prediction_metrics (
+  id uuid primary key default gen_random_uuid(),
+  session_id uuid,
+  model_version varchar(30) not null,
+  latency_ms numeric(10,2) not null,
+  sma_track varchar(50),
+  features jsonb not null,
+  top_major varchar(150),
+  bias_score numeric(8,4) default 0,
+  created_at timestamptz default now()
+);
+
+create table if not exists user_feedback (
+  id uuid primary key default gen_random_uuid(),
+  session_id uuid not null,
+  selected_major varchar(150),
+  aligns_with_goals boolean not null,
+  rating int not null check (rating between 1 and 5),
+  notes text,
+  created_at timestamptz default now()
+);
+
+create table if not exists prediction_explanations (
+  id uuid primary key default gen_random_uuid(),
+  session_id uuid not null,
+  model_version varchar(30) not null,
+  major varchar(150) not null,
+  shap_values jsonb not null,
+  created_at timestamptz default now()
+);
+
+alter table prediction_log add column if not exists curriculum_type varchar(50);
+alter table prediction_log add column if not exists dataset_version varchar(50);
+alter table prediction_log add column if not exists feature_version varchar(50);
+alter table prediction_log add column if not exists academic_context jsonb default '{}'::jsonb;
+alter table prediction_log add column if not exists subject_preferences jsonb default '{}'::jsonb;
+alter table prediction_log add column if not exists interest_deep_dive jsonb default '{}'::jsonb;
+alter table prediction_log add column if not exists career_direction jsonb default '{}'::jsonb;
+alter table prediction_log add column if not exists constraints jsonb default '{}'::jsonb;
+alter table prediction_log add column if not exists expected_prodi text;
+alter table prediction_log add column if not exists prodi_to_avoid text[] default '{}';
+alter table prediction_log add column if not exists free_text_goal text;
+alter table prediction_log add column if not exists language varchar(10);
+alter table prediction_log add column if not exists top_1_prodi_id varchar(40);
+alter table prediction_log add column if not exists top_1_kelompok_prodi varchar(200);
+alter table prediction_log add column if not exists top_1_rumpun_ilmu varchar(200);
+alter table prediction_log add column if not exists top_2_prodi_id varchar(40);
+alter table prediction_log add column if not exists top_2_kelompok_prodi varchar(200);
+alter table prediction_log add column if not exists top_2_rumpun_ilmu varchar(200);
+alter table prediction_log add column if not exists top_3_prodi_id varchar(40);
+alter table prediction_log add column if not exists top_3_kelompok_prodi varchar(200);
+alter table prediction_log add column if not exists top_3_rumpun_ilmu varchar(200);
+alter table prediction_log add column if not exists latency_ms numeric(10,2);
+alter table prediction_log add column if not exists fallback_used boolean default false;
+
+alter table user_feedback add column if not exists selected_prodi_id varchar(40);
+alter table user_feedback add column if not exists selected_kelompok_prodi varchar(200);
+alter table user_feedback add column if not exists recommendation_snapshot jsonb default '{}'::jsonb;
+
+create index if not exists idx_prediction_log_created_at on prediction_log(created_at);
+create index if not exists idx_prediction_log_top_1 on prediction_log(top_1_major);
+create index if not exists idx_prediction_metrics_created_at on prediction_metrics(created_at);
+create index if not exists idx_prediction_metrics_model_version on prediction_metrics(model_version);
+create index if not exists idx_user_feedback_created_at on user_feedback(created_at);
+create index if not exists idx_user_feedback_rating on user_feedback(rating);
+create index if not exists idx_prediction_explanations_session_id on prediction_explanations(session_id);
+create index if not exists idx_prediction_explanations_created_at on prediction_explanations(created_at);
