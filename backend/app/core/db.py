@@ -6,12 +6,21 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from uuid import UUID
 
-from supabase import Client, create_client
+if TYPE_CHECKING:
+    from supabase import Client
+else:
+    Client = Any
+
+try:
+    from supabase import create_client
+except ImportError:
+    create_client = None
 
 from app.config import settings
+from app.recommendation_config import DATASET_VERSION, FEATURE_VERSION
 from app.schemas import FeedbackRequest, PredictRequest, RecommendationItem
 
 _supabase: Client | None = None
@@ -22,7 +31,7 @@ def get_supabase() -> Client | None:
     if _supabase is not None:
         return _supabase
 
-    if not settings.supabase_url or not settings.supabase_service_key:
+    if create_client is None or not settings.supabase_url or not settings.supabase_service_key:
         return None
 
     _supabase = create_client(settings.supabase_url, settings.supabase_service_key)
@@ -73,7 +82,7 @@ def fetch_feedback_for_retrain(limit: int = 5000) -> list[dict[str, Any]]:
     try:
         response = (
             client.table("user_feedback")
-            .select("session_id,selected_major,aligns_with_goals,rating,notes,created_at")
+            .select("session_id,selected_major,selected_prodi_id,selected_kelompok_prodi,recommendation_snapshot,aligns_with_goals,rating,notes,created_at")
             .gte("rating", 4)
             .order("created_at", desc=False)
             .limit(limit)
@@ -96,7 +105,17 @@ def count_feedback_rows() -> int:
         return 0
 
 
-def log_prediction(req: PredictRequest, recs: list[RecommendationItem], source: str = "web") -> None:
+def _first_present(score_map: dict[str, Any], *keys: str) -> Any:
+    return next((score_map[key] for key in keys if score_map.get(key) is not None), None)
+
+
+def log_prediction(
+    req: PredictRequest,
+    recs: list[RecommendationItem],
+    source: str = "web",
+    latency_ms: float | None = None,
+    fallback_used: bool | None = None,
+) -> None:
     client = get_supabase()
     if client is None:
         return
@@ -106,26 +125,59 @@ def log_prediction(req: PredictRequest, recs: list[RecommendationItem], source: 
         payload = {
             "session_id": str(req.session_id),
             "sma_track": req.sma_track,
-            "math_score": score_map.get("math") or score_map.get("general_math") or score_map.get("basic_math"),
+            "curriculum_type": req.curriculum_type,
+            "dataset_version": DATASET_VERSION,
+            "feature_version": FEATURE_VERSION,
+            "math_score": _first_present(score_map, "mathematics", "math", "general_math", "basic_math"),
             "physics_score": score_map.get("physics"),
             "chemistry_score": score_map.get("chemistry"),
             "biology_score": score_map.get("biology"),
             "economics_score": score_map.get("economics"),
-            "indonesian_score": score_map.get("indonesian") or score_map.get("indonesian_literature"),
-            "english_score": score_map.get("english") or score_map.get("english_literature"),
+            "indonesian_score": _first_present(score_map, "bahasa_indonesia", "indonesian", "indonesian_literature"),
+            "english_score": _first_present(score_map, "english", "english_literature"),
             "interests": req.interests,
+            "academic_context": req.academic_context,
+            "subject_preferences": req.subject_preferences,
+            "interest_deep_dive": req.interest_deep_dive,
+            "career_direction": req.career_direction,
+            "constraints": req.constraints,
+            "expected_prodi": req.expected_prodi,
+            "prodi_to_avoid": req.prodi_to_avoid,
+            "free_text_goal": req.free_text_goal,
+            "language": req.language,
             "top_1_major": recs[0].major if len(recs) > 0 else None,
             "top_1_score": (recs[0].suitability_score / 100) if len(recs) > 0 else None,
+            "top_1_prodi_id": recs[0].prodi_id if len(recs) > 0 else None,
+            "top_1_kelompok_prodi": recs[0].kelompok_prodi if len(recs) > 0 else None,
+            "top_1_rumpun_ilmu": recs[0].rumpun_ilmu if len(recs) > 0 else None,
             "top_2_major": recs[1].major if len(recs) > 1 else None,
             "top_2_score": (recs[1].suitability_score / 100) if len(recs) > 1 else None,
+            "top_2_prodi_id": recs[1].prodi_id if len(recs) > 1 else None,
+            "top_2_kelompok_prodi": recs[1].kelompok_prodi if len(recs) > 1 else None,
+            "top_2_rumpun_ilmu": recs[1].rumpun_ilmu if len(recs) > 1 else None,
             "top_3_major": recs[2].major if len(recs) > 2 else None,
             "top_3_score": (recs[2].suitability_score / 100) if len(recs) > 2 else None,
+            "top_3_prodi_id": recs[2].prodi_id if len(recs) > 2 else None,
+            "top_3_kelompok_prodi": recs[2].kelompok_prodi if len(recs) > 2 else None,
+            "top_3_rumpun_ilmu": recs[2].rumpun_ilmu if len(recs) > 2 else None,
             "model_version": settings.model_version,
             "source": source,
         }
+        if latency_ms is not None:
+            payload["latency_ms"] = round(float(latency_ms), 2)
+        if fallback_used is not None:
+            payload["fallback_used"] = bool(fallback_used)
         client.table("prediction_log").insert(payload).execute()
     except Exception:
-        return
+        try:
+            legacy_payload = {key: payload[key] for key in ["session_id", "sma_track", "math_score", "physics_score", "chemistry_score", "biology_score", "economics_score", "indonesian_score", "english_score", "interests", "top_1_major", "top_1_score", "top_2_major", "top_2_score", "top_3_major", "top_3_score", "model_version", "source"]}
+            if latency_ms is not None:
+                legacy_payload["latency_ms"] = round(float(latency_ms), 2)
+            if fallback_used is not None:
+                legacy_payload["fallback_used"] = bool(fallback_used)
+            client.table("prediction_log").insert(legacy_payload).execute()
+        except Exception:
+            return
 
 
 def log_prediction_metrics(
@@ -165,13 +217,19 @@ def log_feedback(payload: FeedbackRequest) -> None:
         row = {
             "session_id": str(payload.session_id),
             "selected_major": payload.selected_major,
+            "selected_prodi_id": payload.selected_prodi_id,
+            "selected_kelompok_prodi": payload.selected_kelompok_prodi,
+            "recommendation_snapshot": payload.recommendation_snapshot,
             "aligns_with_goals": payload.aligns_with_goals,
             "rating": payload.rating,
             "notes": payload.notes,
         }
         client.table("user_feedback").insert(row).execute()
     except Exception:
-        return
+        try:
+            client.table("user_feedback").insert({"session_id": row["session_id"], "selected_major": row["selected_major"], "aligns_with_goals": row["aligns_with_goals"], "rating": row["rating"], "notes": row["notes"]}).execute()
+        except Exception:
+            return
 
 
 def save_explanations(session_id: UUID, model_version: str, explanations: list[dict[str, Any]]) -> None:

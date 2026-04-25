@@ -10,18 +10,42 @@ from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
-from app.recommendation_config import TRACK_SUBJECT_RULES, VALID_INTERESTS, VALID_PREFERENCE_VALUES, VALID_SMA_TRACKS
+from app.recommendation_config import TRACK_SUBJECT_RULES, VALID_SMA_TRACKS
+
+LEGACY_SUBJECT_ALIASES = {
+    "mathematics": "general_math",
+    "bahasa_indonesia": "indonesian",
+    "arts_culture": "arts",
+    "religion_ethics": "religion",
+}
+LEGACY_OPTIONAL_SUBJECTS = {"history", "regional_language", "pkwu", "prakarya", "pe"}
 
 
 class PredictRequest(BaseModel):
     session_id: UUID = Field(default_factory=uuid4)
     sma_track: str = Field(..., description="IPA, IPS, Bahasa, or Merdeka")
-    curriculum_type: str = Field(..., min_length=2)
-    scores: dict[str, float] = Field(..., min_length=6)
+    curriculum_type: str | None = None
+    scores: dict[str, float | None] = Field(default_factory=dict)
     selected_electives: list[str] = Field(default_factory=list, max_length=5)
-    interests: list[str] = Field(..., min_length=3, max_length=6)
-    preferences: dict[str, str] = Field(..., min_length=3, max_length=3)
-    top_n: int = Field(default=3, ge=3, le=5)
+    interests: list[str] = Field(default_factory=list)
+    preferences: dict[str, str | list[str]] = Field(default_factory=dict)
+    academic_context: dict[str, str | list[str] | int | float | bool | None] = Field(default_factory=dict)
+    subject_preferences: dict[str, list[str]] = Field(default_factory=dict)
+    interest_deep_dive: dict[str, list[str] | str] = Field(default_factory=dict)
+    career_direction: dict[str, list[str] | str] = Field(default_factory=dict)
+    constraints: dict[str, str | list[str] | int | float | bool | None] = Field(default_factory=dict)
+    expected_prodi: str | None = None
+    prodi_to_avoid: list[str] = Field(default_factory=list)
+    free_text_goal: str | None = None
+    top_n: int = Field(default=5, ge=3, le=5)
+    language: str = "en"
+
+    @field_validator("top_n", mode="before")
+    @classmethod
+    def clamp_top_n(cls, value: int | None) -> int:
+        if value is None:
+            return 5
+        return min(5, max(3, int(value)))
 
     @field_validator("sma_track")
     @classmethod
@@ -33,46 +57,37 @@ class PredictRequest(BaseModel):
     @field_validator("interests")
     @classmethod
     def validate_interests(cls, values: list[str]) -> list[str]:
-        seen = set()
-        cleaned: list[str] = []
-        for interest in values:
-            if interest not in VALID_INTERESTS:
-                raise ValueError(f"Interest '{interest}' is not recognized.")
-            if interest not in seen:
-                seen.add(interest)
-                cleaned.append(interest)
-        return cleaned
+        return [value.strip() for value in values if value and value.strip()]
 
     @field_validator("preferences")
     @classmethod
-    def validate_preferences(cls, values: dict[str, str]) -> dict[str, str]:
-        required = {"orientation", "approach", "style"}
-        if set(values) != required:
-            raise ValueError("preferences must contain orientation, approach, and style")
-        for value in values.values():
-            if value not in VALID_PREFERENCE_VALUES:
-                raise ValueError(f"Preference value '{value}' is not recognized.")
-        return values
+    def validate_preferences(cls, values: dict[str, str | list[str]]) -> dict[str, str | list[str]]:
+        cleaned: dict[str, str | list[str]] = {}
+        for key, value in values.items():
+            if isinstance(value, list):
+                cleaned[key] = [item.strip() for item in value if item and item.strip()]
+            elif isinstance(value, str):
+                cleaned[key] = value.strip()
+        return cleaned
 
     @field_validator("scores")
     @classmethod
-    def validate_scores(cls, values: dict[str, float]) -> dict[str, float]:
-        for key, value in values.items():
-            if value < 0 or value > 100:
-                raise ValueError(f"Score for '{key}' must be between 0 and 100.")
+    def validate_scores(cls, values: dict[str, float | None]) -> dict[str, float | None]:
+        for subject, score in values.items():
+            if score is None:
+                continue
+            if score < 0 or score > 100:
+                raise ValueError(f"{subject} must be between 0 and 100")
         return values
 
     @model_validator(mode="after")
     def validate_track_subject_rules(self) -> "PredictRequest":
         rules = TRACK_SUBJECT_RULES[self.sma_track]
         score_keys = set(self.scores)
-        missing_required = sorted(rules["required"] - score_keys)
-        if missing_required:
-            raise ValueError(f"Missing required subjects: {missing_required}")
 
         optional = rules.get("optional", set())
         elective_pool = rules.get("electives", set())
-        allowed_keys = rules["required"] | optional | elective_pool
+        allowed_keys = rules["required"] | optional | elective_pool | set(LEGACY_SUBJECT_ALIASES) | LEGACY_OPTIONAL_SUBJECTS
         unknown = sorted(score_keys - allowed_keys)
         if unknown:
             raise ValueError(f"Scores contain unsupported subjects for {self.sma_track}: {unknown}")
@@ -94,33 +109,68 @@ class PredictRequest(BaseModel):
 class RecommendationItem(BaseModel):
     rank: int
     major: str
-    cluster: str
+    cluster: str = "General"
     suitability_score: int
-    confidence_label: str
-    explanation: str
-    fit_summary: list[str] = Field(default_factory=list)
-    strength_signals: list[str] = Field(default_factory=list)
+    match_level: str = "Match"
+    score_breakdown: dict[str, int] = Field(default_factory=dict)
+    explanation: list[str] = Field(default_factory=list)
     tradeoffs: list[str] = Field(default_factory=list)
     career_paths: list[str] = Field(default_factory=list)
     alternative_majors: list[str] = Field(default_factory=list)
+    caution: str | None = None
+    confidence_label: str | None = None
+    fit_summary: list[str] = Field(default_factory=list)
+    strength_signals: list[str] = Field(default_factory=list)
     shap_values: dict[str, float] = Field(default_factory=dict)
     major_requirements: dict[str, float] = Field(default_factory=dict)
+    user_scores: dict[str, float] = Field(default_factory=dict)
+    prodi_id: str | None = None
+    nama_prodi: str | None = None
+    alias: list[str] = Field(default_factory=list)
+    kelompok_prodi: str | None = None
+    rumpun_ilmu: str | None = None
+    supporting_subjects: dict[str, object] = Field(default_factory=dict)
+    why_specific: list[str] = Field(default_factory=list)
+    skill_gaps: list[str] = Field(default_factory=list)
+    llm_review: dict[str, object] | None = None
+
+    @field_validator("explanation", mode="before")
+    @classmethod
+    def normalize_explanation(cls, value: str | list[str] | None) -> list[str]:
+        if value is None:
+            return []
+        if isinstance(value, str):
+            cleaned = value.strip()
+            return [cleaned] if cleaned else []
+        return value
 
 
 class ProfileSummary(BaseModel):
-    strongest_subject: str
-    strongest_group: str
-    avg_score: float
-    confidence_label: str
+    strongest_subject: str | None = None
+    strongest_group: str | None = None
+    avg_score: float | None = None
+    confidence_label: str | None = None
+    strongest_area: str | None = None
+    academic_pattern: str | None = None
+    interest_pattern: str | None = None
+    preference_pattern: str | None = None
+    input_completeness_score: int | None = None
 
 
 class PredictResponse(BaseModel):
-    session_id: UUID
-    recommendations: list[RecommendationItem]
-    profile_summary: ProfileSummary
+    app: str = "apti"
     model_version: str
-    disclaimer: str
-    latency_ms: float | None = None
+    dataset_version: str | None = None
+    feature_version: str
+    llm_provider: str = "none"
+    llm_review_used: bool = False
+    session_id: UUID | None = None
+    recommendations: list[RecommendationItem]
+    profile_summary: ProfileSummary | dict[str, object]
+    notes: list[str] = Field(default_factory=list)
+    fallback_used: bool = False
+    latency_ms: int
+    disclaimer: str | None = None
 
 
 class HealthResponse(BaseModel):
@@ -143,6 +193,9 @@ class ErrorResponse(BaseModel):
 class FeedbackRequest(BaseModel):
     session_id: UUID
     selected_major: str | None = None
+    selected_prodi_id: str | None = None
+    selected_kelompok_prodi: str | None = None
+    recommendation_snapshot: dict[str, object] = Field(default_factory=dict)
     aligns_with_goals: bool
     rating: int = Field(..., ge=1, le=5)
     notes: str | None = None

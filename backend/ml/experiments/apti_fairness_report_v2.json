@@ -1,0 +1,12 @@
+{
+  "checked_rows": 1000,
+  "cluster_coverage": 59,
+  "prediction_coverage": 59,
+  "optional_missing_rows": 0,
+  "dominant_prediction_ratio": 0.032,
+  "popular_prodi_dominance_passed": true,
+  "missing_optional_subjects_passed": true,
+  "religion_safety_passed": true,
+  "track_bias_checks_passed": true,
+  "passed": true
+}

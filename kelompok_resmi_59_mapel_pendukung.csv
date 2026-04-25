@@ -1,0 +1,60 @@
+no,rumpun_ilmu,kelompok_prodi_resmi,mapel_kurmer,mapel_k13_ipa,mapel_k13_ips,mapel_k13_bahasa,sumber
+1,Humaniora,Seni,Seni Budaya,Seni Budaya,Seni Budaya,Seni Budaya,Kepmendikdasmen 102/M/2025
+2,Humaniora,Sejarah,Sejarah,Sejarah Indonesia,Sejarah Indonesia,Sejarah Indonesia,Kepmendikdasmen 102/M/2025
+3,Humaniora,Linguistik,Bahasa Indonesia Tingkat Lanjut dan/atau Bahasa Inggris,Bahasa Indonesia dan/atau Bahasa Inggris,Bahasa Indonesia dan/atau Bahasa Inggris,Bahasa Indonesia dan/atau Bahasa Inggris,Kepmendikdasmen 102/M/2025
+4,Humaniora,Susastra atau Sastra,Bahasa Indonesia Tingkat Lanjut dan/atau bahasa asing yang relevan,Bahasa Indonesia dan/atau bahasa asing yang relevan,Bahasa Indonesia dan/atau bahasa asing yang relevan,Bahasa Indonesia dan/atau bahasa asing yang relevan,Kepmendikdasmen 102/M/2025
+5,Humaniora,Filsafat,Sosiologi,Sejarah Indonesia,Sosiologi,Antropologi,Kepmendikdasmen 102/M/2025
+6,Ilmu Sosial,Sosial,Sosiologi,Sejarah Indonesia,Sosiologi,Antropologi,Kepmendikdasmen 102/M/2025
+7,Ilmu Sosial,Ekonomi,Ekonomi dan/atau Matematika,Matematika,Ekonomi dan/atau Matematika,Matematika,Kepmendikdasmen 102/M/2025
+8,Ilmu Sosial,Pertahanan,Pendidikan Pancasila,PPKn,PPKn,PPKn,Kepmendikdasmen 102/M/2025
+9,Ilmu Sosial,Psikologi,Sosiologi dan/atau Matematika,Matematika,Sosiologi,Matematika,Kepmendikdasmen 102/M/2025
+10,Ilmu Alam,Kimia,Kimia,Kimia,Kimia,Kimia,Kepmendikdasmen 102/M/2025
+11,Ilmu Alam,Ilmu atau Sains Kebumian,Fisika dan/atau Matematika Tingkat Lanjut,Fisika dan/atau Matematika dari kelompok peminatan MIPA,Fisika dan/atau Geografi,Fisika dan/atau Matematika,Kepmendikdasmen 102/M/2025
+12,Ilmu Alam,Ilmu atau Sains Kelautan,Biologi,Biologi,Biologi dan/atau Geografi,Biologi,Kepmendikdasmen 102/M/2025
+13,Ilmu Alam,Biologi,Biologi,Biologi,Biologi,Biologi,Kepmendikdasmen 102/M/2025
+14,Ilmu Alam,Biofisika,Fisika,Fisika,Fisika,Fisika,Kepmendikdasmen 102/M/2025
+15,Ilmu Alam,Fisika,Fisika,Fisika,Fisika,Fisika,Kepmendikdasmen 102/M/2025
+16,Ilmu Alam,Astronomi,Fisika dan/atau Matematika Tingkat Lanjut,Fisika dan/atau Matematika dari kelompok peminatan MIPA,Fisika dan/atau Matematika,Fisika dan/atau Matematika,Kepmendikdasmen 102/M/2025
+17,Ilmu Formal,Komputer,Matematika Tingkat Lanjut,Matematika dari kelompok peminatan MIPA,Matematika,Matematika,Kepmendikdasmen 102/M/2025
+18,Ilmu Formal,Logika,Matematika Tingkat Lanjut,Matematika dari kelompok peminatan MIPA,Matematika,Matematika,Kepmendikdasmen 102/M/2025
+19,Ilmu Formal,Matematika,Matematika Tingkat Lanjut,Matematika dari kelompok peminatan MIPA,Matematika,Matematika,Kepmendikdasmen 102/M/2025
+20,Ilmu Terapan,Ilmu dan Sains Pertanian,Biologi,Biologi,Biologi,Biologi,Kepmendikdasmen 102/M/2025
+21,Ilmu Terapan,Peternakan,Biologi,Biologi,Biologi,Biologi,Kepmendikdasmen 102/M/2025
+22,Ilmu Terapan,Ilmu atau Sains Perikanan,Biologi,Biologi,Biologi,Biologi,Kepmendikdasmen 102/M/2025
+23,Ilmu Terapan,Arsitektur,Matematika dan/atau Fisika,Matematika dan/atau Fisika,Matematika dan/atau Fisika,Matematika dan/atau Fisika,Kepmendikdasmen 102/M/2025
+24,Ilmu Terapan,Perencanaan Wilayah,Ekonomi dan/atau Matematika,Matematika,Ekonomi dan/atau Matematika,Matematika,Kepmendikdasmen 102/M/2025
+25,Ilmu Terapan,Desain,Seni Budaya dan/atau Matematika,Seni Budaya dan/atau Matematika,Seni Budaya dan/atau Matematika,Seni Budaya dan/atau Matematika,Kepmendikdasmen 102/M/2025
+26,Ilmu Terapan,Ilmu atau Sains Akuntansi,Ekonomi,Matematika dan/atau Ekonomi,Ekonomi,Matematika dan/atau Ekonomi,Kepmendikdasmen 102/M/2025
+27,Ilmu Terapan,Ilmu atau Sains Manajemen,Ekonomi,Matematika dan/atau Ekonomi,Ekonomi,Matematika dan/atau Ekonomi,Kepmendikdasmen 102/M/2025
+28,Ilmu Terapan,Logistik,Ekonomi,Matematika dan/atau Ekonomi,Ekonomi,Matematika dan/atau Ekonomi,Kepmendikdasmen 102/M/2025
+29,Ilmu Terapan,Administrasi Bisnis,Ekonomi,Matematika dan/atau Ekonomi,Ekonomi,Matematika dan/atau Ekonomi,Kepmendikdasmen 102/M/2025
+30,Ilmu Terapan,Bisnis,Ekonomi,Matematika dan/atau Ekonomi,Ekonomi,Matematika dan/atau Ekonomi,Kepmendikdasmen 102/M/2025
+31,Ilmu Terapan,Ilmu atau Sains Komunikasi,Sosiologi dan/atau Antropologi,Bahasa Indonesia dan/atau Sosiologi,Sosiologi,Antropologi dan/atau Sosiologi,Kepmendikdasmen 102/M/2025
+32,Ilmu Terapan,Pendidikan,Paling banyak 1 mata pelajaran pendukung yang relevan dengan program studi kependidikannya,Paling banyak 1 mata pelajaran pendukung yang relevan dengan program studi kependidikannya,Paling banyak 1 mata pelajaran pendukung yang relevan dengan program studi kependidikannya,Paling banyak 1 mata pelajaran pendukung yang relevan dengan program studi kependidikannya,Kepmendikdasmen 102/M/2025
+33,Ilmu Terapan,Teknik atau Rekayasa,Fisika/Kimia dan/atau Matematika Tingkat Lanjut,Fisika/Kimia dan/atau Matematika dari kelompok peminatan MIPA,Fisika/Kimia dan/atau Matematika,Fisika/Kimia dan/atau Matematika,Kepmendikdasmen 102/M/2025
+34,Ilmu Terapan,Ilmu atau Sains Lingkungan,Biologi,Biologi,Biologi,Biologi,Kepmendikdasmen 102/M/2025
+35,Ilmu Terapan,Kehutanan,Biologi,Biologi,Biologi,Biologi,Kepmendikdasmen 102/M/2025
+36,Ilmu Terapan,Ilmu atau Sains Kedokteran,Biologi dan/atau Kimia,Biologi dan/atau Kimia,Biologi dan/atau Kimia,Biologi dan/atau Kimia,Kepmendikdasmen 102/M/2025
+37,Ilmu Terapan,Ilmu atau Sains Kedokteran Gigi,Biologi dan/atau Kimia,Biologi dan/atau Kimia,Biologi dan/atau Kimia,Biologi dan/atau Kimia,Kepmendikdasmen 102/M/2025
+38,Ilmu Terapan,Ilmu atau Sains Veteriner,Biologi dan/atau Kimia,Biologi dan/atau Kimia,Biologi dan/atau Kimia,Biologi dan/atau Kimia,Kepmendikdasmen 102/M/2025
+39,Ilmu Terapan,Ilmu Farmasi,Biologi dan/atau Kimia,Biologi dan/atau Kimia,Biologi dan/atau Kimia,Biologi dan/atau Kimia,Kepmendikdasmen 102/M/2025
+40,Ilmu Terapan,Ilmu atau Sains Gizi,Biologi dan/atau Kimia,Biologi dan/atau Kimia,Biologi dan/atau Kimia,Biologi dan/atau Kimia,Kepmendikdasmen 102/M/2025
+41,Ilmu Terapan,Kesehatan Masyarakat,Biologi,Biologi,Sosiologi dan/atau Biologi,Biologi,Kepmendikdasmen 102/M/2025
+42,Ilmu Terapan,Kebidanan,Biologi,Biologi,Biologi,Biologi,Kepmendikdasmen 102/M/2025
+43,Ilmu Terapan,Keperawatan,Biologi,Biologi,Biologi,Biologi,Kepmendikdasmen 102/M/2025
+44,Ilmu Terapan,Kesehatan,Biologi,Biologi,Biologi,Biologi,Kepmendikdasmen 102/M/2025
+45,Ilmu Terapan,Ilmu atau Sains Informasi,Matematika Tingkat Lanjut,Matematika dari kelompok peminatan MIPA,Matematika,Matematika,Kepmendikdasmen 102/M/2025
+46,Ilmu Terapan,Hukum,Sosiologi dan/atau Pendidikan Pancasila,PPKn,Sosiologi dan/atau PPKn,PPKn,Kepmendikdasmen 102/M/2025
+47,Ilmu Terapan,Ilmu atau Sains Militer,Sosiologi,PPKn dan/atau Sosiologi,Sosiologi,PPKn dan/atau Antropologi,Kepmendikdasmen 102/M/2025
+48,Ilmu Terapan,Urusan Publik,Sosiologi,PPKn dan/atau Sosiologi,Sosiologi,PPKn dan/atau Antropologi,Kepmendikdasmen 102/M/2025
+49,Ilmu Terapan,Ilmu atau Sains Keolahragaan,"Pendidikan Jasmani, Olahraga, dan Kesehatan (PJOK) dan/atau Biologi","Pendidikan Jasmani, Olahraga, dan Kesehatan (PJOK) dan/atau Biologi",PJOK,PJOK,Kepmendikdasmen 102/M/2025
+50,Ilmu Terapan,Pariwisata,Ekonomi dan/atau Bahasa Inggris Tingkat Lanjut/Bahasa Asing lainnya,Bahasa Inggris dan/atau Ekonomi,Ekonomi dan/atau Bahasa Inggris,Bahasa dan Sastra Inggris dan/atau Bahasa Asing lainnya,Kepmendikdasmen 102/M/2025
+51,Ilmu Terapan,Transportasi,Matematika Tingkat Lanjut,Matematika dari kelompok peminatan MIPA,Matematika,Matematika,Kepmendikdasmen 102/M/2025
+52,Ilmu Terapan,"Bioteknologi, Biokewirausahaan, Bioinformatika",Biologi dan/atau Matematika,Biologi dan/atau Matematika,Biologi dan/atau Matematika,Biologi dan/atau Matematika,Kepmendikdasmen 102/M/2025
+53,Ilmu Terapan,"Geografi, Geografi Lingkungan, Sains Informasi Geografi",Geografi dan/atau Matematika,Fisika dan/atau Matematika,Geografi dan/atau Matematika,Matematika,Kepmendikdasmen 102/M/2025
+54,Ilmu Terapan,Informatika Medis atau Informatika Kesehatan,Biologi dan/atau Matematika Tingkat Lanjut,Biologi dan/atau Matematika dari kelompok peminatan MIPA,Biologi dan/atau Matematika,Biologi dan/atau Matematika,Kepmendikdasmen 102/M/2025
+55,Ilmu Terapan,"Konservasi Biologi, Konservasi Hewan Liar, Konservasi Hutan, Konservasi Sumber Daya Alam",Biologi,Biologi,Biologi,Biologi,Kepmendikdasmen 102/M/2025
+56,Ilmu Terapan,"Teknologi Pangan, Teknologi Hasil Pertanian/Peternakan/Perikanan",Kimia dan/atau Biologi,Kimia dan/atau Biologi,Kimia dan/atau Biologi,Kimia dan/atau Biologi,Kepmendikdasmen 102/M/2025
+57,Ilmu Terapan,Sains Data,Matematika Tingkat Lanjut,Matematika dari kelompok peminatan MIPA,Matematika,Matematika,Kepmendikdasmen 102/M/2025
+58,Ilmu Terapan,Sains Perkopian,Biologi,Biologi,Biologi,Biologi,Kepmendikdasmen 102/M/2025
+59,Ilmu Terapan,Studi Humanitas,Antropologi dan/atau Sosiologi,PPKn dan/atau Sosiologi,Sosiologi,Antropologi,Kepmendikdasmen 102/M/2025

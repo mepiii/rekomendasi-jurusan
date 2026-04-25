@@ -1,11 +1,11 @@
-// Purpose: Present schema-driven recommendation intake across curriculum, subjects, interests, preferences, and review.
+// Purpose: Present schema-driven recommendation intake across curriculum, subjects, prodi context, preferences, and review.
 // Callers: App component.
 // Deps: React, framer-motion, recommendation config, i18n copy.
 // API: Props onSubmit(payload), loading, error, helperCopy, locale, copy.
 // Side effects: Emits normalized payload to parent submit handler.
 import { AnimatePresence, motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
-import { buildInitialScores, interestOptions, preferenceGroups, trackConfig } from '../../lib/recommendationConfig';
+import { buildInitialScores, interestOptions, preferenceGroups, prodiIntakeSteps, religionRelatedMajorPreferences, trackConfig } from '../../lib/recommendationConfig';
 
 const stepMotion = {
   initial: { opacity: 0, y: 26, scale: 0.985, filter: 'blur(10px)' },
@@ -54,6 +54,9 @@ const groupLabels = {
   }
 };
 
+const toList = (value) => value.split(',').map((item) => item.trim()).filter(Boolean);
+const toContext = (value) => ({ note: value.trim() });
+
 function generateSessionId() {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
   return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
@@ -101,6 +104,30 @@ function SubjectField({ label, value, onChange, error, optional }) {
   );
 }
 
+function ProdiTextStep({ config, value, onChange, error, locale }) {
+  const label = config.label[locale] || config.label.en;
+  return (
+    <motion.div key={config.key} {...stepMotion} className="space-y-4">
+      <div className="editorial-shell rounded-[22px] border p-4">
+        <label className="flex flex-col gap-2">
+          <span className="text-sm text-textSecondary">
+            {label}
+            {!config.required ? <span className="ml-1 text-textSubtle">({locale === 'id' ? 'opsional' : 'optional'})</span> : null}
+          </span>
+          <span className="text-xs leading-5 text-textSubtle">{config.helper[locale] || config.helper.en}</span>
+          <textarea
+            value={value}
+            onChange={(event) => onChange(config.key, event.target.value)}
+            className={`glass-input min-h-28 rounded-xl px-3 py-2 text-sm text-textPrimary outline-none ${error ? 'border-danger' : 'focus:border-accent'}`}
+            placeholder={config.placeholder[locale] || config.placeholder.en}
+          />
+        </label>
+        {error ? <span className="mt-2 block text-xs text-danger">{error}</span> : null}
+      </div>
+    </motion.div>
+  );
+}
+
 export default function RecommendationJourney({ onSubmit, loading, error, helperCopy, locale = 'en', copy }) {
   const [step, setStep] = useState(1);
   const [trackKey, setTrackKey] = useState('IPA');
@@ -108,6 +135,9 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
   const [selectedElectives, setSelectedElectives] = useState([]);
   const [interests, setInterests] = useState([]);
   const [preferences, setPreferences] = useState({ orientation: '', approach: '', style: '' });
+  const [advancedOpen, setAdvancedOpen] = useState(false);
+  const [religionRelatedMajorPreference, setReligionRelatedMajorPreference] = useState('Not relevant');
+  const [prodiContext, setProdiContext] = useState(() => Object.fromEntries(prodiIntakeSteps.map(({ key }) => [key, ''])));
   const [errors, setErrors] = useState({});
 
   const track = trackConfig[trackKey];
@@ -151,39 +181,48 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
     });
   };
 
+  const handleProdiContextChange = (key, value) => {
+    setProdiContext((prev) => ({ ...prev, [key]: value }));
+    setErrors((prev) => {
+      if (!prev[key]) return prev;
+      const { [key]: _removed, ...rest } = prev;
+      return rest;
+    });
+  };
+
+  const validateProdiStep = (stepNumber = step) => {
+    const config = prodiIntakeSteps[stepNumber - 3];
+    if (!config?.required || prodiContext[config.key]?.trim()) return true;
+    setErrors((prev) => ({ ...prev, [config.key]: locale === 'id' ? `${config.label.id} wajib diisi` : `${config.label.en} is required` }));
+    return false;
+  };
+
   const validateProfile = () => {
     const nextErrors = {};
+    const validateScore = (key, label, required = false) => {
+      const raw = scores[key];
+      if (raw === undefined || String(raw).trim() === '') {
+        if (required) nextErrors[key] = `${label} ${locale === 'id' ? 'wajib diisi' : 'score is required'}`;
+        return;
+      }
+      const parsed = Number(raw);
+      if (Number.isNaN(parsed) || !Number.isFinite(parsed) || parsed < 0 || parsed > 100) {
+        nextErrors[key] = `${label} ${locale === 'id' ? 'harus antara 0 sampai 100' : 'score must be between 0 and 100'}`;
+      }
+    };
 
     if (!trackKey) nextErrors.trackKey = copy.inputsError;
 
-    for (const [key, label] of track.requiredSubjects) {
-      const raw = scores[key];
-      if (raw === '') {
-        nextErrors[key] = `${label} ${locale === 'id' ? 'wajib diisi' : 'score is required'}`;
-        continue;
-      }
-      const parsed = Number(raw);
-      if (Number.isNaN(parsed) || parsed < 0 || parsed > 100) {
-        nextErrors[key] = `${label} ${locale === 'id' ? 'harus antara 0 sampai 100' : 'score must be between 0 and 100'}`;
-      }
-    }
-
-    for (const [key, label] of track.optionalSubjects || []) {
-      const raw = scores[key];
-      if (raw === '') continue;
-      const parsed = Number(raw);
-      if (Number.isNaN(parsed) || parsed < 0 || parsed > 100) {
-        nextErrors[key] = `${label} ${locale === 'id' ? 'harus antara 0 sampai 100' : 'score must be between 0 and 100'}`;
-      }
-    }
+    for (const [key, label] of track.requiredSubjects) validateScore(key, label, true);
+    for (const [key, label] of track.optionalSubjects || []) validateScore(key, label);
 
     if (trackKey === 'Merdeka') {
       if (selectedElectives.length < 4 || selectedElectives.length > 5) {
         nextErrors.selectedElectives = locale === 'id' ? 'Pilih 4-5 mata pelajaran pilihan' : 'Pick 4-5 elective subjects';
       }
       for (const elective of selectedElectives) {
-        const raw = scores[elective];
-        if (raw === '') nextErrors[elective] = locale === 'id' ? 'Nilai wajib diisi' : 'Score is required';
+        const label = track.electiveSubjects.find(([key]) => key === elective)?.[1] || elective;
+        validateScore(elective, label, true);
       }
     }
 
@@ -201,6 +240,7 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
   const goNext = () => {
     if (step === 1) setStep(2);
     if (step === 2 && validateProfile()) setStep(3);
+    if (step >= 3 && step < 11 && validateProdiStep(step)) setStep((prev) => prev + 1);
   };
 
   const goBack = () => {
@@ -210,8 +250,8 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
 
   const activeSubjects = Object.fromEntries(
     Object.entries(scores)
-      .filter(([key, value]) => value !== '' && (track.requiredSubjects.some(([subjectKey]) => subjectKey === key) || (track.optionalSubjects || []).some(([subjectKey]) => subjectKey === key) || selectedElectives.includes(key)))
       .map(([key, value]) => [key, Number(value)])
+      .filter(([key, value]) => Number.isFinite(value) && value >= 0 && value <= 100 && (track.requiredSubjects.some(([subjectKey]) => subjectKey === key) || (track.optionalSubjects || []).some(([subjectKey]) => subjectKey === key) || selectedElectives.includes(key)))
   );
 
   const averageScore = Object.values(activeSubjects).length
@@ -225,6 +265,13 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
       return;
     }
 
+    const invalidStep = prodiIntakeSteps.findIndex(({ key, required }) => required && !prodiContext[key]?.trim());
+    if (invalidStep >= 0) {
+      setStep(invalidStep + 3);
+      validateProdiStep(invalidStep + 3);
+      return;
+    }
+
     onSubmit({
       session_id: generateSessionId(),
       sma_track: trackKey,
@@ -232,7 +279,20 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
       scores: activeSubjects,
       selected_electives: selectedElectives,
       interests,
-      preferences,
+      preferences: {
+        ...preferences,
+        religion_related_major_preference: religionRelatedMajorPreference || 'Not relevant'
+      },
+      religion_related_major_preference: religionRelatedMajorPreference || 'Not relevant',
+      academic_context: toContext(prodiContext.academic_context),
+      subject_preferences: { preferred: toList(prodiContext.subject_preferences) },
+      interest_deep_dive: { note: prodiContext.interest_deep_dive.trim() },
+      career_direction: { note: prodiContext.career_direction.trim() },
+      constraints: toContext(prodiContext.constraints),
+      expected_prodi: prodiContext.expected_prodi.trim() || null,
+      prodi_to_avoid: toList(prodiContext.prodi_to_avoid),
+      free_text_goal: prodiContext.free_text_goal.trim() || null,
+      language: locale,
       top_n: 5
     });
   };
@@ -260,6 +320,7 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
                       <motion.button
                         key={key}
                         type="button"
+                        aria-pressed={active}
                         onClick={() => handleTrackChange(key)}
                         className={`editorial-chip apti-interactive-lift rounded-2xl px-4 py-4 text-left text-sm transition ${active ? 'apti-choice-active border-accent/30 bg-accent/10 text-accent' : 'apti-choice-idle hover:border-accent/40 hover:text-textPrimary'}`}
                         variants={itemMotion}
@@ -277,7 +338,7 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
               {trackKey === 'Merdeka' ? (
                 <div className="space-y-3">
                   <div className="flex items-center justify-between gap-3">
-                    <p className="text-sm text-textSecondary">Elective subjects</p>
+                    <p className="text-sm text-textSecondary">{locale === 'id' ? 'Mata pelajaran pilihan' : 'Elective subjects'}</p>
                     <span className="text-xs text-textSubtle">{selectedElectives.length}/5</span>
                   </div>
                   <div className="flex flex-wrap gap-2">
@@ -288,6 +349,7 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
                         <motion.button
                           key={key}
                           type="button"
+                          aria-pressed={active}
                           onClick={() => !blocked && toggleElective(key)}
                           className={`editorial-chip apti-interactive-lift rounded-full px-3 py-1 text-xs transition ${active ? 'apti-choice-active border-accent/30 bg-accent/10 text-accent' : 'apti-choice-idle hover:border-accent/40 hover:text-textPrimary'} ${blocked ? 'cursor-not-allowed opacity-40' : ''}`}
                           {...chipHover}
@@ -331,18 +393,19 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {interestOptions.map((interest) => {
-                    const active = interests.includes(interest);
+                    const active = interests.includes(interest.value);
                     const blocked = !active && interests.length >= 6;
                     return (
                       <motion.button
-                        key={interest}
+                        key={interest.value}
                         type="button"
-                        onClick={() => !blocked && toggleInterest(interest)}
+                        aria-pressed={active}
+                        onClick={() => !blocked && toggleInterest(interest.value)}
                         className={`editorial-chip apti-interactive-lift rounded-full px-3 py-1 text-xs transition ${active ? 'apti-choice-active border-accent/30 bg-accent/10 text-accent' : 'apti-choice-idle hover:border-accent/40 hover:text-textPrimary'} ${blocked ? 'cursor-not-allowed opacity-40' : ''}`}
                         {...chipHover}
                         {...buttonTap}
                       >
-                        {interest}
+                        {interest.label[locale] || interest.label.en}
                       </motion.button>
                     );
                   })}
@@ -358,17 +421,18 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
                       <p className="text-xs uppercase tracking-[0.18em] text-textSubtle">{localizedGroupLabels[groupKey]}</p>
                       <div className="mt-3 flex flex-wrap gap-2">
                         {options.map((option) => {
-                          const active = preferences[groupKey] === option;
+                          const active = preferences[groupKey] === option.value;
                           return (
                             <motion.button
-                              key={option}
+                              key={option.value}
                               type="button"
-                              onClick={() => setPreferences((prev) => ({ ...prev, [groupKey]: option }))}
+                              aria-pressed={active}
+                              onClick={() => setPreferences((prev) => ({ ...prev, [groupKey]: option.value }))}
                               className={`editorial-chip apti-interactive-lift rounded-full px-3 py-1 text-xs transition ${active ? 'apti-choice-active border-accent/30 bg-accent/10 text-accent' : 'apti-choice-idle hover:border-accent/40 hover:text-textPrimary'}`}
                               {...chipHover}
                               {...buttonTap}
                             >
-                              {option}
+                              {option.label[locale] || option.label.en}
                             </motion.button>
                           );
                         })}
@@ -377,18 +441,64 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
                     </motion.div>
                   ))}
                 </div>
+
+                <motion.div variants={itemMotion} className="editorial-shell rounded-2xl border p-4">
+                  <button type="button" aria-pressed={advancedOpen} onClick={() => setAdvancedOpen((prev) => !prev)} className="flex w-full items-center justify-between gap-3 text-left text-sm text-textSecondary">
+                    <span>{locale === 'id' ? 'Preferensi lanjutan' : 'Advanced preferences'}</span>
+                    <span className="text-xs text-textSubtle">{advancedOpen ? (locale === 'id' ? 'Tutup' : 'Hide') : (locale === 'id' ? 'Buka' : 'Show')}</span>
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {advancedOpen ? (
+                      <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+                        <div className="mt-3 space-y-2">
+                          <p className="text-xs text-textSubtle">{locale === 'id' ? 'Preferensi ini opsional dan default-nya tidak relevan.' : 'This optional preference defaults to not relevant.'}</p>
+                          <div className="flex flex-wrap gap-2">
+                            {religionRelatedMajorPreferences.map((option) => {
+                              const active = religionRelatedMajorPreference === option.value;
+                              return (
+                                <motion.button
+                                  key={option.value}
+                                  type="button"
+                                  aria-pressed={active}
+                                  onClick={() => setReligionRelatedMajorPreference(option.value)}
+                                  className={`editorial-chip apti-interactive-lift rounded-full px-3 py-1 text-xs transition ${active ? 'apti-choice-active border-accent/30 bg-accent/10 text-accent' : 'apti-choice-idle hover:border-accent/40 hover:text-textPrimary'}`}
+                                  {...chipHover}
+                                  {...buttonTap}
+                                >
+                                  {option.label[locale] || option.label.en}
+                                </motion.button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </motion.div>
+                    ) : null}
+                  </AnimatePresence>
+                </motion.div>
               </div>
             </motion.div>
           ) : null}
 
-          {step === 3 ? (
-            <motion.div key="step-3" {...stepMotion} className="space-y-4">
+          {step >= 3 && step <= 10 ? (
+            <ProdiTextStep
+              config={prodiIntakeSteps[step - 3]}
+              value={prodiContext[prodiIntakeSteps[step - 3].key]}
+              onChange={handleProdiContextChange}
+              error={errors[prodiIntakeSteps[step - 3].key]}
+              locale={locale}
+            />
+          ) : null}
+
+          {step === 11 ? (
+            <motion.div key="step-11" {...stepMotion} className="space-y-4">
               <div className="editorial-shell rounded-[22px] border p-4 text-sm text-textMuted">
                 <p className="mb-2 text-textSecondary">{copy.profileReview}</p>
                 <p>{copy.track}: {track.label[locale] || track.label.en}</p>
                 <p>{copy.interests}: {interests.join(', ') || '-'}</p>
                 <p>{copy.preferences}: {Object.values(preferences).join(' · ') || '-'}</p>
                 <p>{copy.averageScore}: {averageScore || '-'}</p>
+                <p>{(prodiIntakeSteps[5].label[locale] || prodiIntakeSteps[5].label.en)}: {prodiContext.expected_prodi || '-'}</p>
+                <p>{(prodiIntakeSteps[6].label[locale] || prodiIntakeSteps[6].label.en)}: {prodiContext.prodi_to_avoid || '-'}</p>
               </div>
 
               <div className="editorial-shell rounded-[22px] border px-4 py-3 text-xs leading-relaxed text-textSubtle">{copy.decisionSupport}</div>
@@ -403,7 +513,7 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
             {copy.back}
           </button>
 
-          {step < 3 ? (
+          {step < 11 ? (
             <button type="button" onClick={goNext} className="apti-primary-button px-5 py-2.5 text-sm font-semibold">
               {copy.continue}
             </button>

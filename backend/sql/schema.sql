@@ -121,6 +121,34 @@ create table if not exists prediction_explanations (
   created_at timestamptz default now()
 );
 
+alter table prediction_log add column if not exists curriculum_type varchar(50);
+alter table prediction_log add column if not exists dataset_version varchar(50);
+alter table prediction_log add column if not exists feature_version varchar(50);
+alter table prediction_log add column if not exists academic_context jsonb default '{}'::jsonb;
+alter table prediction_log add column if not exists subject_preferences jsonb default '{}'::jsonb;
+alter table prediction_log add column if not exists interest_deep_dive jsonb default '{}'::jsonb;
+alter table prediction_log add column if not exists career_direction jsonb default '{}'::jsonb;
+alter table prediction_log add column if not exists constraints jsonb default '{}'::jsonb;
+alter table prediction_log add column if not exists expected_prodi text;
+alter table prediction_log add column if not exists prodi_to_avoid text[] default '{}';
+alter table prediction_log add column if not exists free_text_goal text;
+alter table prediction_log add column if not exists language varchar(10);
+alter table prediction_log add column if not exists top_1_prodi_id varchar(40);
+alter table prediction_log add column if not exists top_1_kelompok_prodi varchar(200);
+alter table prediction_log add column if not exists top_1_rumpun_ilmu varchar(200);
+alter table prediction_log add column if not exists top_2_prodi_id varchar(40);
+alter table prediction_log add column if not exists top_2_kelompok_prodi varchar(200);
+alter table prediction_log add column if not exists top_2_rumpun_ilmu varchar(200);
+alter table prediction_log add column if not exists top_3_prodi_id varchar(40);
+alter table prediction_log add column if not exists top_3_kelompok_prodi varchar(200);
+alter table prediction_log add column if not exists top_3_rumpun_ilmu varchar(200);
+alter table prediction_log add column if not exists latency_ms numeric(10,2);
+alter table prediction_log add column if not exists fallback_used boolean default false;
+
+alter table user_feedback add column if not exists selected_prodi_id varchar(40);
+alter table user_feedback add column if not exists selected_kelompok_prodi varchar(200);
+alter table user_feedback add column if not exists recommendation_snapshot jsonb default '{}'::jsonb;
+
 create index if not exists idx_prediction_log_created_at on prediction_log(created_at);
 create index if not exists idx_prediction_log_top_1 on prediction_log(top_1_major);
 create index if not exists idx_prediction_metrics_created_at on prediction_metrics(created_at);

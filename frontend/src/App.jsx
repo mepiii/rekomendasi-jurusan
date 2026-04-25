@@ -137,6 +137,7 @@ export default function App() {
     >
       {!introState.completed ? (
         <AptiIntroFlow
+          locale={locale}
           onComplete={handleIntroComplete}
           onSkip={() => handleIntroComplete({ completed: true, name: '', goal: 'find-fit', confidence: '' })}
         />

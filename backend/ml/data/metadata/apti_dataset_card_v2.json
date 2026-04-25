@@ -1,0 +1,48 @@
+{
+  "dataset_version": "apti_dataset_v2",
+  "row_count": 5000,
+  "source_type": "synthetic_v2_from_catalog_profiles",
+  "random_state": 42,
+  "synthetic_real_ratio": "100:0",
+  "label_count": 470,
+  "group_count": 59,
+  "top_label_counts": {
+    "Kedokteran Gigi": 89,
+    "Kebidanan": 85,
+    "Kedokteran Hewan": 82,
+    "Astronomi": 80,
+    "Biofisika": 78,
+    "Sains Perkopian": 51,
+    "Ners": 51,
+    "Logika dan Filsafat Sains": 50,
+    "Teknologi Kopi": 49,
+    "Ilmu Kedokteran": 47,
+    "Logika": 44,
+    "Strategi Pertahanan": 43,
+    "Filsafat": 40,
+    "Psikologi Pendidikan": 37,
+    "Keperawatan": 36
+  },
+  "top_group_counts": {
+    "Sains Data": 105,
+    "Teknik atau Rekayasa": 102,
+    "Bioteknologi, Biokewirausahaan, Bioinformatika": 101,
+    "Sains Perkopian": 100,
+    "Informatika Medis atau Informatika Kesehatan": 97,
+    "Kimia": 95,
+    "Ilmu atau Sains Kelautan": 95,
+    "Logika": 94,
+    "Perencanaan Wilayah": 93,
+    "Peternakan": 93,
+    "Sosial": 93,
+    "Pertahanan": 92,
+    "Ilmu atau Sains Lingkungan": 92,
+    "Ilmu atau Sains Komunikasi": 91,
+    "Seni": 90
+  },
+  "limitations": [
+    "Synthetic data is not real-world proof.",
+    "Official feedback and validation data should replace or augment this dataset before production claims.",
+    "Recommendations remain decision support, not final selection advice."
+  ]
+}

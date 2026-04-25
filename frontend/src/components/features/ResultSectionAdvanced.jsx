@@ -7,13 +7,33 @@ import { motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
 import ResultCardAdvanced from './ResultCardAdvanced';
 
+const profileLabel = (value, locale) => {
+  if (locale !== 'id' || !value) return value;
+  return {
+    'Pendidikan Agama': 'Pendidikan Agama', 'Matematika Umum': 'Matematika Umum', science: 'sains', social: 'sosial', language: 'bahasa', humanities: 'humaniora', technical: 'teknis', High: 'Tinggi', Medium: 'Sedang', Emerging: 'Berkembang'
+  }[value] || value;
+};
+
+const localizedNotice = (note, locale) => {
+  if (locale !== 'id') return note;
+  if (note.includes('fallback')) return 'Apti memakai rekomendasi cadangan sementara karena model prediktif belum siap.';
+  if (note.includes('Optional missing subjects')) return 'Mapel opsional yang kosong diperlakukan netral, bukan sebagai nilai rendah.';
+  if (note.includes('extra caution')) return 'Apti memakai kehati-hatian ekstra karena profil ini berbeda dari contoh latihan terbaru.';
+  return note;
+};
+
 function mergeRecommendationWithExplanations(recommendations, explanations) {
-  const map = new Map((explanations || []).map((item) => [item.major, item.shap_values || {}]));
-  return (recommendations || []).map((item) => ({
-    ...item,
-    shap_values: map.get(item.major) || item.shap_values || {},
-    user_scores: item.user_scores || {}
-  }));
+  const map = new Map((explanations || []).map((item) => [item.major, item]));
+  return (recommendations || []).map((item) => {
+    const explanation = map.get(item.major) || {};
+    return {
+      ...item,
+      shap_values: explanation.shap_values || item.shap_values || {},
+      user_scores: item.user_scores || {},
+      fallback_reason: item.fallback_reason || explanation.fallback_reason,
+      notes: item.notes || explanation.notes
+    };
+  });
 }
 
 export default function ResultSectionAdvanced({ result, locale = 'en', copy, explanations, onReset, onSubmitFeedback, feedbackState }) {
@@ -27,12 +47,17 @@ export default function ResultSectionAdvanced({ result, locale = 'en', copy, exp
     [result, explanations]
   );
 
+  const clampRating = (value) => {
+    const parsed = Number(value || 5);
+    return Number.isFinite(parsed) ? Math.min(5, Math.max(1, parsed)) : 5;
+  };
+
   const handleFeedback = (event) => {
     event.preventDefault();
     onSubmitFeedback({
       selected_major: selectedMajor || null,
       aligns_with_goals: aligns,
-      rating,
+      rating: clampRating(rating),
       notes: notes.trim() || null
     });
   };
@@ -53,11 +78,11 @@ export default function ResultSectionAdvanced({ result, locale = 'en', copy, exp
         <div className="mt-3 grid gap-3 sm:grid-cols-4">
           <div>
             <p className="text-xs text-textSubtle">{copy.strongestSubject}</p>
-            <p className="mt-1 text-sm text-textPrimary">{result.profile_summary?.strongest_subject || '-'}</p>
+            <p className="mt-1 text-sm text-textPrimary">{profileLabel(result.profile_summary?.strongest_subject, locale) || '-'}</p>
           </div>
           <div>
             <p className="text-xs text-textSubtle">{copy.strongestGroup}</p>
-            <p className="mt-1 text-sm capitalize text-textPrimary">{result.profile_summary?.strongest_group || '-'}</p>
+            <p className="mt-1 text-sm capitalize text-textPrimary">{profileLabel(result.profile_summary?.strongest_group, locale) || '-'}</p>
           </div>
           <div>
             <p className="text-xs text-textSubtle">{copy.averageScore}</p>
@@ -65,14 +90,22 @@ export default function ResultSectionAdvanced({ result, locale = 'en', copy, exp
           </div>
           <div>
             <p className="text-xs text-textSubtle">{copy.confidence}</p>
-            <p className="mt-1 text-sm text-textPrimary">{result.profile_summary?.confidence_label || '-'}</p>
+            <p className="mt-1 text-sm text-textPrimary">{profileLabel(result.profile_summary?.confidence_label, locale) || '-'}</p>
           </div>
         </div>
       </motion.div>
 
+      {result.fallback_used || result.fallback_reason || result.notes?.length ? (
+        <motion.div initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.34, ease: [0.16, 1, 0.3, 1] }} className="editorial-shell rounded-[22px] border px-4 py-4 text-xs leading-relaxed text-textSubtle">
+          {result.fallback_used ? <p>{locale === 'id' ? 'Apti memakai rekomendasi cadangan sementara. Hasil tetap dihitung dari pola nilai, minat, dan preferensi kamu.' : 'Apti used temporary backup recommendations. Results still use your score pattern, interests, and preferences.'}</p> : null}
+          {result.fallback_reason ? <p>{copy.fallback || 'Fallback'}: {localizedNotice(result.fallback_reason, locale)}</p> : null}
+          {Array.isArray(result.notes) ? result.notes.map((note) => <p key={note}>{localizedNotice(note, locale)}</p>) : result.notes ? <p>{copy.notes || 'Notes'}: {localizedNotice(result.notes, locale)}</p> : null}
+        </motion.div>
+      ) : null}
+
       <div className="space-y-3">
         {recommendationItems.map((recommendation) => (
-          <ResultCardAdvanced key={`${recommendation.rank}-${recommendation.major}`} recommendation={recommendation} highlight={recommendation.rank === 1} copy={copy} locale={locale} />
+          <ResultCardAdvanced key={`${recommendation.rank}-${recommendation.major}`} recommendation={recommendation} highlight={recommendation.rank === 1} copy={copy} locale={locale} fallbackUsed={Boolean(result.fallback_used)} />
         ))}
       </div>
 
@@ -100,7 +133,7 @@ export default function ResultSectionAdvanced({ result, locale = 'en', copy, exp
             ))}
           </select>
 
-          <input type="number" min="1" max="5" value={rating} onChange={(event) => setRating(Number(event.target.value || 5))} className="glass-input rounded-xl px-3 py-2 text-sm text-textPrimary" placeholder={copy.rating} />
+          <input type="number" min="1" max="5" value={rating} onChange={(event) => setRating(clampRating(event.target.value))} className="glass-input rounded-xl px-3 py-2 text-sm text-textPrimary" placeholder={copy.rating} />
         </div>
 
         <textarea value={notes} onChange={(event) => setNotes(event.target.value)} className="glass-input mt-3 h-20 w-full rounded-xl px-3 py-2 text-sm text-textPrimary" placeholder={copy.notes} />

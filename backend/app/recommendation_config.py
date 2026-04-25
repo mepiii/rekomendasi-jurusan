@@ -6,6 +6,31 @@
 
 from __future__ import annotations
 
+MODEL_VERSION = "apti_v2"
+FEATURE_VERSION = "apti_features_v2"
+DATASET_VERSION = "apti_dataset_v2"
+APP_IDENTIFIER = "apti"
+
+VALID_RELIGION_RELATED_MAJOR_PREFERENCES = {
+    "Not relevant",
+    "Open to religious studies",
+    "Islamic studies / education",
+    "Christian theology / education",
+    "Catholic theology / education",
+    "Hindu studies",
+    "Buddhist studies",
+    "Other / unsure",
+}
+
+RELIGION_RELATED_MAJORS = {
+    "Islamic Education",
+    "Islamic Studies",
+    "Theology",
+    "Christian Religious Education",
+    "Catholic Religious Education",
+    "Religious Studies",
+}
+
 VALID_SMA_TRACKS = {"IPA", "IPS", "Bahasa", "Merdeka"}
 VALID_INTERESTS = {
     "Technology",
@@ -163,3 +188,80 @@ MAJOR_METADATA = {
         "alternatives": ["Communication Studies", "Management"],
     },
 }
+
+MAJOR_CLUSTERS = {
+    "STEM / Technology": [
+        "Computer Science",
+        "Informatics Engineering",
+        "Information Systems",
+        "Data Science",
+        "Electrical Engineering",
+        "Mechanical Engineering",
+        "Civil Engineering",
+        "Industrial Engineering",
+        "Architecture",
+        "Cybersecurity",
+    ],
+    "Health / Natural Science": [
+        "Medicine",
+        "Nursing",
+        "Pharmacy",
+        "Nutrition",
+        "Public Health",
+        "Biology",
+        "Chemistry",
+        "Mathematics",
+        "Statistics",
+        "Environmental Science",
+    ],
+    "Business / Economy": [
+        "Management",
+        "Accounting",
+        "Development Economics",
+        "Digital Business",
+        "Entrepreneurship",
+        "Business Administration",
+        "Finance",
+    ],
+    "Social / Humanities": [
+        "Psychology",
+        "Law",
+        "Communication Science",
+        "International Relations",
+        "Sociology",
+        "Political Science",
+        "Public Administration",
+    ],
+    "Language / Culture": [
+        "Indonesian Literature",
+        "English Literature",
+        "Japanese Literature",
+        "French Literature",
+        "Linguistics",
+        "Anthropology",
+        "Indonesian Language Education",
+        "English Education",
+        "Translation Studies",
+    ],
+    "Creative": [
+        "Visual Communication Design",
+        "Product Design",
+        "Film and Television",
+        "Fine Arts",
+        "Music",
+        "Animation",
+        "Creative Media",
+    ],
+    "Education": [
+        "Elementary Teacher Education",
+        "Guidance and Counseling",
+        "Educational Technology",
+        "Mathematics Education",
+        "Biology Education",
+        "Economics Education",
+        "Language Education",
+    ],
+    "Religion-related": sorted(RELIGION_RELATED_MAJORS),
+}
+
+MAJOR_CLUSTER_MAP = {major: cluster for cluster, majors in MAJOR_CLUSTERS.items() for major in majors}

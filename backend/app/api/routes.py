@@ -14,6 +14,7 @@ from fastapi import APIRouter, BackgroundTasks
 from fastapi.responses import JSONResponse
 
 from app.config import settings
+from app.recommendation_config import APP_IDENTIFIER, DATASET_VERSION, FEATURE_VERSION
 from app.core.db import (
     clear_explanations,
     fetch_explanations,
@@ -35,6 +36,7 @@ from app.schemas import (
     RetrainTriggerRequest,
     RetrainTriggerResponse,
 )
+from app.services.llm_review_service import llm_review_service
 from app.services.ml_service import MAJOR_CLUSTER_MAP, ml_service
 from app.services.retrain_service import retrain_service
 from app.services.telemetry_service import compute_bias_score, compute_drift_score, snapshot_metrics
@@ -86,10 +88,15 @@ def root() -> dict[str, str]:
 
 
 @router.get("/health")
-def health() -> dict[str, str]:
+def health() -> dict[str, object]:
     return {
+        "app": APP_IDENTIFIER,
         "status": "ok" if ml_service.loaded else "degraded",
+        "model_loaded": ml_service.loaded,
+        "model_load_error": ml_service.load_error,
         "model_version": settings.model_version,
+        "feature_version": FEATURE_VERSION,
+        "supabase_configured": bool(settings.supabase_url and settings.supabase_service_key),
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }
 
@@ -109,6 +116,13 @@ def get_interests() -> dict[str, list[dict[str, str]]]:
 @router.post("/predict", response_model=PredictResponse)
 def predict(req: PredictRequest, background_tasks: BackgroundTasks) -> PredictResponse | JSONResponse:
     started = perf_counter()
+
+    def _safe_task(func, *args, **kwargs) -> None:
+        try:
+            func(*args, **kwargs)
+        except Exception:
+            return
+
     try:
         prediction = ml_service.predict(req)
         elapsed_ms = (perf_counter() - started) * 1000
@@ -117,15 +131,25 @@ def predict(req: PredictRequest, background_tasks: BackgroundTasks) -> PredictRe
         top_cluster = MAJOR_CLUSTER_MAP.get(top_major or "", "Other")
         bias_score = compute_bias_score(req.sma_track, top_cluster)
         drift = compute_drift_score(prediction.features)
-        majors = [item.major for item in prediction.recommendations]
+        llm_review = llm_review_service.review(req, prediction.recommendations)
+        recommendations = llm_review_service.apply(prediction.recommendations, llm_review)
+        majors = [item.major for item in recommendations]
 
         def _build_and_save_explanations() -> None:
             rows = ml_service.build_explanations(req, majors)
             if rows:
                 save_explanations(req.session_id, settings.model_version, rows)
 
-        background_tasks.add_task(log_prediction, req, prediction.recommendations)
         background_tasks.add_task(
+            _safe_task,
+            log_prediction,
+            req,
+            recommendations,
+            latency_ms=elapsed_ms,
+            fallback_used=prediction.fallback_used,
+        )
+        background_tasks.add_task(
+            _safe_task,
             log_prediction_metrics,
             req.session_id,
             settings.model_version,
@@ -135,20 +159,27 @@ def predict(req: PredictRequest, background_tasks: BackgroundTasks) -> PredictRe
             top_major,
             bias_score,
         )
-        background_tasks.add_task(clear_explanations, req.session_id)
-        background_tasks.add_task(_build_and_save_explanations)
+        background_tasks.add_task(_safe_task, clear_explanations, req.session_id)
+        background_tasks.add_task(_safe_task, _build_and_save_explanations)
+
+        notes = list(prediction.notes)
+        if drift.alerted:
+            notes.append("Apti used extra caution because this profile differs from recent training examples.")
 
         return PredictResponse(
-            session_id=req.session_id,
-            recommendations=prediction.recommendations,
-            profile_summary=prediction.profile_summary,
+            app=APP_IDENTIFIER,
             model_version=settings.model_version,
-            disclaimer=(
-                prediction.disclaimer
-                if not drift.alerted
-                else f"{prediction.disclaimer} Input appears different from the training data distribution."
-            ),
-            latency_ms=round(elapsed_ms, 2),
+            dataset_version=DATASET_VERSION,
+            feature_version=FEATURE_VERSION,
+            llm_provider=llm_review.provider,
+            llm_review_used=llm_review.used,
+            session_id=req.session_id,
+            recommendations=recommendations,
+            profile_summary=prediction.profile_summary,
+            notes=notes,
+            fallback_used=prediction.fallback_used,
+            disclaimer=prediction.disclaimer,
+            latency_ms=round(elapsed_ms),
         )
     except Exception:
         return JSONResponse(

@@ -192,7 +192,9 @@
   color: var(--shell-muted) !important;
 }
 
-.apti-choice-idle:hover {
+.apti-choice-idle:hover,
+.apti-shell[data-theme='light'] .apti-choice-idle:hover,
+.apti-shell[data-theme='light'] .apti-choice-idle:hover * {
   color: var(--shell-ink) !important;
 }
 
