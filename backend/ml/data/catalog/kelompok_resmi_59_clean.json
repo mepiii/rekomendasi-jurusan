@@ -1,0 +1,3034 @@
+[
+  {
+    "no": 1,
+    "rumpun_ilmu": "Humaniora",
+    "kelompok_prodi_resmi": "Seni",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Seni Budaya",
+        "subjects": [
+          {
+            "raw": "Seni Budaya",
+            "key": "arts_culture"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Seni Budaya",
+        "subjects": [
+          {
+            "raw": "Seni Budaya",
+            "key": "arts_culture"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Seni Budaya",
+        "subjects": [
+          {
+            "raw": "Seni Budaya",
+            "key": "arts_culture"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Seni Budaya",
+        "subjects": [
+          {
+            "raw": "Seni Budaya",
+            "key": "arts_culture"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 2,
+    "rumpun_ilmu": "Humaniora",
+    "kelompok_prodi_resmi": "Sejarah",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Sejarah",
+        "subjects": [
+          {
+            "raw": "Sejarah",
+            "key": "history"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Sejarah Indonesia",
+        "subjects": [
+          {
+            "raw": "Sejarah Indonesia",
+            "key": "history"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Sejarah Indonesia",
+        "subjects": [
+          {
+            "raw": "Sejarah Indonesia",
+            "key": "history"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Sejarah Indonesia",
+        "subjects": [
+          {
+            "raw": "Sejarah Indonesia",
+            "key": "history"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 3,
+    "rumpun_ilmu": "Humaniora",
+    "kelompok_prodi_resmi": "Linguistik",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Bahasa Indonesia Tingkat Lanjut dan/atau Bahasa Inggris",
+        "subjects": [
+          {
+            "raw": "Bahasa Indonesia Tingkat Lanjut",
+            "key": "bahasa_indonesia_advanced"
+          },
+          {
+            "raw": "Bahasa Inggris",
+            "key": "english"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Bahasa Indonesia dan/atau Bahasa Inggris",
+        "subjects": [
+          {
+            "raw": "Bahasa Indonesia",
+            "key": "bahasa_indonesia"
+          },
+          {
+            "raw": "Bahasa Inggris",
+            "key": "english"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Bahasa Indonesia dan/atau Bahasa Inggris",
+        "subjects": [
+          {
+            "raw": "Bahasa Indonesia",
+            "key": "bahasa_indonesia"
+          },
+          {
+            "raw": "Bahasa Inggris",
+            "key": "english"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Bahasa Indonesia dan/atau Bahasa Inggris",
+        "subjects": [
+          {
+            "raw": "Bahasa Indonesia",
+            "key": "bahasa_indonesia"
+          },
+          {
+            "raw": "Bahasa Inggris",
+            "key": "english"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 4,
+    "rumpun_ilmu": "Humaniora",
+    "kelompok_prodi_resmi": "Susastra atau Sastra",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Bahasa Indonesia Tingkat Lanjut dan/atau bahasa asing yang relevan",
+        "subjects": [
+          {
+            "raw": "Bahasa Indonesia Tingkat Lanjut",
+            "key": "bahasa_indonesia_advanced"
+          },
+          {
+            "raw": "bahasa asing yang relevan",
+            "key": "foreign_language"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Bahasa Indonesia dan/atau bahasa asing yang relevan",
+        "subjects": [
+          {
+            "raw": "Bahasa Indonesia",
+            "key": "bahasa_indonesia"
+          },
+          {
+            "raw": "bahasa asing yang relevan",
+            "key": "foreign_language"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Bahasa Indonesia dan/atau bahasa asing yang relevan",
+        "subjects": [
+          {
+            "raw": "Bahasa Indonesia",
+            "key": "bahasa_indonesia"
+          },
+          {
+            "raw": "bahasa asing yang relevan",
+            "key": "foreign_language"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Bahasa Indonesia dan/atau bahasa asing yang relevan",
+        "subjects": [
+          {
+            "raw": "Bahasa Indonesia",
+            "key": "bahasa_indonesia"
+          },
+          {
+            "raw": "bahasa asing yang relevan",
+            "key": "foreign_language"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 5,
+    "rumpun_ilmu": "Humaniora",
+    "kelompok_prodi_resmi": "Filsafat",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Sosiologi",
+        "subjects": [
+          {
+            "raw": "Sosiologi",
+            "key": "sociology"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Sejarah Indonesia",
+        "subjects": [
+          {
+            "raw": "Sejarah Indonesia",
+            "key": "history"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Sosiologi",
+        "subjects": [
+          {
+            "raw": "Sosiologi",
+            "key": "sociology"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Antropologi",
+        "subjects": [
+          {
+            "raw": "Antropologi",
+            "key": "anthropology"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 6,
+    "rumpun_ilmu": "Ilmu Sosial",
+    "kelompok_prodi_resmi": "Sosial",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Sosiologi",
+        "subjects": [
+          {
+            "raw": "Sosiologi",
+            "key": "sociology"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Sejarah Indonesia",
+        "subjects": [
+          {
+            "raw": "Sejarah Indonesia",
+            "key": "history"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Sosiologi",
+        "subjects": [
+          {
+            "raw": "Sosiologi",
+            "key": "sociology"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Antropologi",
+        "subjects": [
+          {
+            "raw": "Antropologi",
+            "key": "anthropology"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 7,
+    "rumpun_ilmu": "Ilmu Sosial",
+    "kelompok_prodi_resmi": "Ekonomi",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Ekonomi dan/atau Matematika",
+        "subjects": [
+          {
+            "raw": "Ekonomi",
+            "key": "economics"
+          },
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Matematika",
+        "subjects": [
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Ekonomi dan/atau Matematika",
+        "subjects": [
+          {
+            "raw": "Ekonomi",
+            "key": "economics"
+          },
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Matematika",
+        "subjects": [
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 8,
+    "rumpun_ilmu": "Ilmu Sosial",
+    "kelompok_prodi_resmi": "Pertahanan",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Pendidikan Pancasila",
+        "subjects": [
+          {
+            "raw": "Pendidikan Pancasila",
+            "key": "civics"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "PPKn",
+        "subjects": [
+          {
+            "raw": "PPKn",
+            "key": "civics"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "PPKn",
+        "subjects": [
+          {
+            "raw": "PPKn",
+            "key": "civics"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "PPKn",
+        "subjects": [
+          {
+            "raw": "PPKn",
+            "key": "civics"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 9,
+    "rumpun_ilmu": "Ilmu Sosial",
+    "kelompok_prodi_resmi": "Psikologi",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Sosiologi dan/atau Matematika",
+        "subjects": [
+          {
+            "raw": "Sosiologi",
+            "key": "sociology"
+          },
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Matematika",
+        "subjects": [
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Sosiologi",
+        "subjects": [
+          {
+            "raw": "Sosiologi",
+            "key": "sociology"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Matematika",
+        "subjects": [
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 10,
+    "rumpun_ilmu": "Ilmu Alam",
+    "kelompok_prodi_resmi": "Kimia",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Kimia",
+        "subjects": [
+          {
+            "raw": "Kimia",
+            "key": "chemistry"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Kimia",
+        "subjects": [
+          {
+            "raw": "Kimia",
+            "key": "chemistry"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Kimia",
+        "subjects": [
+          {
+            "raw": "Kimia",
+            "key": "chemistry"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Kimia",
+        "subjects": [
+          {
+            "raw": "Kimia",
+            "key": "chemistry"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 11,
+    "rumpun_ilmu": "Ilmu Alam",
+    "kelompok_prodi_resmi": "Ilmu atau Sains Kebumian",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Fisika dan/atau Matematika Tingkat Lanjut",
+        "subjects": [
+          {
+            "raw": "Fisika",
+            "key": "physics"
+          },
+          {
+            "raw": "Matematika Tingkat Lanjut",
+            "key": "mathematics_advanced"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Fisika dan/atau Matematika dari kelompok peminatan MIPA",
+        "subjects": [
+          {
+            "raw": "Fisika",
+            "key": "physics"
+          },
+          {
+            "raw": "Matematika dari kelompok peminatan MIPA",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Fisika dan/atau Geografi",
+        "subjects": [
+          {
+            "raw": "Fisika",
+            "key": "physics"
+          },
+          {
+            "raw": "Geografi",
+            "key": "geography"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Fisika dan/atau Matematika",
+        "subjects": [
+          {
+            "raw": "Fisika",
+            "key": "physics"
+          },
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 12,
+    "rumpun_ilmu": "Ilmu Alam",
+    "kelompok_prodi_resmi": "Ilmu atau Sains Kelautan",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Biologi dan/atau Geografi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          },
+          {
+            "raw": "Geografi",
+            "key": "geography"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 13,
+    "rumpun_ilmu": "Ilmu Alam",
+    "kelompok_prodi_resmi": "Biologi",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 14,
+    "rumpun_ilmu": "Ilmu Alam",
+    "kelompok_prodi_resmi": "Biofisika",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Fisika",
+        "subjects": [
+          {
+            "raw": "Fisika",
+            "key": "physics"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Fisika",
+        "subjects": [
+          {
+            "raw": "Fisika",
+            "key": "physics"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Fisika",
+        "subjects": [
+          {
+            "raw": "Fisika",
+            "key": "physics"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Fisika",
+        "subjects": [
+          {
+            "raw": "Fisika",
+            "key": "physics"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 15,
+    "rumpun_ilmu": "Ilmu Alam",
+    "kelompok_prodi_resmi": "Fisika",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Fisika",
+        "subjects": [
+          {
+            "raw": "Fisika",
+            "key": "physics"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Fisika",
+        "subjects": [
+          {
+            "raw": "Fisika",
+            "key": "physics"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Fisika",
+        "subjects": [
+          {
+            "raw": "Fisika",
+            "key": "physics"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Fisika",
+        "subjects": [
+          {
+            "raw": "Fisika",
+            "key": "physics"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 16,
+    "rumpun_ilmu": "Ilmu Alam",
+    "kelompok_prodi_resmi": "Astronomi",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Fisika dan/atau Matematika Tingkat Lanjut",
+        "subjects": [
+          {
+            "raw": "Fisika",
+            "key": "physics"
+          },
+          {
+            "raw": "Matematika Tingkat Lanjut",
+            "key": "mathematics_advanced"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Fisika dan/atau Matematika dari kelompok peminatan MIPA",
+        "subjects": [
+          {
+            "raw": "Fisika",
+            "key": "physics"
+          },
+          {
+            "raw": "Matematika dari kelompok peminatan MIPA",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Fisika dan/atau Matematika",
+        "subjects": [
+          {
+            "raw": "Fisika",
+            "key": "physics"
+          },
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Fisika dan/atau Matematika",
+        "subjects": [
+          {
+            "raw": "Fisika",
+            "key": "physics"
+          },
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 17,
+    "rumpun_ilmu": "Ilmu Formal",
+    "kelompok_prodi_resmi": "Komputer",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Matematika Tingkat Lanjut",
+        "subjects": [
+          {
+            "raw": "Matematika Tingkat Lanjut",
+            "key": "mathematics_advanced"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Matematika dari kelompok peminatan MIPA",
+        "subjects": [
+          {
+            "raw": "Matematika dari kelompok peminatan MIPA",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Matematika",
+        "subjects": [
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Matematika",
+        "subjects": [
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 18,
+    "rumpun_ilmu": "Ilmu Formal",
+    "kelompok_prodi_resmi": "Logika",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Matematika Tingkat Lanjut",
+        "subjects": [
+          {
+            "raw": "Matematika Tingkat Lanjut",
+            "key": "mathematics_advanced"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Matematika dari kelompok peminatan MIPA",
+        "subjects": [
+          {
+            "raw": "Matematika dari kelompok peminatan MIPA",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Matematika",
+        "subjects": [
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Matematika",
+        "subjects": [
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 19,
+    "rumpun_ilmu": "Ilmu Formal",
+    "kelompok_prodi_resmi": "Matematika",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Matematika Tingkat Lanjut",
+        "subjects": [
+          {
+            "raw": "Matematika Tingkat Lanjut",
+            "key": "mathematics_advanced"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Matematika dari kelompok peminatan MIPA",
+        "subjects": [
+          {
+            "raw": "Matematika dari kelompok peminatan MIPA",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Matematika",
+        "subjects": [
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Matematika",
+        "subjects": [
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 20,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Ilmu dan Sains Pertanian",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 21,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Peternakan",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 22,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Ilmu atau Sains Perikanan",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 23,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Arsitektur",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Matematika dan/atau Fisika",
+        "subjects": [
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          },
+          {
+            "raw": "Fisika",
+            "key": "physics"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Matematika dan/atau Fisika",
+        "subjects": [
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          },
+          {
+            "raw": "Fisika",
+            "key": "physics"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Matematika dan/atau Fisika",
+        "subjects": [
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          },
+          {
+            "raw": "Fisika",
+            "key": "physics"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Matematika dan/atau Fisika",
+        "subjects": [
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          },
+          {
+            "raw": "Fisika",
+            "key": "physics"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 24,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Perencanaan Wilayah",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Ekonomi dan/atau Matematika",
+        "subjects": [
+          {
+            "raw": "Ekonomi",
+            "key": "economics"
+          },
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Matematika",
+        "subjects": [
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Ekonomi dan/atau Matematika",
+        "subjects": [
+          {
+            "raw": "Ekonomi",
+            "key": "economics"
+          },
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Matematika",
+        "subjects": [
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 25,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Desain",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Seni Budaya dan/atau Matematika",
+        "subjects": [
+          {
+            "raw": "Seni Budaya",
+            "key": "arts_culture"
+          },
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Seni Budaya dan/atau Matematika",
+        "subjects": [
+          {
+            "raw": "Seni Budaya",
+            "key": "arts_culture"
+          },
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Seni Budaya dan/atau Matematika",
+        "subjects": [
+          {
+            "raw": "Seni Budaya",
+            "key": "arts_culture"
+          },
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Seni Budaya dan/atau Matematika",
+        "subjects": [
+          {
+            "raw": "Seni Budaya",
+            "key": "arts_culture"
+          },
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 26,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Ilmu atau Sains Akuntansi",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Ekonomi",
+        "subjects": [
+          {
+            "raw": "Ekonomi",
+            "key": "economics"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Matematika dan/atau Ekonomi",
+        "subjects": [
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          },
+          {
+            "raw": "Ekonomi",
+            "key": "economics"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Ekonomi",
+        "subjects": [
+          {
+            "raw": "Ekonomi",
+            "key": "economics"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Matematika dan/atau Ekonomi",
+        "subjects": [
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          },
+          {
+            "raw": "Ekonomi",
+            "key": "economics"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 27,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Ilmu atau Sains Manajemen",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Ekonomi",
+        "subjects": [
+          {
+            "raw": "Ekonomi",
+            "key": "economics"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Matematika dan/atau Ekonomi",
+        "subjects": [
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          },
+          {
+            "raw": "Ekonomi",
+            "key": "economics"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Ekonomi",
+        "subjects": [
+          {
+            "raw": "Ekonomi",
+            "key": "economics"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Matematika dan/atau Ekonomi",
+        "subjects": [
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          },
+          {
+            "raw": "Ekonomi",
+            "key": "economics"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 28,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Logistik",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Ekonomi",
+        "subjects": [
+          {
+            "raw": "Ekonomi",
+            "key": "economics"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Matematika dan/atau Ekonomi",
+        "subjects": [
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          },
+          {
+            "raw": "Ekonomi",
+            "key": "economics"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Ekonomi",
+        "subjects": [
+          {
+            "raw": "Ekonomi",
+            "key": "economics"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Matematika dan/atau Ekonomi",
+        "subjects": [
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          },
+          {
+            "raw": "Ekonomi",
+            "key": "economics"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 29,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Administrasi Bisnis",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Ekonomi",
+        "subjects": [
+          {
+            "raw": "Ekonomi",
+            "key": "economics"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Matematika dan/atau Ekonomi",
+        "subjects": [
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          },
+          {
+            "raw": "Ekonomi",
+            "key": "economics"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Ekonomi",
+        "subjects": [
+          {
+            "raw": "Ekonomi",
+            "key": "economics"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Matematika dan/atau Ekonomi",
+        "subjects": [
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          },
+          {
+            "raw": "Ekonomi",
+            "key": "economics"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 30,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Bisnis",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Ekonomi",
+        "subjects": [
+          {
+            "raw": "Ekonomi",
+            "key": "economics"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Matematika dan/atau Ekonomi",
+        "subjects": [
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          },
+          {
+            "raw": "Ekonomi",
+            "key": "economics"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Ekonomi",
+        "subjects": [
+          {
+            "raw": "Ekonomi",
+            "key": "economics"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Matematika dan/atau Ekonomi",
+        "subjects": [
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          },
+          {
+            "raw": "Ekonomi",
+            "key": "economics"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 31,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Ilmu atau Sains Komunikasi",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Sosiologi dan/atau Antropologi",
+        "subjects": [
+          {
+            "raw": "Sosiologi",
+            "key": "sociology"
+          },
+          {
+            "raw": "Antropologi",
+            "key": "anthropology"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Bahasa Indonesia dan/atau Sosiologi",
+        "subjects": [
+          {
+            "raw": "Bahasa Indonesia",
+            "key": "bahasa_indonesia"
+          },
+          {
+            "raw": "Sosiologi",
+            "key": "sociology"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Sosiologi",
+        "subjects": [
+          {
+            "raw": "Sosiologi",
+            "key": "sociology"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Antropologi dan/atau Sosiologi",
+        "subjects": [
+          {
+            "raw": "Antropologi",
+            "key": "anthropology"
+          },
+          {
+            "raw": "Sosiologi",
+            "key": "sociology"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 32,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Pendidikan",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Paling banyak 1 mata pelajaran pendukung yang relevan dengan program studi kependidikannya",
+        "subjects": [
+          {
+            "raw": "Paling banyak 1 mata pelajaran pendukung yang relevan dengan program studi kependidikannya",
+            "key": "paling_banyak_1_mata_pelajaran_pendukung_yang_relevan_dengan_program_studi_kependidikannya"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Paling banyak 1 mata pelajaran pendukung yang relevan dengan program studi kependidikannya",
+        "subjects": [
+          {
+            "raw": "Paling banyak 1 mata pelajaran pendukung yang relevan dengan program studi kependidikannya",
+            "key": "paling_banyak_1_mata_pelajaran_pendukung_yang_relevan_dengan_program_studi_kependidikannya"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Paling banyak 1 mata pelajaran pendukung yang relevan dengan program studi kependidikannya",
+        "subjects": [
+          {
+            "raw": "Paling banyak 1 mata pelajaran pendukung yang relevan dengan program studi kependidikannya",
+            "key": "paling_banyak_1_mata_pelajaran_pendukung_yang_relevan_dengan_program_studi_kependidikannya"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Paling banyak 1 mata pelajaran pendukung yang relevan dengan program studi kependidikannya",
+        "subjects": [
+          {
+            "raw": "Paling banyak 1 mata pelajaran pendukung yang relevan dengan program studi kependidikannya",
+            "key": "paling_banyak_1_mata_pelajaran_pendukung_yang_relevan_dengan_program_studi_kependidikannya"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 33,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Teknik atau Rekayasa",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Fisika/Kimia dan/atau Matematika Tingkat Lanjut",
+        "subjects": [
+          {
+            "raw": "Fisika",
+            "key": "physics"
+          },
+          {
+            "raw": "Kimia",
+            "key": "chemistry"
+          },
+          {
+            "raw": "Matematika Tingkat Lanjut",
+            "key": "mathematics_advanced"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Fisika/Kimia dan/atau Matematika dari kelompok peminatan MIPA",
+        "subjects": [
+          {
+            "raw": "Fisika",
+            "key": "physics"
+          },
+          {
+            "raw": "Kimia",
+            "key": "chemistry"
+          },
+          {
+            "raw": "Matematika dari kelompok peminatan MIPA",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Fisika/Kimia dan/atau Matematika",
+        "subjects": [
+          {
+            "raw": "Fisika",
+            "key": "physics"
+          },
+          {
+            "raw": "Kimia",
+            "key": "chemistry"
+          },
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Fisika/Kimia dan/atau Matematika",
+        "subjects": [
+          {
+            "raw": "Fisika",
+            "key": "physics"
+          },
+          {
+            "raw": "Kimia",
+            "key": "chemistry"
+          },
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 34,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Ilmu atau Sains Lingkungan",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 35,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Kehutanan",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 36,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Ilmu atau Sains Kedokteran",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Biologi dan/atau Kimia",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          },
+          {
+            "raw": "Kimia",
+            "key": "chemistry"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Biologi dan/atau Kimia",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          },
+          {
+            "raw": "Kimia",
+            "key": "chemistry"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Biologi dan/atau Kimia",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          },
+          {
+            "raw": "Kimia",
+            "key": "chemistry"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Biologi dan/atau Kimia",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          },
+          {
+            "raw": "Kimia",
+            "key": "chemistry"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 37,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Ilmu atau Sains Kedokteran Gigi",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Biologi dan/atau Kimia",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          },
+          {
+            "raw": "Kimia",
+            "key": "chemistry"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Biologi dan/atau Kimia",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          },
+          {
+            "raw": "Kimia",
+            "key": "chemistry"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Biologi dan/atau Kimia",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          },
+          {
+            "raw": "Kimia",
+            "key": "chemistry"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Biologi dan/atau Kimia",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          },
+          {
+            "raw": "Kimia",
+            "key": "chemistry"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 38,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Ilmu atau Sains Veteriner",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Biologi dan/atau Kimia",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          },
+          {
+            "raw": "Kimia",
+            "key": "chemistry"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Biologi dan/atau Kimia",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          },
+          {
+            "raw": "Kimia",
+            "key": "chemistry"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Biologi dan/atau Kimia",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          },
+          {
+            "raw": "Kimia",
+            "key": "chemistry"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Biologi dan/atau Kimia",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          },
+          {
+            "raw": "Kimia",
+            "key": "chemistry"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 39,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Ilmu Farmasi",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Biologi dan/atau Kimia",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          },
+          {
+            "raw": "Kimia",
+            "key": "chemistry"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Biologi dan/atau Kimia",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          },
+          {
+            "raw": "Kimia",
+            "key": "chemistry"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Biologi dan/atau Kimia",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          },
+          {
+            "raw": "Kimia",
+            "key": "chemistry"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Biologi dan/atau Kimia",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          },
+          {
+            "raw": "Kimia",
+            "key": "chemistry"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 40,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Ilmu atau Sains Gizi",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Biologi dan/atau Kimia",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          },
+          {
+            "raw": "Kimia",
+            "key": "chemistry"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Biologi dan/atau Kimia",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          },
+          {
+            "raw": "Kimia",
+            "key": "chemistry"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Biologi dan/atau Kimia",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          },
+          {
+            "raw": "Kimia",
+            "key": "chemistry"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Biologi dan/atau Kimia",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          },
+          {
+            "raw": "Kimia",
+            "key": "chemistry"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 41,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Kesehatan Masyarakat",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Sosiologi dan/atau Biologi",
+        "subjects": [
+          {
+            "raw": "Sosiologi",
+            "key": "sociology"
+          },
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 42,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Kebidanan",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 43,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Keperawatan",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 44,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Kesehatan",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 45,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Ilmu atau Sains Informasi",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Matematika Tingkat Lanjut",
+        "subjects": [
+          {
+            "raw": "Matematika Tingkat Lanjut",
+            "key": "mathematics_advanced"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Matematika dari kelompok peminatan MIPA",
+        "subjects": [
+          {
+            "raw": "Matematika dari kelompok peminatan MIPA",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Matematika",
+        "subjects": [
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Matematika",
+        "subjects": [
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 46,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Hukum",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Sosiologi dan/atau Pendidikan Pancasila",
+        "subjects": [
+          {
+            "raw": "Sosiologi",
+            "key": "sociology"
+          },
+          {
+            "raw": "Pendidikan Pancasila",
+            "key": "civics"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "PPKn",
+        "subjects": [
+          {
+            "raw": "PPKn",
+            "key": "civics"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Sosiologi dan/atau PPKn",
+        "subjects": [
+          {
+            "raw": "Sosiologi",
+            "key": "sociology"
+          },
+          {
+            "raw": "PPKn",
+            "key": "civics"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "PPKn",
+        "subjects": [
+          {
+            "raw": "PPKn",
+            "key": "civics"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 47,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Ilmu atau Sains Militer",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Sosiologi",
+        "subjects": [
+          {
+            "raw": "Sosiologi",
+            "key": "sociology"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "PPKn dan/atau Sosiologi",
+        "subjects": [
+          {
+            "raw": "PPKn",
+            "key": "civics"
+          },
+          {
+            "raw": "Sosiologi",
+            "key": "sociology"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Sosiologi",
+        "subjects": [
+          {
+            "raw": "Sosiologi",
+            "key": "sociology"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "PPKn dan/atau Antropologi",
+        "subjects": [
+          {
+            "raw": "PPKn",
+            "key": "civics"
+          },
+          {
+            "raw": "Antropologi",
+            "key": "anthropology"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 48,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Urusan Publik",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Sosiologi",
+        "subjects": [
+          {
+            "raw": "Sosiologi",
+            "key": "sociology"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "PPKn dan/atau Sosiologi",
+        "subjects": [
+          {
+            "raw": "PPKn",
+            "key": "civics"
+          },
+          {
+            "raw": "Sosiologi",
+            "key": "sociology"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Sosiologi",
+        "subjects": [
+          {
+            "raw": "Sosiologi",
+            "key": "sociology"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "PPKn dan/atau Antropologi",
+        "subjects": [
+          {
+            "raw": "PPKn",
+            "key": "civics"
+          },
+          {
+            "raw": "Antropologi",
+            "key": "anthropology"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 49,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Ilmu atau Sains Keolahragaan",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Pendidikan Jasmani, Olahraga, dan Kesehatan (PJOK) dan/atau Biologi",
+        "subjects": [
+          {
+            "raw": "Pendidikan Jasmani",
+            "key": "pendidikan_jasmani"
+          },
+          {
+            "raw": "Olahraga",
+            "key": "olahraga"
+          },
+          {
+            "raw": "Kesehatan",
+            "key": "kesehatan"
+          },
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          },
+          {
+            "raw": "PJOK",
+            "key": "pe"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Pendidikan Jasmani, Olahraga, dan Kesehatan (PJOK) dan/atau Biologi",
+        "subjects": [
+          {
+            "raw": "Pendidikan Jasmani",
+            "key": "pendidikan_jasmani"
+          },
+          {
+            "raw": "Olahraga",
+            "key": "olahraga"
+          },
+          {
+            "raw": "Kesehatan",
+            "key": "kesehatan"
+          },
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          },
+          {
+            "raw": "PJOK",
+            "key": "pe"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "PJOK",
+        "subjects": [
+          {
+            "raw": "PJOK",
+            "key": "pe"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "PJOK",
+        "subjects": [
+          {
+            "raw": "PJOK",
+            "key": "pe"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 50,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Pariwisata",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Ekonomi dan/atau Bahasa Inggris Tingkat Lanjut/Bahasa Asing lainnya",
+        "subjects": [
+          {
+            "raw": "Ekonomi",
+            "key": "economics"
+          },
+          {
+            "raw": "Bahasa Inggris Tingkat Lanjut",
+            "key": "english_advanced"
+          },
+          {
+            "raw": "Bahasa Asing lainnya",
+            "key": "foreign_language"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Bahasa Inggris dan/atau Ekonomi",
+        "subjects": [
+          {
+            "raw": "Bahasa Inggris",
+            "key": "english"
+          },
+          {
+            "raw": "Ekonomi",
+            "key": "economics"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Ekonomi dan/atau Bahasa Inggris",
+        "subjects": [
+          {
+            "raw": "Ekonomi",
+            "key": "economics"
+          },
+          {
+            "raw": "Bahasa Inggris",
+            "key": "english"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Bahasa dan Sastra Inggris dan/atau Bahasa Asing lainnya",
+        "subjects": [
+          {
+            "raw": "Bahasa",
+            "key": "bahasa"
+          },
+          {
+            "raw": "Sastra Inggris",
+            "key": "sastra_inggris"
+          },
+          {
+            "raw": "Bahasa Asing lainnya",
+            "key": "foreign_language"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 51,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Transportasi",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Matematika Tingkat Lanjut",
+        "subjects": [
+          {
+            "raw": "Matematika Tingkat Lanjut",
+            "key": "mathematics_advanced"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Matematika dari kelompok peminatan MIPA",
+        "subjects": [
+          {
+            "raw": "Matematika dari kelompok peminatan MIPA",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Matematika",
+        "subjects": [
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Matematika",
+        "subjects": [
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 52,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Bioteknologi, Biokewirausahaan, Bioinformatika",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Biologi dan/atau Matematika",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          },
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Biologi dan/atau Matematika",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          },
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Biologi dan/atau Matematika",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          },
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Biologi dan/atau Matematika",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          },
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 53,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Geografi, Geografi Lingkungan, Sains Informasi Geografi",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Geografi dan/atau Matematika",
+        "subjects": [
+          {
+            "raw": "Geografi",
+            "key": "geography"
+          },
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Fisika dan/atau Matematika",
+        "subjects": [
+          {
+            "raw": "Fisika",
+            "key": "physics"
+          },
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Geografi dan/atau Matematika",
+        "subjects": [
+          {
+            "raw": "Geografi",
+            "key": "geography"
+          },
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Matematika",
+        "subjects": [
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 54,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Informatika Medis atau Informatika Kesehatan",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Biologi dan/atau Matematika Tingkat Lanjut",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          },
+          {
+            "raw": "Matematika Tingkat Lanjut",
+            "key": "mathematics_advanced"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Biologi dan/atau Matematika dari kelompok peminatan MIPA",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          },
+          {
+            "raw": "Matematika dari kelompok peminatan MIPA",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Biologi dan/atau Matematika",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          },
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Biologi dan/atau Matematika",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          },
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 55,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Konservasi Biologi, Konservasi Hewan Liar, Konservasi Hutan, Konservasi Sumber Daya Alam",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 56,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Teknologi Pangan, Teknologi Hasil Pertanian/Peternakan/Perikanan",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Kimia dan/atau Biologi",
+        "subjects": [
+          {
+            "raw": "Kimia",
+            "key": "chemistry"
+          },
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Kimia dan/atau Biologi",
+        "subjects": [
+          {
+            "raw": "Kimia",
+            "key": "chemistry"
+          },
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Kimia dan/atau Biologi",
+        "subjects": [
+          {
+            "raw": "Kimia",
+            "key": "chemistry"
+          },
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Kimia dan/atau Biologi",
+        "subjects": [
+          {
+            "raw": "Kimia",
+            "key": "chemistry"
+          },
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 57,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Sains Data",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Matematika Tingkat Lanjut",
+        "subjects": [
+          {
+            "raw": "Matematika Tingkat Lanjut",
+            "key": "mathematics_advanced"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Matematika dari kelompok peminatan MIPA",
+        "subjects": [
+          {
+            "raw": "Matematika dari kelompok peminatan MIPA",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Matematika",
+        "subjects": [
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Matematika",
+        "subjects": [
+          {
+            "raw": "Matematika",
+            "key": "mathematics"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 58,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Sains Perkopian",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Biologi",
+        "subjects": [
+          {
+            "raw": "Biologi",
+            "key": "biology"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  },
+  {
+    "no": 59,
+    "rumpun_ilmu": "Ilmu Terapan",
+    "kelompok_prodi_resmi": "Studi Humanitas",
+    "supporting_subjects": {
+      "kurikulum_merdeka": {
+        "raw": "Antropologi dan/atau Sosiologi",
+        "subjects": [
+          {
+            "raw": "Antropologi",
+            "key": "anthropology"
+          },
+          {
+            "raw": "Sosiologi",
+            "key": "sociology"
+          }
+        ]
+      },
+      "k13_ipa": {
+        "raw": "PPKn dan/atau Sosiologi",
+        "subjects": [
+          {
+            "raw": "PPKn",
+            "key": "civics"
+          },
+          {
+            "raw": "Sosiologi",
+            "key": "sociology"
+          }
+        ]
+      },
+      "k13_ips": {
+        "raw": "Sosiologi",
+        "subjects": [
+          {
+            "raw": "Sosiologi",
+            "key": "sociology"
+          }
+        ]
+      },
+      "k13_bahasa": {
+        "raw": "Antropologi",
+        "subjects": [
+          {
+            "raw": "Antropologi",
+            "key": "anthropology"
+          }
+        ]
+      }
+    },
+    "sumber": "Kepmendikdasmen 102/M/2025"
+  }
+]

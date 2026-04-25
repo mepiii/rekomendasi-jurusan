@@ -1,0 +1,29 @@
+{
+  "row_counts": {
+    "kelompok_csv": 59,
+    "prodi_csv": 489,
+    "kelompok_json": 59,
+    "prodi_json": 489
+  },
+  "missing_columns": {
+    "kelompok_csv": [],
+    "prodi_csv": []
+  },
+  "duplicate_prodi_id": [],
+  "duplicate_prodi_names": {
+    "Pendidikan Kepelatihan Olahraga": 2,
+    "Rekayasa Hayati": 2
+  },
+  "missing_kelompok_prodi_resmi": [],
+  "mapping_groups_missing_from_official": [],
+  "invalid_confidence_score": [],
+  "confidence_score_range": [
+    0.75,
+    1.0
+  ],
+  "json_matches_csv": {
+    "kelompok_resmi_59": true,
+    "prodi_spesifik_mapping": true
+  },
+  "passed": true
+}

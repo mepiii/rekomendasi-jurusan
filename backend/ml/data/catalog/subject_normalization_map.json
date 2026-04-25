@@ -1,0 +1,40 @@
+{
+  "canonical_subjects": {
+    "matematika": "mathematics",
+    "matematika tingkat lanjut": "mathematics_advanced",
+    "matematika dari kelompok peminatan mipa": "mathematics",
+    "fisika": "physics",
+    "kimia": "chemistry",
+    "biologi": "biology",
+    "ekonomi": "economics",
+    "sosiologi": "sociology",
+    "geografi": "geography",
+    "sejarah": "history",
+    "sejarah indonesia": "history",
+    "ppkn": "civics",
+    "pendidikan pancasila": "civics",
+    "pendidikan pancasila dan kewarganegaraan": "civics",
+    "bahasa indonesia": "bahasa_indonesia",
+    "bahasa indonesia tingkat lanjut": "bahasa_indonesia_advanced",
+    "bahasa inggris": "english",
+    "bahasa inggris tingkat lanjut": "english_advanced",
+    "bahasa asing": "foreign_language",
+    "bahasa asing lainnya": "foreign_language",
+    "bahasa asing yang relevan": "foreign_language",
+    "antropologi": "anthropology",
+    "seni budaya": "arts_culture",
+    "seni": "arts_culture",
+    "pjok": "pe",
+    "pendidikan jasmani olahraga dan kesehatan": "pe",
+    "pendidikan jasmani, olahraga, dan kesehatan": "pe",
+    "religion/ethics": "religion_ethics",
+    "pendidikan agama": "religion_ethics",
+    "informatika": "informatics"
+  },
+  "curriculum_fields": {
+    "kurikulum_merdeka": "mapel_kurmer",
+    "k13_ipa": "mapel_k13_ipa",
+    "k13_ips": "mapel_k13_ips",
+    "k13_bahasa": "mapel_k13_bahasa"
+  }
+}
