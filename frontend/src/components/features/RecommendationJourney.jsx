@@ -106,22 +106,53 @@ function SubjectField({ label, value, onChange, error, optional }) {
 
 function ProdiTextStep({ config, value, onChange, error, locale }) {
   const label = config.label[locale] || config.label.en;
+  const selectedValues = toList(value);
+  const handleOptionClick = (optionValue) => {
+    if (config.optionMode === 'append') {
+      const next = selectedValues.includes(optionValue) ? selectedValues.filter((item) => item !== optionValue) : [...selectedValues, optionValue];
+      onChange(config.key, next.join(', '));
+      return;
+    }
+    onChange(config.key, value === optionValue ? '' : optionValue);
+  };
+
   return (
     <motion.div key={config.key} {...stepMotion} className="space-y-4">
       <div className="editorial-shell rounded-[22px] border p-4">
-        <label className="flex flex-col gap-2">
+        <div className="flex flex-col gap-3">
           <span className="text-sm text-textSecondary">
             {label}
             {!config.required ? <span className="ml-1 text-textSubtle">({locale === 'id' ? 'opsional' : 'optional'})</span> : null}
           </span>
           <span className="text-xs leading-5 text-textSubtle">{config.helper[locale] || config.helper.en}</span>
+          {config.options?.length ? (
+            <div className="flex flex-wrap gap-2">
+              {config.options.map((option) => {
+                const active = config.optionMode === 'append' ? selectedValues.includes(option.value) : value === option.value;
+                return (
+                  <motion.button
+                    key={option.value}
+                    type="button"
+                    aria-pressed={active}
+                    onClick={() => handleOptionClick(option.value)}
+                    className={`editorial-chip apti-interactive-lift rounded-full px-3 py-1 text-xs transition ${active ? 'apti-choice-active border-accent/30 bg-accent/10 text-accent' : 'apti-choice-idle hover:border-accent/40 hover:text-textPrimary'}`}
+                    {...chipHover}
+                    {...buttonTap}
+                  >
+                    {option.label[locale] || option.label.en}
+                  </motion.button>
+                );
+              })}
+            </div>
+          ) : null}
           <textarea
+            aria-label={label}
             value={value}
             onChange={(event) => onChange(config.key, event.target.value)}
-            className={`glass-input min-h-28 rounded-xl px-3 py-2 text-sm text-textPrimary outline-none ${error ? 'border-danger' : 'focus:border-accent'}`}
+            className={`glass-input min-h-24 rounded-xl px-3 py-2 text-sm text-textPrimary outline-none ${error ? 'border-danger' : 'focus:border-accent'}`}
             placeholder={config.placeholder[locale] || config.placeholder.en}
           />
-        </label>
+        </div>
         {error ? <span className="mt-2 block text-xs text-danger">{error}</span> : null}
       </div>
     </motion.div>

@@ -130,15 +130,73 @@ export const religionRelatedMajorPreferences = [
   { value: 'Prefer religion-related majors', label: { en: 'Prefer religion-related majors', id: 'Prioritaskan jurusan terkait agama' } }
 ];
 
+const prodiOptionSets = {
+  academic_context: [
+    { value: 'STEM-heavy classes', label: { en: 'STEM-heavy classes', id: 'Kelas dominan STEM' } },
+    { value: 'Strong language and humanities', label: { en: 'Language and humanities', id: 'Bahasa dan humaniora' } },
+    { value: 'Business and organization activities', label: { en: 'Business and organization', id: 'Bisnis dan organisasi' } },
+    { value: 'Health and biology exposure', label: { en: 'Health and biology', id: 'Kesehatan dan biologi' } }
+  ],
+  subject_preferences: [
+    { value: 'Computer Science', label: { en: 'Computer Science', id: 'Informatika' } },
+    { value: 'Mathematics', label: { en: 'Mathematics', id: 'Matematika' } },
+    { value: 'Biology', label: { en: 'Biology', id: 'Biologi' } },
+    { value: 'Economics', label: { en: 'Economics', id: 'Ekonomi' } },
+    { value: 'Communication', label: { en: 'Communication', id: 'Komunikasi' } },
+    { value: 'Design', label: { en: 'Design', id: 'Desain' } }
+  ],
+  interest_deep_dive: [
+    { value: 'Software engineering', label: { en: 'Software engineering', id: 'Rekayasa perangkat lunak' } },
+    { value: 'Data and AI products', label: { en: 'Data and AI products', id: 'Produk data dan AI' } },
+    { value: 'Human behavior research', label: { en: 'Human behavior research', id: 'Riset perilaku manusia' } },
+    { value: 'Creative visual work', label: { en: 'Creative visual work', id: 'Karya visual kreatif' } },
+    { value: 'Healthcare impact', label: { en: 'Healthcare impact', id: 'Dampak kesehatan' } }
+  ],
+  career_direction: [
+    { value: 'Technology builder', label: { en: 'Technology builder', id: 'Pembuat teknologi' } },
+    { value: 'Analyst or researcher', label: { en: 'Analyst or researcher', id: 'Analis atau peneliti' } },
+    { value: 'Healthcare professional', label: { en: 'Healthcare professional', id: 'Profesional kesehatan' } },
+    { value: 'Business leader', label: { en: 'Business leader', id: 'Pemimpin bisnis' } },
+    { value: 'Creative professional', label: { en: 'Creative professional', id: 'Profesional kreatif' } }
+  ],
+  constraints: [
+    { value: 'Prefer Jakarta only', label: { en: 'Jakarta only', id: 'Hanya Jakarta' } },
+    { value: 'Prefer affordable study path', label: { en: 'Affordable path', id: 'Jalur terjangkau' } },
+    { value: 'Avoid long clinical path', label: { en: 'Avoid long clinical path', id: 'Hindari klinis panjang' } },
+    { value: 'Need flexible career options', label: { en: 'Flexible career options', id: 'Karier fleksibel' } }
+  ],
+  expected_prodi: [
+    { value: 'Teknik Informatika', label: { en: 'Informatics Engineering', id: 'Teknik Informatika' } },
+    { value: 'Kecerdasan Artifisial', label: { en: 'Artificial Intelligence', id: 'Kecerdasan Artifisial' } },
+    { value: 'Psikologi', label: { en: 'Psychology', id: 'Psikologi' } },
+    { value: 'Kedokteran', label: { en: 'Medicine', id: 'Kedokteran' } },
+    { value: 'Manajemen', label: { en: 'Management', id: 'Manajemen' } },
+    { value: 'Desain Komunikasi Visual', label: { en: 'Visual Communication Design', id: 'Desain Komunikasi Visual' } }
+  ],
+  prodi_to_avoid: [
+    { value: 'Kedokteran', label: { en: 'Medicine', id: 'Kedokteran' } },
+    { value: 'Akuntansi', label: { en: 'Accounting', id: 'Akuntansi' } },
+    { value: 'Hukum', label: { en: 'Law', id: 'Hukum' } },
+    { value: 'Teknik Sipil', label: { en: 'Civil Engineering', id: 'Teknik Sipil' } },
+    { value: 'Pendidikan Bahasa Inggris', label: { en: 'English Education', id: 'Pendidikan Bahasa Inggris' } }
+  ],
+  free_text_goal: [
+    { value: 'Build AI products', label: { en: 'Build AI products', id: 'Membangun produk AI' } },
+    { value: 'Create stable career options', label: { en: 'Stable career options', id: 'Karier stabil' } },
+    { value: 'Solve social problems', label: { en: 'Solve social problems', id: 'Memecahkan masalah sosial' } },
+    { value: 'Keep creative work in daily role', label: { en: 'Creative daily work', id: 'Pekerjaan harian kreatif' } }
+  ]
+};
+
 export const prodiIntakeSteps = [
-  { key: 'academic_context', required: true, label: { en: 'Academic context', id: 'Konteks akademik' }, helper: { en: 'Describe classes, projects, or academic signals that should shape your program recommendation.', id: 'Ceritakan kelas, proyek, atau sinyal akademik yang perlu memengaruhi rekomendasi prodi.' }, placeholder: { en: 'Example: strong STEM classes, coding club, biology olympiad...', id: 'Contoh: kuat di STEM, klub coding, olimpiade biologi...' } },
-  { key: 'subject_preferences', required: true, label: { en: 'Subject preferences', id: 'Preferensi mapel' }, helper: { en: 'Which subjects do you want more or less of in college?', id: 'Mapel apa yang ingin lebih banyak atau lebih sedikit kamu temui saat kuliah?' }, placeholder: { en: 'Example: more computing and math, less memorization...', id: 'Contoh: lebih banyak komputasi dan matematika, minim hafalan...' } },
-  { key: 'interest_deep_dive', required: true, label: { en: 'Interest deep dive', id: 'Pendalaman minat' }, helper: { en: 'Add specifics behind your selected interests.', id: 'Tambahkan detail dari minat yang kamu pilih.' }, placeholder: { en: 'Example: AI products, UX research, public health...', id: 'Contoh: produk AI, riset UX, kesehatan masyarakat...' } },
-  { key: 'career_direction', required: true, label: { en: 'Career direction', id: 'Arah karier' }, helper: { en: 'Share career roles, work settings, or impact areas you are considering.', id: 'Tuliskan peran, lingkungan kerja, atau dampak karier yang kamu pertimbangkan.' }, placeholder: { en: 'Example: software engineer, analyst, doctor, entrepreneur...', id: 'Contoh: software engineer, analis, dokter, wirausaha...' } },
-  { key: 'constraints', required: true, label: { en: 'Constraints', id: 'Batasan' }, helper: { en: 'Mention location, cost, family, duration, or study-style constraints.', id: 'Sebutkan batasan lokasi, biaya, keluarga, durasi, atau gaya belajar.' }, placeholder: { en: 'Example: prefer Jakarta, avoid long clinical path...', id: 'Contoh: prefer Jakarta, hindari jalur klinis panjang...' } },
-  { key: 'expected_prodi', required: false, label: { en: 'Expected prodi', id: 'Prodi yang diharapkan' }, helper: { en: 'Optional. Add programs you already expect or want to compare.', id: 'Opsional. Tambahkan prodi yang sudah kamu harapkan atau ingin bandingkan.' }, placeholder: { en: 'Example: Informatics, Psychology...', id: 'Contoh: Informatika, Psikologi...' } },
-  { key: 'prodi_to_avoid', required: false, label: { en: 'Prodi to avoid', id: 'Prodi yang dihindari' }, helper: { en: 'Optional. Add programs Apti should avoid unless strongly justified.', id: 'Opsional. Tambahkan prodi yang sebaiknya dihindari kecuali sangat kuat alasannya.' }, placeholder: { en: 'Example: Medicine, Accounting...', id: 'Contoh: Kedokteran, Akuntansi...' } },
-  { key: 'free_text_goal', required: false, label: { en: 'Free-text goal', id: 'Tujuan bebas' }, helper: { en: 'Optional. Add any final context in your own words.', id: 'Opsional. Tambahkan konteks akhir dengan kata-katamu sendiri.' }, placeholder: { en: 'Example: I want a stable career but still creative...', id: 'Contoh: ingin karier stabil tapi tetap kreatif...' } }
+  { key: 'academic_context', required: true, optionMode: 'replace', options: prodiOptionSets.academic_context, label: { en: 'Academic context', id: 'Konteks akademik' }, helper: { en: 'Choose the closest academic signal, then add detail if needed.', id: 'Pilih sinyal akademik yang paling sesuai, lalu tambah detail jika perlu.' }, placeholder: { en: 'Optional detail after choosing an option...', id: 'Detail opsional setelah memilih opsi...' } },
+  { key: 'subject_preferences', required: true, optionMode: 'append', options: prodiOptionSets.subject_preferences, label: { en: 'Subject preferences', id: 'Preferensi mapel' }, helper: { en: 'Pick subjects you want more or less of in college.', id: 'Pilih mapel yang ingin lebih banyak atau lebih sedikit ditemui saat kuliah.' }, placeholder: { en: 'Optional detail or extra subject...', id: 'Detail opsional atau mapel tambahan...' } },
+  { key: 'interest_deep_dive', required: true, optionMode: 'replace', options: prodiOptionSets.interest_deep_dive, label: { en: 'Interest deep dive', id: 'Pendalaman minat' }, helper: { en: 'Pick the closest interest detail.', id: 'Pilih detail minat yang paling sesuai.' }, placeholder: { en: 'Optional interest detail...', id: 'Detail minat opsional...' } },
+  { key: 'career_direction', required: true, optionMode: 'replace', options: prodiOptionSets.career_direction, label: { en: 'Career direction', id: 'Arah karier' }, helper: { en: 'Pick the career direction you are considering.', id: 'Pilih arah karier yang kamu pertimbangkan.' }, placeholder: { en: 'Optional career detail...', id: 'Detail karier opsional...' } },
+  { key: 'constraints', required: true, optionMode: 'replace', options: prodiOptionSets.constraints, label: { en: 'Constraints', id: 'Batasan' }, helper: { en: 'Pick the main constraint Apti should consider.', id: 'Pilih batasan utama yang perlu dipertimbangkan Apti.' }, placeholder: { en: 'Optional constraint detail...', id: 'Detail batasan opsional...' } },
+  { key: 'expected_prodi', required: false, optionMode: 'replace', options: prodiOptionSets.expected_prodi, label: { en: 'Expected prodi', id: 'Prodi yang diharapkan' }, helper: { en: 'Optional. Pick one program you already expect or want to compare.', id: 'Opsional. Pilih satu prodi yang sudah kamu harapkan atau ingin bandingkan.' }, placeholder: { en: 'Optional custom program...', id: 'Prodi lain opsional...' } },
+  { key: 'prodi_to_avoid', required: false, optionMode: 'append', options: prodiOptionSets.prodi_to_avoid, label: { en: 'Prodi to avoid', id: 'Prodi yang dihindari' }, helper: { en: 'Optional. Pick programs Apti should avoid unless strongly justified.', id: 'Opsional. Pilih prodi yang sebaiknya dihindari kecuali sangat kuat alasannya.' }, placeholder: { en: 'Optional custom avoided program...', id: 'Prodi lain yang dihindari...' } },
+  { key: 'free_text_goal', required: false, optionMode: 'replace', options: prodiOptionSets.free_text_goal, label: { en: 'Free-text goal', id: 'Tujuan bebas' }, helper: { en: 'Optional. Pick the closest goal, then edit freely if needed.', id: 'Opsional. Pilih tujuan terdekat, lalu ubah bebas jika perlu.' }, placeholder: { en: 'Optional final context...', id: 'Konteks akhir opsional...' } }
 ];
 
 export function buildInitialScores(trackKey) {

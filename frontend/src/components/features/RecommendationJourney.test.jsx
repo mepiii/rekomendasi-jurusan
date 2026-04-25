@@ -44,24 +44,22 @@ describe('RecommendationJourney prodi intake', () => {
     ['Numbers', 'Technical', 'Independent'].forEach((name) => fireEvent.click(screen.getByRole('button', { name })));
 
     fireEvent.click(screen.getByRole('button', { name: /continue/i }));
-    for (const value of ['STEM-heavy classes', 'Computer Science', 'Software engineering', 'Jakarta only', 'Informatics Engineering', 'Medicine', 'Build AI products']) {
+    for (const name of ['STEM-heavy classes', 'Computer Science', 'Software engineering', 'Technology builder', 'Jakarta only', 'Artificial Intelligence', 'Medicine', 'Build AI products']) {
       await waitFor(() => expect(screen.getByRole('textbox')).toBeTruthy());
-      fireEvent.change(screen.getByRole('textbox'), { target: { value } });
+      fireEvent.click(screen.getByRole('button', { name }));
       fireEvent.click(screen.getByRole('button', { name: /continue/i }));
     }
-    await waitFor(() => expect(screen.getByRole('textbox')).toBeTruthy());
-    fireEvent.click(screen.getByRole('button', { name: /continue/i }));
     fireEvent.click(screen.getByRole('button', { name: /analyze/i }));
 
     expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({
       academic_context: { note: 'STEM-heavy classes' },
       subject_preferences: { preferred: ['Computer Science'] },
       interest_deep_dive: { note: 'Software engineering' },
-      career_direction: { note: 'Jakarta only' },
-      constraints: { note: 'Informatics Engineering' },
-      expected_prodi: 'Medicine',
-      prodi_to_avoid: ['Build AI products'],
-      free_text_goal: null,
+      career_direction: { note: 'Technology builder' },
+      constraints: { note: 'Prefer Jakarta only' },
+      expected_prodi: 'Kecerdasan Artifisial',
+      prodi_to_avoid: ['Kedokteran'],
+      free_text_goal: 'Build AI products',
       language: 'en'
     }));
   });

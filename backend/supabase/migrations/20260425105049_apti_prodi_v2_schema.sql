@@ -157,3 +157,11 @@ create index if not exists idx_user_feedback_created_at on user_feedback(created
 create index if not exists idx_user_feedback_rating on user_feedback(rating);
 create index if not exists idx_prediction_explanations_session_id on prediction_explanations(session_id);
 create index if not exists idx_prediction_explanations_created_at on prediction_explanations(created_at);
+
+alter table sma_tracks enable row level security;
+alter table majors enable row level security;
+alter table interests enable row level security;
+alter table prediction_log enable row level security;
+alter table prediction_metrics enable row level security;
+alter table user_feedback enable row level security;
+alter table prediction_explanations enable row level security;

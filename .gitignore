@@ -36,6 +36,8 @@ backend/ml/data/*
 .claude/
 .tldr/
 .tldrignore
+frontend/test-results/
+frontend/playwright-report/
 
 1_mvp.md
 2_prd.md
