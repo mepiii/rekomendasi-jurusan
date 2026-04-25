@@ -61,7 +61,18 @@ const localizeText = (text, locale) => {
       .replace('points.', 'poin.');
 };
 
-const localizeList = (items, locale) => (items || []).map((item) => localizeText(item, locale));
+const flattenListItem = (item) => {
+  if (item === null || item === undefined || item === '') return [];
+  if (Array.isArray(item)) return item.flatMap(flattenListItem);
+  if (typeof item === 'object') {
+    if (Array.isArray(item.subjects)) return item.subjects.flatMap(flattenListItem);
+    if (item.raw || item.key) return [item.raw || item.key];
+    return Object.values(item).flatMap(flattenListItem);
+  }
+  return [String(item)];
+};
+
+const localizeList = (items, locale) => flattenListItem(items).map((item) => localizeText(item, locale));
 
 function useAnimatedNumber(target, duration = 0.9) {
   const [value, setValue] = useState(0);
