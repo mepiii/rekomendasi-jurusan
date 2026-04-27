@@ -736,7 +736,7 @@ class MLService:
     @staticmethod
     def _score_value(scores: dict[str, float | None], subject: str) -> float | None:
         aliases = {
-            "mathematics": ["math", "general_math", "basic_math"],
+            "mathematics": ["math", "general_math", "basic_math", "advanced_math"],
             "mathematics_advanced": ["advanced_math"],
             "bahasa_indonesia": ["indonesian"],
             "bahasa_indonesia_advanced": ["indonesian_literature"],
@@ -760,21 +760,88 @@ class MLService:
         weight_total = sum(float(weight) for subject, weight in academic_weights.items() if self._score_value(req.scores, subject) is not None)
         academic = int(round(sum(scored_subjects) / weight_total)) if weight_total else 55
 
-        interest_values = " ".join([*req.interests, *[str(item) for value in req.interest_deep_dive.values() for item in (value if isinstance(value, list) else [value])]]).lower()
+        free_text_values = [
+            str(value)
+            for source in [req.academic_context, req.subject_preferences, req.interest_deep_dive, req.career_direction, req.constraints]
+            for value in source.values()
+            for value in (value if isinstance(value, list) else [value])
+        ]
+        interest_values = " ".join([*req.interests, *free_text_values, req.expected_prodi or "", req.free_text_goal or ""]).lower()
         interest_aliases = {
             "technology": "technology_digital",
+            "teknologi": "technology_digital",
+            "computer": "technology_digital",
+            "komputer": "technology_digital",
+            "informatics": "technology_digital",
+            "informatika": "technology_digital",
             "data / ai": "tech_ai_data",
             "ai / data": "tech_ai_data",
+            "artificial intelligence": "tech_ai_data",
+            "kecerdasan artifisial": "tech_ai_data",
+            "sains data": "tech_ai_data",
+            "data science": "tech_ai_data",
             "programming": "tech_software",
+            "software": "tech_software",
+            "perangkat lunak": "tech_software",
+            "cybersecurity": "tech_software",
+            "keamanan siber": "tech_software",
             "engineering": "engineering",
+            "teknik": "engineering",
+            "robotics": "engineering",
+            "robotika": "engineering",
+            "sipil": "engineering",
             "health": "health_life_science",
+            "kesehatan": "health_life_science",
+            "medicine": "health_life_science",
+            "kedokteran": "health_life_science",
+            "pharmacy": "health_life_science",
+            "farmasi": "health_life_science",
+            "biology": "health_life_science",
+            "biologi": "health_life_science",
             "business": "business_management",
+            "bisnis": "business_management",
+            "management": "business_management",
+            "manajemen": "business_management",
+            "accounting": "business_management",
+            "akuntansi": "business_management",
+            "finance": "business_management",
+            "keuangan": "business_management",
             "law": "social_law",
+            "hukum": "social_law",
+            "policy": "social_law",
+            "kebijakan": "social_law",
             "psychology": "social_psychology",
+            "psikologi": "social_psychology",
+            "counseling": "social_psychology",
+            "konseling": "social_psychology",
+            "communication": "social_communication",
+            "komunikasi": "social_communication",
+            "media": "social_communication",
+            "public speaking": "social_communication",
             "design": "creative_design",
+            "desain": "creative_design",
+            "visual": "creative_design",
+            "creative": "creative_design",
+            "kreatif": "creative_design",
             "language": "language_culture",
+            "bahasa": "language_culture",
+            "literature": "language_culture",
+            "sastra": "language_culture",
+            "translation": "language_culture",
+            "penerjemahan": "language_culture",
             "education": "education_teaching",
+            "pendidikan": "education_teaching",
+            "teaching": "education_teaching",
+            "mengajar": "education_teaching",
+            "mentoring": "education_teaching",
             "tourism": "tourism_hospitality",
+            "pariwisata": "tourism_hospitality",
+            "environment": "environment_agriculture",
+            "lingkungan": "environment_agriculture",
+            "fieldwork": "environment_agriculture",
+            "lapangan": "environment_agriculture",
+            "agriculture": "environment_agriculture",
+            "pertanian": "environment_agriculture",
         }
         active_interest_keys = {mapped for label, mapped in interest_aliases.items() if label in interest_values}
         interest_weights = profile.get("interest_weights", {})
@@ -782,7 +849,7 @@ class MLService:
         interest = max(0, min(100, interest))
         model_score = max(model_score, 45 + int(sum(float(weight) * 18 for key, weight in interest_weights.items() if key in active_interest_keys)))
 
-        preference_values = " ".join(str(item) for value in {**req.preferences, **req.career_direction, **req.constraints}.values() for item in (value if isinstance(value, list) else [value])).lower()
+        preference_values = " ".join([*(str(item) for value in {**req.preferences, **req.career_direction, **req.constraints}.values() for item in (value if isinstance(value, list) else [value])), req.free_text_goal or "", req.expected_prodi or ""]).lower()
         preference = 60 + sum(8 for key in profile.get("preference_weights", {}) if key.replace("_", " ") in preference_values or key in preference_values)
         preference = max(0, min(100, preference))
 

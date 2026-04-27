@@ -406,6 +406,55 @@ def test_fallback_handles_empty_interests_and_preferences():
     assert result.recommendations[0].fit_summary
 
 
+def test_advanced_math_score_supports_catalog_mathematics_aliases():
+    service = __import__("app.services.ml_service", fromlist=["MLService"]).MLService()
+    scores = {"advanced_math": 92}
+
+    assert service._score_value(scores, "mathematics") == 92
+    assert service._score_value(scores, "mathematics_advanced") == 92
+
+
+def test_custom_free_text_changes_prodi_scoring_signal():
+    service = __import__("app.services.ml_service", fromlist=["MLService"]).MLService()
+    profile = {
+        "prodi_id": "TI_TEST",
+        "nama_prodi": "Teknik Informatika",
+        "kelompok_prodi": "Komputer dan Informatika",
+        "rumpun_ilmu": "Sains dan Teknologi",
+        "academic_weights": {"mathematics": 1},
+        "interest_weights": {"technology_digital": 1, "tech_software": 1},
+        "preference_weights": {"remote_friendly": 1},
+        "career_weights": {"technology_builder": 1},
+        "challenge_areas": ["Math consistency"],
+        "career_paths": ["Software Engineer"],
+        "skill_gaps": ["Algorithms"],
+        "supporting_subjects": {},
+    }
+    base = PredictRequest(
+        sma_track="IPA",
+        scores={"advanced_math": 90, "english": 80},
+        interests=[],
+        preferences={},
+        top_n=3,
+        language="en",
+    )
+    custom = base.model_copy(
+        update={
+            "subject_preferences": {"custom": "Saya suka informatika dan perangkat lunak"},
+            "career_direction": {"custom": "technology builder"},
+            "constraints": {"custom": "remote friendly"},
+            "free_text_goal": "Membangun produk software",
+        }
+    )
+
+    base_item = service._score_prodi_profile(base, profile)
+    custom_item = service._score_prodi_profile(custom, profile)
+
+    assert custom_item.score_breakdown["interest_fit_score"] > base_item.score_breakdown["interest_fit_score"]
+    assert custom_item.score_breakdown["preference_fit_score"] > base_item.score_breakdown["preference_fit_score"]
+    assert custom_item.suitability_score > base_item.suitability_score
+
+
 def test_load_missing_artifacts_does_not_raise(monkeypatch):
     service = __import__("app.services.ml_service", fromlist=["MLService"]).MLService()
 

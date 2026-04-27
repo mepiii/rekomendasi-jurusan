@@ -37,7 +37,7 @@ describe('RecommendationJourney prodi intake', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /continue/i }));
     await waitFor(() => expect(screen.getByLabelText(/Pendidikan Agama/i)).toBeTruthy());
-    ['Pendidikan Agama', 'PPKn', 'Bahasa Indonesia', 'Bahasa Inggris', 'Matematika Umum', 'PJOK', 'Seni', 'Biologi', 'Fisika', 'Kimia', 'Matematika Peminatan'].forEach((label) => {
+    ['Pendidikan Agama', 'PPKn', 'Bahasa Indonesia', 'Bahasa Inggris', 'Matematika Umum', 'PJOK', 'Seni', 'Biologi', 'Fisika', 'Kimia', 'Matematika Lanjut'].forEach((label) => {
       fireEvent.change(screen.getByLabelText(new RegExp(label, 'i')), { target: { value: '88' } });
     });
     ['Technology', 'Engineering', 'Data / AI'].forEach((name) => fireEvent.click(screen.getByRole('button', { name })));
