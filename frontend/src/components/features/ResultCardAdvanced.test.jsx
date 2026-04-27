@@ -58,6 +58,8 @@ describe('ResultCardAdvanced', () => {
           career_paths: ['AI Engineer'],
           alternative_majors: ['Teknik Informatika'],
           supporting_subjects: {
+            tier: 'competitive',
+            threshold_gaps: [{ subject: 'advanced_math', score: 72, min_score: 80, gap: -8 }],
             k13_ipa: {
               raw: 'Matematika dari kelompok peminatan MIPA',
               subjects: [{ raw: 'Matematika dari kelompok peminatan MIPA', key: 'mathematics' }]
@@ -80,5 +82,7 @@ describe('ResultCardAdvanced', () => {
 
     expect(screen.getByText('Kecerdasan Artifisial')).toBeTruthy();
     expect(screen.getAllByText('Matematika Tingkat Lanjut').length).toBeGreaterThan(0);
+    expect(screen.getByText('Score benchmark')).toBeTruthy();
+    expect(screen.getAllByText(/competitive/).length).toBeGreaterThan(0);
   });
 });

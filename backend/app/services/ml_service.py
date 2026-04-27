@@ -14,7 +14,7 @@ import numpy as np
 import pandas as pd
 
 from app.recommendation_config import MAJOR_CLUSTER_MAP as CONFIG_MAJOR_CLUSTER_MAP, MAJOR_CLUSTERS, MAJOR_METADATA, RELIGION_RELATED_MAJORS
-from app.schemas import PredictRequest, ProfileSummary, RecommendationItem
+from app.schemas import DerivedAggregates, PredictRequest, ProfileSummary, RecommendationItem
 from app.services.prodi_catalog_service import prodi_catalog_service
 from app.services.prodi_profile_service import prodi_profile_service
 
@@ -194,6 +194,46 @@ class MLService:
                 if column:
                     features[column] = 1
         return features
+
+    @staticmethod
+    def _semester_slope(points: list[tuple[int, float]]) -> float:
+        if len(points) < 2:
+            return 0.0
+        xs = [point[0] for point in points]
+        ys = [point[1] for point in points]
+        x_mean = sum(xs) / len(xs)
+        y_mean = sum(ys) / len(ys)
+        denominator = sum((x - x_mean) ** 2 for x in xs)
+        if denominator == 0:
+            return 0.0
+        slope = sum((x - x_mean) * (y - y_mean) for x, y in points) / denominator
+        return round(max(-1.0, min(1.0, slope / 10)), 3)
+
+    def _rapor_aggregates(self, req: PredictRequest) -> DerivedAggregates:
+        if not req.rapor:
+            scores = {key: float(value) for key, value in req.scores.items() if value is not None}
+            avg = round(sum(scores.values()) / len(scores), 2) if scores else 0.0
+            return DerivedAggregates(subject_avg=scores, subject_trend={key: 0.0 for key in scores}, kelas_12_avg=avg, overall_gpa=avg)
+
+        grouped: dict[str, list[tuple[int, float]]] = {}
+        kelas_values = {10: [], 11: [], 12: []}
+        for kelas, items in [(10, req.rapor.kelas_10), (11, req.rapor.kelas_11), (12, req.rapor.kelas_12)]:
+            for item in items:
+                if item.score is not None:
+                    score = float(item.score)
+                    grouped.setdefault(item.subject, []).append((item.semester, score))
+                    kelas_values[kelas].append(score)
+        subject_avg = {subject: round(sum(score for _, score in values) / len(values), 2) for subject, values in grouped.items()}
+        subject_trend = {subject: self._semester_slope(values) for subject, values in grouped.items()}
+        kelas_avg = {kelas: (sum(values) / len(values) if values else None) for kelas, values in kelas_values.items()}
+        available_weight = sum(weight for kelas, weight in {10: 0.2, 11: 0.3, 12: 0.5}.items() if kelas_avg[kelas] is not None)
+        overall_gpa = sum(float(kelas_avg[kelas]) * weight for kelas, weight in {10: 0.2, 11: 0.3, 12: 0.5}.items() if kelas_avg[kelas] is not None) / available_weight if available_weight else 0.0
+        return DerivedAggregates(
+            subject_avg=subject_avg,
+            subject_trend=subject_trend,
+            kelas_12_avg=round(float(kelas_avg[12] or overall_gpa), 2),
+            overall_gpa=round(overall_gpa, 2),
+        )
 
     @staticmethod
     def _subject_groups(scores: dict[str, float]) -> dict[str, float]:
@@ -735,6 +775,11 @@ class MLService:
 
     @staticmethod
     def _score_value(scores: dict[str, float | None], subject: str) -> float | None:
+        values = [float(scores[key]) for key in MLService._subject_key_candidates(subject) if scores.get(key) is not None]
+        return max(values) if values else None
+
+    @staticmethod
+    def _subject_key_candidates(subject: str) -> list[str]:
         aliases = {
             "mathematics": ["math", "general_math", "basic_math", "advanced_math"],
             "mathematics_advanced": ["advanced_math"],
@@ -745,20 +790,39 @@ class MLService:
             "religion_ethics": ["religion"],
             "pe": ["pjok"],
         }
-        for key in [subject, *aliases.get(subject, [])]:
-            if scores.get(key) is not None:
-                return float(scores[key])
-        return None
+        return [subject, *aliases.get(subject, [])]
 
     def _score_prodi_profile(self, req: PredictRequest, profile: dict[str, Any], model_score: int = 55) -> RecommendationItem:
+        aggregates = self._rapor_aggregates(req)
+        academic_requirements = prodi_profile_service.academic_requirements(profile["prodi_id"])
         academic_weights = profile.get("academic_weights", {})
-        scored_subjects = [
-            score * float(weight)
-            for subject, weight in academic_weights.items()
-            if (score := self._score_value(req.scores, subject)) is not None
-        ]
-        weight_total = sum(float(weight) for subject, weight in academic_weights.items() if self._score_value(req.scores, subject) is not None)
-        academic = int(round(sum(scored_subjects) / weight_total)) if weight_total else 55
+        requirement_items = [(group, subject, values) for group, subjects in academic_requirements.items() for subject, values in subjects.items()]
+        scored_subjects = []
+        score_gaps = []
+        unmet_primary = []
+        for group, subject, values in requirement_items:
+            score = self._score_value(req.scores, subject)
+            if score is None:
+                continue
+            weight = float(values.get("weight", academic_weights.get(subject, 0.3)))
+            benchmark = float(values.get("benchmark", 75))
+            scored_subjects.append((min(100, score / benchmark * 100), weight))
+            if min_score := values.get("min_score"):
+                gap = round(float(score) - float(min_score), 2)
+                score_gaps.append({"subject": subject, "score": round(float(score), 2), "min_score": float(min_score), "gap": gap})
+                if group == "primary" and gap < 0:
+                    unmet_primary.append(subject)
+        weight_total = sum(weight for _, weight in scored_subjects)
+        academic = int(round(sum(score * weight for score, weight in scored_subjects) / weight_total)) if weight_total else 55
+        tier = prodi_profile_service.tier(profile["prodi_id"])
+        eligibility_penalty = 12 if tier == "competitive" and unmet_primary else 0
+        trend_subjects = prodi_profile_service.trend_bonus_subjects(profile["prodi_id"]) or [subject for _, subject, _ in requirement_items[:3]]
+        trends = [next((aggregates.subject_trend[key] for key in self._subject_key_candidates(subject) if key in aggregates.subject_trend), 0.0) for subject in trend_subjects]
+        trend = int(round(50 + (sum(trends) / len(trends) * 50 if trends else 0)))
+        trend = max(0, min(100, trend))
+        min_gpa = prodi_profile_service.min_gpa(profile["prodi_id"])
+        gpa = int(round(min(100, aggregates.overall_gpa / min_gpa * 100))) if min_gpa else int(aggregates.overall_gpa)
+        gpa = max(0, min(100, gpa))
 
         free_text_values = [
             str(value)
@@ -856,12 +920,13 @@ class MLService:
         career = 60 + sum(6 for key in profile.get("career_weights", {}) if key.replace("_", " ") in preference_values or key in preference_values)
         career = max(0, min(100, career))
         optional = int(self._optional_subject_features(req.scores)["optional_subject_boost"])
-        supporting = academic
         breakdown = {
             "model_score": model_score,
             "model_group_score": model_score,
             "academic_fit_score": academic,
-            "supporting_subject_fit_score": supporting,
+            "threshold_fit_score": max(0, 100 - eligibility_penalty * 5),
+            "trend_fit_score": trend,
+            "gpa_fit_score": gpa,
             "interest_fit_score": interest,
             "interest_depth_fit_score": interest,
             "preference_fit_score": preference,
@@ -870,12 +935,14 @@ class MLService:
         }
         expected_bonus = 3 if req.expected_prodi and req.expected_prodi.lower() in profile["nama_prodi"].lower() else 0
         religion_bonus = 18 if self._religion_preference(req) == "Islamic studies / education" and profile["nama_prodi"] in {"Pendidikan Agama Islam", "Hukum Islam", "Ekonomi Syariah"} else 0
-        suitability = max(0, min(100, int(round(model_score * 0.25 + academic * 0.20 + supporting * 0.15 + interest * 0.20 + preference * 0.10 + career * 0.05 + optional * 0.05 + expected_bonus + religion_bonus))))
+        suitability = max(0, min(100, int(round(model_score * 0.15 + academic * 0.35 + trend * 0.10 + interest * 0.25 + career * 0.15 + preference * 0.10 + gpa * 0.05 + optional * 0.03 + expected_bonus + religion_bonus - eligibility_penalty))))
         alternatives = prodi_profile_service.alternatives(profile["prodi_id"])
         why_specific = [
             f"{profile['nama_prodi']} berada dalam kelompok {profile['kelompok_prodi']} dengan mapel pendukung yang cocok untuk dibandingkan.",
-            f"Kecocokan akademik dihitung dari {len(academic_weights)} mapel pendukung yang tersedia.",
+            f"Kecocokan akademik dihitung dari {len(academic_requirements.get('primary', {}))} mapel primer dan {len(academic_requirements.get('supporting', {}))} mapel pendukung.",
         ]
+        if unmet_primary:
+            why_specific.append(f"Perlu penguatan pada mapel primer: {', '.join(unmet_primary[:3])}.")
         legacy_major = "Islamic Education" if profile["nama_prodi"] == "Pendidikan Agama Islam" else profile["nama_prodi"]
         if legacy_major == "Islamic Education":
             why_specific.append("This appears because you stated preference for Islamic studies / education; Apti does not infer personal beliefs.")
@@ -902,7 +969,7 @@ class MLService:
             alias=profile.get("alias", []),
             kelompok_prodi=profile["kelompok_prodi"],
             rumpun_ilmu=profile["rumpun_ilmu"],
-            supporting_subjects=profile.get("supporting_subjects", {}),
+            supporting_subjects={**profile.get("supporting_subjects", {}), "threshold_gaps": score_gaps, "tier": tier},
             why_specific=why_specific,
             skill_gaps=profile.get("skill_gaps", []),
             llm_review=None,

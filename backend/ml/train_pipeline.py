@@ -7,6 +7,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 from pathlib import Path
 from typing import Dict, Tuple
 
@@ -46,6 +47,10 @@ INTEREST_COLUMNS = [
 ]
 
 CATEGORICAL_COLUMNS = ["sma_track"]
+PERSONA_COLUMNS = ["persona"]
+SEMESTER_COLUMNS = [f"s{semester}_{subject}" for semester in range(1, 7) for subject in NUMERIC_COLUMNS]
+TREND_COLUMNS = [f"{subject}_trend" for subject in NUMERIC_COLUMNS]
+RAPOR_DERIVED_COLUMNS = ["kelas_10_avg", "kelas_11_avg", "kelas_12_avg", "overall_gpa"]
 
 DERIVED_COLUMNS = [
     "avg_sains",
@@ -82,18 +87,27 @@ def top_k_accuracy(pipeline: Pipeline, x_test: pd.DataFrame, y_test: np.ndarray,
     return float(np.mean(hits))
 
 
-def build_preprocessor() -> ColumnTransformer:
-    numeric_all = NUMERIC_COLUMNS + INTEREST_COLUMNS + DERIVED_COLUMNS
+def feature_columns_for(df: pd.DataFrame) -> list[str]:
+    numeric_candidates = NUMERIC_COLUMNS + INTEREST_COLUMNS + DERIVED_COLUMNS + SEMESTER_COLUMNS + TREND_COLUMNS + RAPOR_DERIVED_COLUMNS
+    categorical_candidates = CATEGORICAL_COLUMNS + PERSONA_COLUMNS
+    return [column for column in numeric_candidates + categorical_candidates if column in df.columns]
+
+
+def build_preprocessor(df: pd.DataFrame | None = None) -> ColumnTransformer:
+    numeric_candidates = NUMERIC_COLUMNS + INTEREST_COLUMNS + DERIVED_COLUMNS + SEMESTER_COLUMNS + TREND_COLUMNS + RAPOR_DERIVED_COLUMNS
+    categorical_candidates = CATEGORICAL_COLUMNS + PERSONA_COLUMNS
+    numeric_all = [column for column in numeric_candidates if df is None or column in df.columns]
+    categorical_all = [column for column in categorical_candidates if df is None or column in df.columns]
     return ColumnTransformer(
         transformers=[
             ("numeric", MinMaxScaler(), numeric_all),
-            ("categorical", OneHotEncoder(handle_unknown="ignore"), CATEGORICAL_COLUMNS),
+            ("categorical", OneHotEncoder(handle_unknown="ignore"), categorical_all),
         ]
     )
 
 
 def train_models(x_train: pd.DataFrame, y_train: np.ndarray) -> Dict[str, Pipeline]:
-    preprocessor = build_preprocessor()
+    preprocessor = build_preprocessor(x_train)
 
     models: Dict[str, Pipeline] = {
         "dummy_most_frequent": Pipeline(
@@ -156,8 +170,9 @@ def evaluate_models(models: Dict[str, Pipeline], x_test: pd.DataFrame, y_test: n
         accuracy = accuracy_score(y_test, prediction)
         macro_f1 = f1_score(y_test, prediction, average="macro")
         top3 = top_k_accuracy(model, x_test, y_test, k=3)
+        top5 = top_k_accuracy(model, x_test, y_test, k=5)
 
-        composite = (top3 * 0.55) + (macro_f1 * 0.30) + (accuracy * 0.15)
+        composite = (top5 * 0.40) + (top3 * 0.25) + (macro_f1 * 0.20) + (accuracy * 0.15)
 
         rows.append(
             {
@@ -165,6 +180,7 @@ def evaluate_models(models: Dict[str, Pipeline], x_test: pd.DataFrame, y_test: n
                 "accuracy": round(float(accuracy), 4),
                 "macro_f1": round(float(macro_f1), 4),
                 "top3_accuracy": round(float(top3), 4),
+                "top5_accuracy": round(float(top5), 4),
                 "composite": round(float(composite), 4),
             }
         )
@@ -183,6 +199,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--dataset", type=Path, default=base / "data" / "training_dataset.csv")
     parser.add_argument("--model-out", type=Path, default=base / "models" / "rf_v1.0.pkl")
     parser.add_argument("--encoder-out", type=Path, default=base / "models" / "label_encoder.pkl")
+    parser.add_argument("--metrics-out", type=Path, default=base / "data" / "metrics" / "training_metrics.json")
+    parser.add_argument("--report-only", action="store_true")
     parser.add_argument("--seed", type=int, default=42)
     return parser.parse_args()
 
@@ -192,10 +210,10 @@ def main() -> None:
     df = pd.read_csv(args.dataset)
     df = add_derived_features(df)
 
-    feature_columns = NUMERIC_COLUMNS + INTEREST_COLUMNS + CATEGORICAL_COLUMNS + DERIVED_COLUMNS
+    feature_columns = feature_columns_for(df)
 
     x = df[feature_columns]
-    y_raw = df["major"]
+    y_raw = df["kelompok_prodi"] if "kelompok_prodi" in df.columns else df["major"]
 
     encoder = LabelEncoder()
     y = encoder.fit_transform(y_raw)
@@ -212,16 +230,37 @@ def main() -> None:
     results, best_name = evaluate_models(models, x_test, y_test)
 
     best_model = models[best_name]
+    best_row = results.iloc[0].to_dict()
+    metrics = {
+        "version": "apti_training_metrics_v2",
+        "dataset": str(args.dataset),
+        "rows": int(len(df)),
+        "labels": int(y_raw.nunique()),
+        "feature_count": len(feature_columns),
+        "has_semester_features": any(column.startswith("s1_") for column in feature_columns),
+        "has_persona_feature": "persona" in feature_columns,
+        "selected_model": best_name,
+        "top1_accuracy": float(best_row["accuracy"]),
+        "top5_accuracy": float(best_row["top5_accuracy"]),
+        "macro_f1": float(best_row["macro_f1"]),
+        "production_swap_allowed": bool(best_row["accuracy"] >= 0.60 and best_row["top5_accuracy"] >= 0.90),
+        "models": results.to_dict(orient="records"),
+    }
 
-    args.model_out.parent.mkdir(parents=True, exist_ok=True)
-    joblib.dump(best_model, args.model_out)
-    joblib.dump(encoder, args.encoder_out)
+    args.metrics_out.parent.mkdir(parents=True, exist_ok=True)
+    args.metrics_out.write_text(json.dumps(metrics, indent=2) + "\n")
+    if not args.report_only:
+        args.model_out.parent.mkdir(parents=True, exist_ok=True)
+        joblib.dump(best_model, args.model_out)
+        joblib.dump(encoder, args.encoder_out)
 
     print("\nModel comparison")
     print(results.to_string(index=False))
     print(f"\nselected_model={best_name}")
-    print(f"model_out={args.model_out}")
-    print(f"encoder_out={args.encoder_out}")
+    print(f"metrics_out={args.metrics_out}")
+    if not args.report_only:
+        print(f"model_out={args.model_out}")
+        print(f"encoder_out={args.encoder_out}")
 
 
 if __name__ == "__main__":

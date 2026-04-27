@@ -5,6 +5,8 @@
 # Side effects: None.
 
 from fastapi.testclient import TestClient
+import json
+
 from pydantic import ValidationError
 
 from app.recommendation_config import (
@@ -14,7 +16,7 @@ from app.recommendation_config import (
     RELIGION_RELATED_MAJORS,
     VALID_RELIGION_RELATED_MAJOR_PREFERENCES,
 )
-from app.schemas import PredictRequest, PredictResponse, RecommendationItem
+from app.schemas import PredictRequest, PredictResponse, RecommendationItem, RaporInput, SemesterScore
 
 
 def feature_row_for(req):
@@ -71,6 +73,23 @@ def test_health_route_returns_p0_contract(monkeypatch):
     assert isinstance(data["supabase_configured"], bool)
     assert "timestamp" in data
     assert "supabase_service_key" not in data
+
+
+def test_model_health_route_exposes_evaluation_gate(monkeypatch):
+    from app.main import app
+    from app.services.ml_service import ml_service
+
+    monkeypatch.setattr(ml_service, "model", None)
+    monkeypatch.setattr(ml_service, "label_encoder", None)
+    response = TestClient(app).get("/api/v1/health/model")
+    data = response.json()
+
+    assert response.status_code == 200
+    assert data["app"] == "apti"
+    assert data["fallback_available"] is True
+    assert data["evaluation_gate"]["version"] == "apti_evaluation_gate_v1"
+    assert data["evaluation_gate"]["gates"]["production_swap_allowed"] is False
+
 
 
 def test_predict_route_returns_p0_contract_when_model_disabled(monkeypatch):
@@ -414,9 +433,44 @@ def test_advanced_math_score_supports_catalog_mathematics_aliases():
     assert service._score_value(scores, "mathematics_advanced") == 92
 
 
-def test_custom_free_text_changes_prodi_scoring_signal():
+def test_rapor_request_backfills_flat_scores_from_semester_averages():
+    req = PredictRequest(
+        sma_track="IPA",
+        rapor=RaporInput(
+            kelas_10=[SemesterScore(semester=1, subject="religion", score=80), SemesterScore(semester=2, subject="religion", score=90)],
+            kelas_11=[SemesterScore(semester=3, subject="physics", score=82), SemesterScore(semester=4, subject="physics", score=86)],
+            kelas_12=[SemesterScore(semester=5, subject="advanced_math", score=90), SemesterScore(semester=6, subject="advanced_math", score=94)],
+        ),
+        preferences={"religion_related_major_preference": "Not relevant"},
+    )
+
+    assert req.scores["religion"] == 85
+    assert req.scores["physics"] == 84
+    assert req.scores["advanced_math"] == 92
+
+
+def test_rapor_aggregates_calculate_gpa_and_subject_trends():
     service = __import__("app.services.ml_service", fromlist=["MLService"]).MLService()
-    profile = {
+    req = PredictRequest(
+        sma_track="IPA",
+        rapor=RaporInput(
+            kelas_10=[SemesterScore(semester=1, subject="general_math", score=70), SemesterScore(semester=2, subject="general_math", score=74)],
+            kelas_11=[SemesterScore(semester=3, subject="advanced_math", score=80), SemesterScore(semester=4, subject="advanced_math", score=84)],
+            kelas_12=[SemesterScore(semester=5, subject="advanced_math", score=88), SemesterScore(semester=6, subject="advanced_math", score=92)],
+        ),
+        preferences={"religion_related_major_preference": "Not relevant"},
+    )
+
+    aggregates = service._rapor_aggregates(req)
+
+    assert aggregates.subject_avg["advanced_math"] == 86
+    assert aggregates.subject_trend["advanced_math"] > 0
+    assert aggregates.kelas_12_avg == 90
+    assert aggregates.overall_gpa > 80
+
+
+def prodi_test_profile():
+    return {
         "prodi_id": "TI_TEST",
         "nama_prodi": "Teknik Informatika",
         "kelompok_prodi": "Komputer dan Informatika",
@@ -430,6 +484,13 @@ def test_custom_free_text_changes_prodi_scoring_signal():
         "skill_gaps": ["Algorithms"],
         "supporting_subjects": {},
     }
+
+
+def test_custom_free_text_changes_prodi_scoring_signal(monkeypatch):
+    service = __import__("app.services.ml_service", fromlist=["MLService"]).MLService()
+    profile = prodi_test_profile()
+    monkeypatch.setattr("app.services.ml_service.prodi_profile_service.academic_requirements", lambda _prodi_id: {"primary": {"mathematics": {"weight": 1, "min_score": 75, "benchmark": 85}}, "supporting": {}, "contextual": {}})
+    monkeypatch.setattr("app.services.ml_service.prodi_profile_service.tier", lambda _prodi_id: "moderate")
     base = PredictRequest(
         sma_track="IPA",
         scores={"advanced_math": 90, "english": 80},
@@ -453,6 +514,63 @@ def test_custom_free_text_changes_prodi_scoring_signal():
     assert custom_item.score_breakdown["interest_fit_score"] > base_item.score_breakdown["interest_fit_score"]
     assert custom_item.score_breakdown["preference_fit_score"] > base_item.score_breakdown["preference_fit_score"]
     assert custom_item.suitability_score > base_item.suitability_score
+
+
+def test_benchmark_defaults_cover_all_kelompok_profiles():
+    from app.services.prodi_profile_service import BENCHMARK_DEFAULTS_PATH, PROFILE_PATH, prodi_profile_service
+
+    defaults = json.loads(BENCHMARK_DEFAULTS_PATH.read_text())["kelompok_defaults"]
+    profiles = json.loads(PROFILE_PATH.read_text())["profiles"]
+    kelompok = {profile["kelompok_prodi"] for profile in profiles}
+
+    assert len(defaults) == 59
+    assert kelompok.issubset(defaults)
+    assert all(defaults[group]["academic_requirements"]["primary"] for group in kelompok)
+    sample = profiles[0]
+    assert prodi_profile_service.min_gpa(sample["prodi_id"]) >= 70
+    assert prodi_profile_service.trend_bonus_subjects(sample["prodi_id"])
+    assert prodi_profile_service.llm_context(sample["prodi_id"])["academic_requirements"]
+
+
+
+def test_phase2_thresholds_and_trend_affect_prodi_scoring(monkeypatch):
+    service = __import__("app.services.ml_service", fromlist=["MLService"]).MLService()
+    profile = prodi_test_profile()
+    monkeypatch.setattr("app.services.ml_service.prodi_profile_service.academic_requirements", lambda _prodi_id: {"primary": {"mathematics": {"weight": 1, "min_score": 80, "benchmark": 90}}, "supporting": {}, "contextual": {}})
+    monkeypatch.setattr("app.services.ml_service.prodi_profile_service.tier", lambda _prodi_id: "competitive")
+    monkeypatch.setattr("app.services.ml_service.prodi_profile_service.min_gpa", lambda _prodi_id: 90)
+    low = PredictRequest(sma_track="IPA", scores={"advanced_math": 70}, interests=["Technology"], preferences={"religion_related_major_preference": "Not relevant"})
+    rising = PredictRequest(
+        sma_track="IPA",
+        rapor=RaporInput(
+            kelas_10=[SemesterScore(semester=1, subject="general_math", score=72), SemesterScore(semester=2, subject="general_math", score=76)],
+            kelas_11=[SemesterScore(semester=3, subject="advanced_math", score=82), SemesterScore(semester=4, subject="advanced_math", score=86)],
+            kelas_12=[SemesterScore(semester=5, subject="advanced_math", score=90), SemesterScore(semester=6, subject="advanced_math", score=94)],
+        ),
+        interests=["Technology"],
+        preferences={"religion_related_major_preference": "Not relevant"},
+    )
+
+    low_item = service._score_prodi_profile(low, profile)
+    rising_item = service._score_prodi_profile(rising, profile)
+
+    assert low_item.score_breakdown["threshold_fit_score"] < rising_item.score_breakdown["threshold_fit_score"]
+    assert rising_item.score_breakdown["trend_fit_score"] > 50
+    assert rising_item.score_breakdown["gpa_fit_score"] > low_item.score_breakdown["gpa_fit_score"]
+    assert rising_item.suitability_score > low_item.suitability_score
+    assert low_item.supporting_subjects["threshold_gaps"][0]["gap"] < 0
+
+
+def test_evaluation_gate_blocks_production_swap_without_metrics():
+    from ml.evaluate import evaluate_readiness
+
+    report = evaluate_readiness()
+
+    assert report["version"] == "apti_evaluation_gate_v1"
+    assert report["thresholds"] == {"top1_accuracy": 0.6, "top5_accuracy": 0.9}
+    assert report["gates"]["production_swap_allowed"] is False
+    assert "fallback" in report["recommendation"].lower()
+
 
 
 def test_load_missing_artifacts_does_not_raise(monkeypatch):

@@ -5,7 +5,7 @@
 // Side effects: Emits normalized payload to parent submit handler.
 import { AnimatePresence, motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
-import { buildInitialScores, interestOptions, preferenceGroups, prodiIntakeSteps, religionRelatedMajorPreferences, trackConfig } from '../../lib/recommendationConfig';
+import { buildInitialRaporScores, buildRaporPayload, interestOptions, preferenceGroups, prodiIntakeSteps, religionRelatedMajorPreferences, subjectsForGrade, trackConfig } from '../../lib/recommendationConfig';
 
 const stepMotion = {
   initial: { opacity: 0, y: 26, scale: 0.985, filter: 'blur(10px)' },
@@ -56,6 +56,14 @@ const groupLabels = {
 
 const toList = (value) => value.split(',').map((item) => item.trim()).filter(Boolean);
 const toContext = (value) => ({ note: value.trim() });
+const slopeFor = (points) => {
+  if (points.length < 2) return 0;
+  const xMean = points.reduce((acc, [semester]) => acc + semester, 0) / points.length;
+  const yMean = points.reduce((acc, [, score]) => acc + score, 0) / points.length;
+  const denominator = points.reduce((acc, [semester]) => acc + ((semester - xMean) ** 2), 0);
+  if (!denominator) return 0;
+  return points.reduce((acc, [semester, score]) => acc + ((semester - xMean) * (score - yMean)), 0) / denominator;
+};
 
 function generateSessionId() {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
@@ -162,7 +170,7 @@ function ProdiTextStep({ config, value, onChange, error, locale }) {
 export default function RecommendationJourney({ onSubmit, loading, error, helperCopy, locale = 'en', copy }) {
   const [step, setStep] = useState(1);
   const [trackKey, setTrackKey] = useState('IPA');
-  const [scores, setScores] = useState(() => buildInitialScores('IPA'));
+  const [raporScores, setRaporScores] = useState(() => buildInitialRaporScores('IPA'));
   const [selectedElectives, setSelectedElectives] = useState([]);
   const [interests, setInterests] = useState([]);
   const [preferences, setPreferences] = useState({ orientation: '', approach: '', style: '' });
@@ -174,26 +182,22 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
   const track = trackConfig[trackKey];
   const localizedGroupLabels = groupLabels[locale] || groupLabels.en;
   const hasErrors = useMemo(() => Object.keys(errors).length > 0, [errors]);
-  const scoreEntries = useMemo(() => {
-    const required = track.requiredSubjects.map(([key, label]) => ({ key, label, optional: false }));
-    const optional = track.optionalSubjects?.map(([key, label]) => ({ key, label, optional: true })) || [];
-    const electives =
-      trackKey === 'Merdeka'
-        ? track.electiveSubjects.map(([key, label]) => ({ key, label, optional: !selectedElectives.includes(key), elective: true }))
-        : [];
-    return [...required, ...optional, ...electives];
-  }, [track, trackKey, selectedElectives]);
+  const raporSections = useMemo(() => [
+    { grade: 10, semesters: [1, 2], label: locale === 'id' ? 'Kelas 10 (umum)' : 'Grade 10 (common)', subjects: subjectsForGrade(trackKey, 10, selectedElectives) },
+    { grade: 11, semesters: [3, 4], label: locale === 'id' ? 'Kelas 11 (penjurusan)' : 'Grade 11 (track)', subjects: subjectsForGrade(trackKey, 11, selectedElectives) },
+    { grade: 12, semesters: [5, 6], label: locale === 'id' ? 'Kelas 12 (penjurusan)' : 'Grade 12 (track)', subjects: subjectsForGrade(trackKey, 12, selectedElectives) }
+  ], [locale, trackKey, selectedElectives]);
 
   const handleTrackChange = (nextTrack) => {
     setTrackKey(nextTrack);
-    setScores(buildInitialScores(nextTrack));
+    setRaporScores(buildInitialRaporScores(nextTrack));
     setSelectedElectives([]);
     setErrors({});
   };
 
-  const handleScoreChange = (key, value) => {
+  const handleRaporScoreChange = (key, value) => {
     const next = value.replace(/[^0-9.]/g, '');
-    setScores((prev) => ({ ...prev, [key]: next }));
+    setRaporScores((prev) => ({ ...prev, [key]: next }));
   };
 
   const toggleInterest = (interest) => {
@@ -204,11 +208,13 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
     setSelectedElectives((prev) => {
       if (prev.includes(key)) {
         const next = prev.filter((item) => item !== key);
-        setScores((current) => ({ ...current, [key]: '' }));
+        setRaporScores(buildInitialRaporScores(trackKey, next));
         return next;
       }
       if (prev.length >= 5) return prev;
-      return [...prev, key];
+      const next = [...prev, key];
+      setRaporScores(buildInitialRaporScores(trackKey, next));
+      return next;
     });
   };
 
@@ -230,10 +236,10 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
 
   const validateProfile = () => {
     const nextErrors = {};
-    const validateScore = (key, label, required = false) => {
-      const raw = scores[key];
+    const validateScore = (key, label) => {
+      const raw = raporScores[key];
       if (raw === undefined || String(raw).trim() === '') {
-        if (required) nextErrors[key] = `${label} ${locale === 'id' ? 'wajib diisi' : 'score is required'}`;
+        nextErrors[key] = `${label} ${locale === 'id' ? 'wajib diisi' : 'score is required'}`;
         return;
       }
       const parsed = Number(raw);
@@ -244,17 +250,12 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
 
     if (!trackKey) nextErrors.trackKey = copy.inputsError;
 
-    for (const [key, label] of track.requiredSubjects) validateScore(key, label, true);
-    for (const [key, label] of track.optionalSubjects || []) validateScore(key, label);
+    raporSections.forEach(({ semesters, subjects }) => {
+      semesters.forEach((semester) => subjects.forEach(([key, label]) => validateScore(`s${semester}_${key}`, `${label} S${semester}`)));
+    });
 
-    if (trackKey === 'Merdeka') {
-      if (selectedElectives.length < 4 || selectedElectives.length > 5) {
-        nextErrors.selectedElectives = locale === 'id' ? 'Pilih 4-5 mata pelajaran pilihan' : 'Pick 4-5 elective subjects';
-      }
-      for (const elective of selectedElectives) {
-        const label = track.electiveSubjects.find(([key]) => key === elective)?.[1] || elective;
-        validateScore(elective, label, true);
-      }
+    if (trackKey === 'Merdeka' && (selectedElectives.length < 4 || selectedElectives.length > 5)) {
+      nextErrors.selectedElectives = locale === 'id' ? 'Pilih 4-5 mata pelajaran pilihan' : 'Pick 4-5 elective subjects';
     }
 
     if (interests.length < 3) nextErrors.interests = locale === 'id' ? 'Pilih minimal 3 minat' : 'Select at least 3 interests';
@@ -279,14 +280,27 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
     setStep((prev) => Math.max(1, prev - 1));
   };
 
-  const activeSubjects = Object.fromEntries(
-    Object.entries(scores)
-      .map(([key, value]) => [key, Number(value)])
-      .filter(([key, value]) => Number.isFinite(value) && value >= 0 && value <= 100 && (track.requiredSubjects.some(([subjectKey]) => subjectKey === key) || (track.optionalSubjects || []).some(([subjectKey]) => subjectKey === key) || selectedElectives.includes(key)))
-  );
+  const activeSubjects = Object.entries(raporScores).reduce((acc, [key, value]) => {
+    const match = key.match(/^s[1-6]_(.+)$/);
+    const parsed = Number(value);
+    if (!match || !Number.isFinite(parsed) || parsed < 0 || parsed > 100) return acc;
+    acc[match[1]] = [...(acc[match[1]] || []), parsed];
+    return acc;
+  }, {});
+  const averagedSubjects = Object.fromEntries(Object.entries(activeSubjects).map(([key, values]) => [key, Math.round(values.reduce((acc, value) => acc + value, 0) / values.length)]));
+  const trendSummary = Object.entries(raporScores).reduce((acc, [key, value]) => {
+    const match = key.match(/^s([1-6])_(.+)$/);
+    const parsed = Number(value);
+    if (!match || !Number.isFinite(parsed) || parsed < 0 || parsed > 100) return acc;
+    acc[match[2]] = [...(acc[match[2]] || []), [Number(match[1]), parsed]];
+    return acc;
+  }, {});
+  const strongestTrend = Object.entries(trendSummary)
+    .map(([subject, points]) => [subject, slopeFor(points)])
+    .sort((a, b) => b[1] - a[1])[0];
 
-  const averageScore = Object.values(activeSubjects).length
-    ? Math.round(Object.values(activeSubjects).reduce((acc, value) => acc + Number(value || 0), 0) / Object.values(activeSubjects).length)
+  const averageScore = Object.values(averagedSubjects).length
+    ? Math.round(Object.values(averagedSubjects).reduce((acc, value) => acc + Number(value || 0), 0) / Object.values(averagedSubjects).length)
     : 0;
 
   const handleSubmit = (event) => {
@@ -307,7 +321,8 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
       session_id: generateSessionId(),
       sma_track: trackKey,
       curriculum_type: track.curriculumType,
-      scores: activeSubjects,
+      scores: averagedSubjects,
+      rapor: buildRaporPayload(raporScores, trackKey, selectedElectives),
       selected_electives: selectedElectives,
       interests,
       preferences: {
@@ -399,22 +414,34 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
 
           {step === 2 ? (
             <motion.div key="step-2" {...stepMotion} variants={staggerMotion} initial="initial" animate="animate" className="space-y-6">
-              <div className="space-y-3">
-                <p className="text-sm text-textSecondary">{copy.subjects}</p>
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  {scoreEntries
-                    .filter((entry) => !entry.elective || selectedElectives.includes(entry.key))
-                    .map(({ key, label, optional }) => (
-                      <SubjectField
-                        key={key}
-                        label={label}
-                        optional={optional}
-                        value={scores[key] || ''}
-                        onChange={(event) => handleScoreChange(key, event.target.value)}
-                        error={errors[key]}
-                      />
-                    ))}
-                </div>
+              <div className="space-y-4">
+                <p className="text-sm text-textSecondary">{locale === 'id' ? 'Nilai rapor 6 semester' : '6-semester report scores'}</p>
+                {raporSections.map(({ grade, semesters, label, subjects }) => (
+                  <div key={grade} className="editorial-shell rounded-2xl border p-4">
+                    <p className="mb-3 text-xs uppercase tracking-[0.18em] text-textSubtle">{label}</p>
+                    <div className="space-y-4">
+                      {semesters.map((semester) => (
+                        <div key={semester} className="space-y-2">
+                          <p className="text-xs text-textSubtle">{locale === 'id' ? `Semester ${semester}` : `Semester ${semester}`}</p>
+                          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            {subjects.map(([subjectKey, subjectLabel]) => {
+                              const fieldKey = `s${semester}_${subjectKey}`;
+                              return (
+                                <SubjectField
+                                  key={fieldKey}
+                                  label={`${subjectLabel} S${semester}`}
+                                  value={raporScores[fieldKey] || ''}
+                                  onChange={(event) => handleRaporScoreChange(fieldKey, event.target.value)}
+                                  error={errors[fieldKey]}
+                                />
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
 
               <div className="space-y-3">
@@ -528,6 +555,7 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
                 <p>{copy.interests}: {interests.join(', ') || '-'}</p>
                 <p>{copy.preferences}: {Object.values(preferences).join(' · ') || '-'}</p>
                 <p>{copy.averageScore}: {averageScore || '-'}</p>
+                <p>{locale === 'id' ? 'Tren terkuat' : 'Strongest trend'}: {strongestTrend ? `${strongestTrend[0]} ${strongestTrend[1] >= 0 ? '↑' : '↓'} ${Math.abs(strongestTrend[1]).toFixed(1)}` : '-'}</p>
                 <p>{(prodiIntakeSteps[5].label[locale] || prodiIntakeSteps[5].label.en)}: {prodiContext.expected_prodi || '-'}</p>
                 <p>{(prodiIntakeSteps[6].label[locale] || prodiIntakeSteps[6].label.en)}: {prodiContext.prodi_to_avoid || '-'}</p>
               </div>

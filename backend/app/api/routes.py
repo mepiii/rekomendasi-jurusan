@@ -37,6 +37,8 @@ from app.schemas import (
     RetrainTriggerRequest,
     RetrainTriggerResponse,
 )
+from ml.evaluate import evaluate_readiness
+
 from app.services.llm_review_service import llm_review_service
 from app.services.ml_service import MAJOR_CLUSTER_MAP, ml_service
 from app.services.retrain_service import retrain_service
@@ -99,6 +101,21 @@ def health() -> dict[str, object]:
         "model_version": settings.model_version,
         "feature_version": FEATURE_VERSION,
         "supabase_configured": bool(settings.supabase_url and settings.supabase_service_key),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+@router.get("/api/v1/health/model")
+def model_health() -> dict[str, object]:
+    readiness = evaluate_readiness()
+    return {
+        "app": APP_IDENTIFIER,
+        "model_version": settings.model_version,
+        "feature_version": FEATURE_VERSION,
+        "dataset_version": DATASET_VERSION,
+        "model_loaded": ml_service.loaded,
+        "fallback_available": True,
+        "evaluation_gate": readiness,
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }
 

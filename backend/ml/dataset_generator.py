@@ -11,6 +11,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List
 
+import json
+
 import numpy as np
 import pandas as pd
 
@@ -37,7 +39,15 @@ INTERESTS = [
     "Pendidikan/Bahasa",
 ]
 
-SMA_TRACKS = ["IPA", "IPS", "Bahasa"]
+SMA_TRACKS = ["IPA", "IPS", "Bahasa", "Merdeka"]
+SEMESTERS = range(1, 7)
+PERSONAS = {
+    "steady_high": {"offset": 5, "drift": 0.6, "noise": 4},
+    "late_bloomer": {"offset": -2, "drift": 1.8, "noise": 5},
+    "early_peak": {"offset": 4, "drift": -0.8, "noise": 5},
+    "spiky_specialist": {"offset": 0, "drift": 0.4, "noise": 8},
+    "adversarial_interest": {"offset": 1, "drift": 0.1, "noise": 7},
+}
 
 MAJOR_LABELS = [
     "Teknik Informatika",
@@ -196,7 +206,41 @@ def _sample_track(preferred_track: str, rng: np.random.Generator) -> str:
     return rng.choice(pool)
 
 
-def _sample_interests(rule: MajorRule, rng: np.random.Generator) -> Dict[str, int]:
+def _sample_persona(rng: np.random.Generator) -> str:
+    return str(rng.choice(list(PERSONAS), p=[0.24, 0.24, 0.18, 0.24, 0.10]))
+
+
+def _subject_trend(values: List[float]) -> float:
+    xs = np.array(list(SEMESTERS), dtype=float)
+    ys = np.array(values, dtype=float)
+    denominator = float(((xs - xs.mean()) ** 2).sum())
+    if denominator == 0:
+        return 0.0
+    slope = float(((xs - xs.mean()) * (ys - ys.mean())).sum() / denominator)
+    return round(float(np.clip(slope / 10, -1, 1)), 3)
+
+
+def _sample_semester_scores(base: Dict[str, int], persona: str, rng: np.random.Generator) -> Dict[str, float]:
+    config = PERSONAS[persona]
+    record: Dict[str, float] = {}
+    for subject, center in base.items():
+        anchor = center + config["offset"] + rng.normal(0, config["noise"])
+        semester_values = []
+        for semester in SEMESTERS:
+            drift = (semester - 3.5) * config["drift"]
+            value = float(np.clip(anchor + drift + rng.normal(0, config["noise"] / 2), 25, 100))
+            record[f"s{semester}_{subject}"] = round(value, 2)
+            semester_values.append(value)
+        record[f"{subject}_trend"] = _subject_trend(semester_values)
+        record[subject] = round(float(np.mean(semester_values)), 2)
+    record["kelas_10_avg"] = round(float(np.mean([record[f"s{semester}_{subject}"] for semester in [1, 2] for subject in SUBJECTS])), 2)
+    record["kelas_11_avg"] = round(float(np.mean([record[f"s{semester}_{subject}"] for semester in [3, 4] for subject in SUBJECTS])), 2)
+    record["kelas_12_avg"] = round(float(np.mean([record[f"s{semester}_{subject}"] for semester in [5, 6] for subject in SUBJECTS])), 2)
+    record["overall_gpa"] = round(record["kelas_10_avg"] * 0.2 + record["kelas_11_avg"] * 0.3 + record["kelas_12_avg"] * 0.5, 2)
+    return record
+
+
+def _sample_interests(rule: MajorRule, rng: np.random.Generator, persona: str = "steady_high") -> Dict[str, int]:
     flags = {column: 0 for column in INTEREST_COLUMN_MAP.values()}
 
     selected: List[str] = []
@@ -209,8 +253,8 @@ def _sample_interests(rule: MajorRule, rng: np.random.Generator) -> Dict[str, in
     if rng.random() < 0.15:
         selected.append(rng.choice(INTERESTS))
 
-    if rng.random() < 0.08:
-        selected = [rng.choice(INTERESTS)]
+    if rng.random() < 0.08 or persona == "adversarial_interest":
+        selected = [rng.choice([interest for interest in INTERESTS if interest not in rule.primary_interests])]
 
     selected = list(dict.fromkeys(selected))[:4]
 
@@ -244,15 +288,18 @@ def build_dataset(rows: int, seed: int) -> pd.DataFrame:
         rule = MAJOR_RULES[major]
 
         for _ in range(count):
-            scores = _sample_scores(rule.base, rng)
-            interest_flags = _sample_interests(rule, rng)
+            persona = _sample_persona(rng)
+            scores = _sample_semester_scores(rule.base, persona, rng)
+            interest_flags = _sample_interests(rule, rng, persona)
             track = _sample_track(rule.preferred_track, rng)
 
             record: Dict[str, object] = {
                 **scores,
                 **interest_flags,
                 "sma_track": track,
+                "persona": persona,
                 "major": major,
+                "kelompok_prodi": major,
                 "cluster": MAJOR_CLUSTER[major],
             }
             records.append(record)
@@ -264,7 +311,7 @@ def build_dataset(rows: int, seed: int) -> pd.DataFrame:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Generate synthetic dataset for major recommendation")
-    parser.add_argument("--rows", type=int, default=1200, help="Number of rows to generate")
+    parser.add_argument("--rows", type=int, default=20000, help="Number of rows to generate")
     parser.add_argument(
         "--output",
         type=Path,
@@ -280,6 +327,8 @@ def main() -> None:
     args.output.parent.mkdir(parents=True, exist_ok=True)
     df = build_dataset(args.rows, args.seed)
     df.to_csv(args.output, index=False)
+    metadata = {"rows": len(df), "labels": int(df["major"].nunique()), "personas": sorted(df["persona"].unique()), "has_semester_features": True}
+    (args.output.parent / "training_dataset_v2_report.json").write_text(json.dumps(metadata, indent=2) + "\n")
     print(f"dataset_rows={len(df)}")
     print(f"output={args.output}")
     print(df["major"].value_counts().sort_index().to_string())

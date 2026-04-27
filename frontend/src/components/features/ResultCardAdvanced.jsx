@@ -73,6 +73,7 @@ const flattenListItem = (item) => {
 };
 
 const localizeList = (items, locale) => flattenListItem(items).map((item) => localizeText(item, locale));
+const supportingSubjectList = (subjects, locale) => localizeList(Object.fromEntries(Object.entries(subjects || {}).filter(([key]) => !['tier', 'threshold_gaps'].includes(key))), locale);
 
 function useAnimatedNumber(target, duration = 0.9) {
   const [value, setValue] = useState(0);
@@ -180,6 +181,25 @@ function RichList({ title, items }) {
   );
 }
 
+function ThresholdWarnings({ subjects, locale }) {
+  const gaps = subjects?.threshold_gaps || [];
+  const weak = gaps.filter((item) => Number(item.gap) < 0).slice(0, 4);
+  if (!weak.length && !subjects?.tier) return null;
+  return (
+    <div className="space-y-2 rounded-xl border border-amber-300/25 bg-amber-300/10 p-3">
+      <p className="text-[11px] uppercase tracking-[0.18em] text-amber-200">{locale === 'id' ? 'Patokan nilai' : 'Score benchmark'}</p>
+      {subjects?.tier ? <p className="text-sm text-textMuted">{locale === 'id' ? 'Tingkat selektivitas' : 'Selectivity tier'}: {subjects.tier}</p> : null}
+      {weak.length ? (
+        <ul className="space-y-1 text-sm text-amber-100">
+          {weak.map((item) => (
+            <li key={`${item.subject}-${item.min_score}`}>{subjectMap[locale]?.[item.subject] || item.subject}: {item.score}/{item.min_score} ({item.gap})</li>
+          ))}
+        </ul>
+      ) : <p className="text-sm text-emerald-200">{locale === 'id' ? 'Nilai primer memenuhi ambang.' : 'Primary scores meet thresholds.'}</p>}
+    </div>
+  );
+}
+
 function DetailPill({ label, value }) {
   if (value === undefined || value === null || value === '') return null;
   return (
@@ -259,7 +279,8 @@ export default function ResultCardAdvanced({ recommendation, highlight, copy, lo
         <RichList title={copy.tradeoffs} items={localizeList(recommendation.tradeoffs, locale)} />
         <RichList title={copy.careerPaths} items={localizeList(recommendation.career_paths, locale)} />
         <RichList title={copy.alternateMajors} items={localizeList(recommendation.alternative_majors, locale)} />
-        <RichList title={locale === 'id' ? 'Mapel pendukung' : 'Supporting subjects'} items={localizeList(recommendation.supporting_subjects, locale)} />
+        <ThresholdWarnings subjects={recommendation.supporting_subjects} locale={locale} />
+        <RichList title={locale === 'id' ? 'Mapel pendukung' : 'Supporting subjects'} items={supportingSubjectList(recommendation.supporting_subjects, locale)} />
         <RichList title={locale === 'id' ? 'Alasan spesifik' : 'Specific reason'} items={localizeList(recommendation.why_specific, locale)} />
         <RichList title={locale === 'id' ? 'Celah keterampilan' : 'Skill gaps'} items={localizeList(recommendation.skill_gaps, locale)} />
         <RichList title="LLM review" items={localizeList(recommendation.llm_review, locale)} />

@@ -21,11 +21,58 @@ LEGACY_SUBJECT_ALIASES = {
 LEGACY_OPTIONAL_SUBJECTS = {"history", "regional_language", "pkwu", "prakarya", "pe"}
 
 
+class SemesterScore(BaseModel):
+    semester: int = Field(..., ge=1, le=6)
+    subject: str = Field(..., min_length=1)
+    score: float | None = Field(default=None, ge=0, le=100)
+
+    @field_validator("subject")
+    @classmethod
+    def normalize_subject(cls, value: str) -> str:
+        return LEGACY_SUBJECT_ALIASES.get(value.strip(), value.strip())
+
+
+class RaporInput(BaseModel):
+    kelas_10: list[SemesterScore] = Field(default_factory=list)
+    kelas_11: list[SemesterScore] = Field(default_factory=list)
+    kelas_12: list[SemesterScore] = Field(default_factory=list)
+    sma_track: str | None = None
+    curriculum_type: str | None = None
+    merdeka_electives: list[str] = Field(default_factory=list, max_length=5)
+
+    def all_scores(self) -> list[SemesterScore]:
+        return [*self.kelas_10, *self.kelas_11, *self.kelas_12]
+
+    def average_scores(self) -> dict[str, float | None]:
+        grouped: dict[str, list[float]] = {}
+        for item in self.all_scores():
+            if item.score is not None:
+                grouped.setdefault(item.subject, []).append(float(item.score))
+        return {subject: round(sum(values) / len(values), 2) for subject, values in grouped.items()}
+
+    @model_validator(mode="after")
+    def validate_semester_buckets(self) -> "RaporInput":
+        expected = {"kelas_10": {1, 2}, "kelas_11": {3, 4}, "kelas_12": {5, 6}}
+        for field_name, semesters in expected.items():
+            invalid = [item.semester for item in getattr(self, field_name) if item.semester not in semesters]
+            if invalid:
+                raise ValueError(f"{field_name} only accepts semesters {sorted(semesters)}")
+        return self
+
+
+class DerivedAggregates(BaseModel):
+    subject_avg: dict[str, float] = Field(default_factory=dict)
+    subject_trend: dict[str, float] = Field(default_factory=dict)
+    kelas_12_avg: float = 0.0
+    overall_gpa: float = 0.0
+
+
 class PredictRequest(BaseModel):
     session_id: UUID = Field(default_factory=uuid4)
     sma_track: str = Field(..., description="IPA, IPS, Bahasa, or Merdeka")
     curriculum_type: str | None = None
     scores: dict[str, float | None] = Field(default_factory=dict)
+    rapor: RaporInput | None = None
     selected_electives: list[str] = Field(default_factory=list, max_length=5)
     interests: list[str] = Field(default_factory=list)
     preferences: dict[str, str | list[str]] = Field(default_factory=dict)
@@ -83,11 +130,14 @@ class PredictRequest(BaseModel):
     @model_validator(mode="after")
     def validate_track_subject_rules(self) -> "PredictRequest":
         rules = TRACK_SUBJECT_RULES[self.sma_track]
+        if self.rapor and not self.scores:
+            self.scores = self.rapor.average_scores()
         score_keys = set(self.scores)
 
         optional = rules.get("optional", set())
         elective_pool = rules.get("electives", set())
-        allowed_keys = rules["required"] | optional | elective_pool | set(LEGACY_SUBJECT_ALIASES) | LEGACY_OPTIONAL_SUBJECTS
+        common_rapor_keys = TRACK_SUBJECT_RULES["Merdeka"]["required"] | {"general_math"}
+        allowed_keys = rules["required"] | optional | elective_pool | common_rapor_keys | set(LEGACY_SUBJECT_ALIASES) | LEGACY_OPTIONAL_SUBJECTS
         unknown = sorted(score_keys - allowed_keys)
         if unknown:
             raise ValueError(f"Scores contain unsupported subjects for {self.sma_track}: {unknown}")

@@ -244,6 +244,25 @@ export const prodiIntakeSteps = [
   { key: 'free_text_goal', required: false, optionMode: 'replace', options: prodiOptionSets.free_text_goal, label: { en: 'Free-text goal', id: 'Tujuan bebas' }, helper: { en: 'Optional. Pick the closest goal, then edit freely if needed.', id: 'Opsional. Pilih tujuan terdekat, lalu ubah bebas jika perlu.' }, placeholder: { en: 'Optional final context...', id: 'Konteks akhir opsional...' } }
 ];
 
+export const commonKelas10Subjects = [
+  ['religion', 'Pendidikan Agama'],
+  ['civics', 'PPKn'],
+  ['indonesian', 'Bahasa Indonesia'],
+  ['english', 'Bahasa Inggris'],
+  ['general_math', 'Matematika Umum'],
+  ['pjok', 'PJOK'],
+  ['arts', 'Seni']
+];
+
+export function subjectsForGrade(trackKey, grade, selectedElectives = []) {
+  if (grade === 10) return commonKelas10Subjects;
+  const track = trackConfig[trackKey];
+  const baseSubjects = [...(track?.requiredSubjects || []), ...(track?.optionalSubjects || [])];
+  if (trackKey !== 'Merdeka') return baseSubjects;
+  const electives = (track?.electiveSubjects || []).filter(([key]) => selectedElectives.includes(key));
+  return [...baseSubjects, ...electives];
+}
+
 export function buildInitialScores(trackKey) {
   const track = trackConfig[trackKey];
   const subjectKeys = [
@@ -252,4 +271,26 @@ export function buildInitialScores(trackKey) {
   ];
 
   return Object.fromEntries(subjectKeys.map((key) => [key, '']));
+}
+
+export function buildInitialRaporScores(trackKey, selectedElectives = []) {
+  const entries = [];
+  for (const grade of [10, 11, 12]) {
+    for (const semester of grade === 10 ? [1, 2] : grade === 11 ? [3, 4] : [5, 6]) {
+      for (const [subject] of subjectsForGrade(trackKey, grade, selectedElectives)) entries.push([`s${semester}_${subject}`, '']);
+    }
+  }
+  return Object.fromEntries(entries);
+}
+
+export function buildRaporPayload(raporScores, trackKey, selectedElectives = []) {
+  const semesterToBucket = { 1: 'kelas_10', 2: 'kelas_10', 3: 'kelas_11', 4: 'kelas_11', 5: 'kelas_12', 6: 'kelas_12' };
+  const payload = { kelas_10: [], kelas_11: [], kelas_12: [], sma_track: trackKey, curriculum_type: trackConfig[trackKey]?.curriculumType, merdeka_electives: selectedElectives };
+  Object.entries(raporScores).forEach(([key, value]) => {
+    const match = key.match(/^s([1-6])_(.+)$/);
+    const parsed = Number(value);
+    if (!match || !Number.isFinite(parsed) || parsed < 0 || parsed > 100) return;
+    payload[semesterToBucket[match[1]]].push({ semester: Number(match[1]), subject: match[2], score: parsed });
+  });
+  return payload;
 }

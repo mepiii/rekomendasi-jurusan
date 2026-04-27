@@ -36,9 +36,9 @@ describe('RecommendationJourney prodi intake', () => {
     render(<RecommendationJourney onSubmit={onSubmit} loading={false} locale="en" copy={copy} />);
 
     fireEvent.click(screen.getByRole('button', { name: /continue/i }));
-    await waitFor(() => expect(screen.getByLabelText(/Pendidikan Agama/i)).toBeTruthy());
-    ['Pendidikan Agama', 'PPKn', 'Bahasa Indonesia', 'Bahasa Inggris', 'Matematika Umum', 'PJOK', 'Seni', 'Biologi', 'Fisika', 'Kimia', 'Matematika Lanjut'].forEach((label) => {
-      fireEvent.change(screen.getByLabelText(new RegExp(label, 'i')), { target: { value: '88' } });
+    await waitFor(() => expect(screen.getByLabelText(/Pendidikan Agama S1/i)).toBeTruthy());
+    screen.getAllByRole('spinbutton').forEach((input) => {
+      fireEvent.change(input, { target: { value: '88' } });
     });
     ['Technology', 'Engineering', 'Data / AI'].forEach((name) => fireEvent.click(screen.getByRole('button', { name })));
     ['Numbers', 'Technical', 'Independent'].forEach((name) => fireEvent.click(screen.getByRole('button', { name })));
@@ -60,7 +60,12 @@ describe('RecommendationJourney prodi intake', () => {
       expected_prodi: 'Kecerdasan Artifisial',
       prodi_to_avoid: ['Kedokteran'],
       free_text_goal: 'Build AI products',
-      language: 'en'
+      language: 'en',
+      scores: expect.objectContaining({ advanced_math: 88, general_math: 88 }),
+      rapor: expect.objectContaining({
+        kelas_10: expect.arrayContaining([expect.objectContaining({ semester: 1, subject: 'general_math', score: 88 })]),
+        kelas_12: expect.arrayContaining([expect.objectContaining({ semester: 6, subject: 'advanced_math', score: 88 })])
+      })
     }));
-  });
+  }, 30000);
 });
