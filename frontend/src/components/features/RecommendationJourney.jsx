@@ -5,7 +5,7 @@
 // Side effects: Emits normalized payload to parent submit handler.
 import { AnimatePresence, motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
-import { buildInitialRaporScores, buildRaporPayload, interestOptions, preferenceGroups, prodiIntakeSteps, religionRelatedMajorPreferences, subjectsForGrade, trackConfig } from '../../lib/recommendationConfig';
+import { buildInitialRaporScores, buildRaporPayload, interestOptions, preferenceGroups, prodiIntakeSteps, religionRelatedMajorPreferences, subjectsForGrade, surveyModeOptions, targetSpecificOptionSets, trackConfig } from '../../lib/recommendationConfig';
 
 const stepMotion = {
   initial: { opacity: 0, y: 26, scale: 0.985, filter: 'blur(10px)' },
@@ -115,9 +115,10 @@ function SubjectField({ label, value, onChange, error, optional }) {
 function ProdiTextStep({ config, value, onChange, error, locale }) {
   const label = config.label[locale] || config.label.en;
   const selectedValues = toList(value);
+  const optionLimit = config.maxSelections || (config.optionMode === 'append' ? 8 : 1);
   const handleOptionClick = (optionValue) => {
     if (config.optionMode === 'append') {
-      const next = selectedValues.includes(optionValue) ? selectedValues.filter((item) => item !== optionValue) : [...selectedValues, optionValue];
+      const next = selectedValues.includes(optionValue) ? selectedValues.filter((item) => item !== optionValue) : [...selectedValues, optionValue].slice(0, optionLimit);
       onChange(config.key, next.join(', '));
       return;
     }
@@ -132,18 +133,22 @@ function ProdiTextStep({ config, value, onChange, error, locale }) {
             {label}
             {!config.required ? <span className="ml-1 text-textSubtle">({locale === 'id' ? 'opsional' : 'optional'})</span> : null}
           </span>
-          <span className="text-xs leading-5 text-textSubtle">{config.helper[locale] || config.helper.en}</span>
+          <div className="flex items-center justify-between gap-3 text-xs text-textSubtle">
+            <span className="leading-5">{config.helper[locale] || config.helper.en}</span>
+            <span>{selectedValues.length}/{optionLimit}</span>
+          </div>
           {config.options?.length ? (
-            <div className="flex flex-wrap gap-2">
-              {config.options.map((option) => {
+            <div className="grid gap-2 sm:grid-cols-2">
+              {config.options.slice(0, 24).map((option) => {
                 const active = config.optionMode === 'append' ? selectedValues.includes(option.value) : value === option.value;
+                const blocked = config.optionMode === 'append' && !active && selectedValues.length >= optionLimit;
                 return (
                   <motion.button
-                    key={option.value}
+                    key={option.id || option.value}
                     type="button"
                     aria-pressed={active}
-                    onClick={() => handleOptionClick(option.value)}
-                    className={`editorial-chip apti-interactive-lift rounded-full px-3 py-1 text-xs transition ${active ? 'apti-choice-active border-accent/30 bg-accent/10 text-accent' : 'apti-choice-idle hover:border-accent/40 hover:text-textPrimary'}`}
+                    onClick={() => !blocked && handleOptionClick(option.value)}
+                    className={`editorial-chip apti-interactive-lift rounded-2xl px-3 py-2 text-left text-xs transition ${active ? 'apti-choice-active border-accent/30 bg-accent/10 text-accent' : 'apti-choice-idle hover:border-accent/40 hover:text-textPrimary'} ${blocked ? 'cursor-not-allowed opacity-40' : ''}`}
                     {...chipHover}
                     {...buttonTap}
                   >
@@ -165,6 +170,7 @@ function ProdiTextStep({ config, value, onChange, error, locale }) {
 
 export default function RecommendationJourney({ onSubmit, loading, error, helperCopy, locale = 'en', copy }) {
   const [step, setStep] = useState(1);
+  const [surveyMode, setSurveyMode] = useState('mode_zero');
   const [trackKey, setTrackKey] = useState('IPA');
   const [raporScores, setRaporScores] = useState(() => buildInitialRaporScores('IPA'));
   const [selectedElectives, setSelectedElectives] = useState([]);
@@ -178,6 +184,12 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
   const track = trackConfig[trackKey];
   const localizedGroupLabels = groupLabels[locale] || groupLabels.en;
   const hasErrors = useMemo(() => Object.keys(errors).length > 0, [errors]);
+  const activeProdiSteps = useMemo(() => prodiIntakeSteps.map((config) => {
+    if (!config.adaptiveTarget) return config;
+    const targets = toList(prodiContext.expected_prodi);
+    return { ...config, options: targets.flatMap((target) => targetSpecificOptionSets[target] || []) };
+  }).filter((config) => !config.showForModes || config.showForModes.includes(surveyMode)).filter((config) => !config.adaptiveTarget || config.options.length), [prodiContext.expected_prodi, surveyMode]);
+  const totalSteps = activeProdiSteps.length + 4;
   const raporSections = useMemo(() => [
     { grade: 10, semesters: [1, 2], label: locale === 'id' ? 'Kelas 10 (umum)' : 'Grade 10 (common)', subjects: subjectsForGrade(trackKey, 10, selectedElectives) },
     { grade: 11, semesters: [3, 4], label: locale === 'id' ? 'Kelas 11 (penjurusan)' : 'Grade 11 (track)', subjects: subjectsForGrade(trackKey, 11, selectedElectives) },
@@ -224,7 +236,7 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
   };
 
   const validateProdiStep = (stepNumber = step) => {
-    const config = prodiIntakeSteps[stepNumber - 3];
+    const config = activeProdiSteps[stepNumber - 4];
     if (!config?.required || prodiContext[config.key]?.trim()) return true;
     setErrors((prev) => ({ ...prev, [config.key]: locale === 'id' ? `${config.label.id} wajib diisi` : `${config.label.en} is required` }));
     return false;
@@ -266,9 +278,19 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
   };
 
   const goNext = () => {
-    if (step === 1) setStep(2);
-    if (step === 2 && validateProfile()) setStep(3);
-    if (step >= 3 && step < 11 && validateProdiStep(step)) setStep((prev) => prev + 1);
+    if (step === 1) {
+      setStep(2);
+      return;
+    }
+    if (step === 2) {
+      setStep(3);
+      return;
+    }
+    if (step === 3) {
+      if (validateProfile()) setStep(4);
+      return;
+    }
+    if (step < totalSteps && validateProdiStep(step)) setStep((prev) => prev + 1);
   };
 
   const goBack = () => {
@@ -306,15 +328,21 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
       return;
     }
 
-    const invalidStep = prodiIntakeSteps.findIndex(({ key, required }) => required && !prodiContext[key]?.trim());
+    const invalidStep = activeProdiSteps.findIndex(({ key, required }) => required && !prodiContext[key]?.trim());
     if (invalidStep >= 0) {
-      setStep(invalidStep + 3);
-      validateProdiStep(invalidStep + 3);
+      setStep(invalidStep + 4);
+      validateProdiStep(invalidStep + 4);
       return;
     }
 
     onSubmit({
       session_id: generateSessionId(),
+      survey_mode: surveyMode,
+      target_clusters: toList(prodiContext.target_clusters),
+      target_specific: toContext(prodiContext.target_specific),
+      avoid_signals: toContext(prodiContext.avoid_signals),
+      activities: toContext(prodiContext.activities),
+      career_goals: toContext(prodiContext.career_goals),
       sma_track: trackKey,
       curriculum_type: track.curriculumType,
       scores: averagedSubjects,
@@ -343,7 +371,7 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
     <form onSubmit={handleSubmit} className="w-full max-w-4xl">
       <GlassCard>
         <p className="editorial-kicker mb-3 text-xs font-medium uppercase">{copy.journeyKicker}</p>
-        <StepIndicator step={step} labels={copy.steps} />
+        <StepIndicator step={step} labels={copy.steps.slice(0, totalSteps)} />
         <div className="mb-8 space-y-3">
           <h1 className="text-2xl font-semibold tracking-tight text-textPrimary sm:text-3xl">{copy.journeyTitle}</h1>
           <p className="max-w-2xl text-sm leading-6 text-textMuted">{helperCopy || copy.journeyHelper}</p>
@@ -353,6 +381,33 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
         <AnimatePresence mode="wait">
           {step === 1 ? (
             <motion.div key="step-1" {...stepMotion} variants={staggerMotion} initial="initial" animate="animate" className="space-y-6">
+              <div className="space-y-3">
+                <p className="text-sm text-textSecondary">{locale === 'id' ? 'Kamu sekarang lebih dekat ke kondisi yang mana?' : 'Which situation fits you now?'}</p>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {surveyModeOptions.map((option) => {
+                    const active = surveyMode === option.id;
+                    return (
+                      <motion.button
+                        key={option.id}
+                        type="button"
+                        aria-pressed={active}
+                        onClick={() => setSurveyMode(option.id)}
+                        className={`editorial-chip apti-interactive-lift rounded-2xl px-4 py-4 text-left text-sm transition ${active ? 'apti-choice-active border-accent/30 bg-accent/10 text-accent' : 'apti-choice-idle hover:border-accent/40 hover:text-textPrimary'}`}
+                        variants={itemMotion}
+                        {...cardHover}
+                        {...buttonTap}
+                      >
+                        <span className="block font-medium">{option.label[locale] || option.label.en}</span>
+                      </motion.button>
+                    );
+                  })}
+                </div>
+              </div>
+            </motion.div>
+          ) : null}
+
+          {step === 2 ? (
+            <motion.div key="step-2" {...stepMotion} variants={staggerMotion} initial="initial" animate="animate" className="space-y-6">
               <div className="space-y-3">
                 <p className="text-sm text-textSecondary">{copy.track}</p>
                 <div className="grid gap-3 sm:grid-cols-2">
@@ -408,8 +463,8 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
             </motion.div>
           ) : null}
 
-          {step === 2 ? (
-            <motion.div key="step-2" {...stepMotion} variants={staggerMotion} initial="initial" animate="animate" className="space-y-6">
+          {step === 3 ? (
+            <motion.div key="step-3" {...stepMotion} variants={staggerMotion} initial="initial" animate="animate" className="space-y-6">
               <div className="space-y-4">
                 <p className="text-sm text-textSecondary">{locale === 'id' ? 'Nilai rapor 6 semester' : '6-semester report scores'}</p>
                 {raporSections.map(({ grade, semesters, label, subjects }) => (
@@ -533,17 +588,17 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
             </motion.div>
           ) : null}
 
-          {step >= 3 && step <= 10 ? (
+          {step >= 4 && step < totalSteps ? (
             <ProdiTextStep
-              config={prodiIntakeSteps[step - 3]}
-              value={prodiContext[prodiIntakeSteps[step - 3].key]}
+              config={activeProdiSteps[step - 4]}
+              value={prodiContext[activeProdiSteps[step - 4].key]}
               onChange={handleProdiContextChange}
-              error={errors[prodiIntakeSteps[step - 3].key]}
+              error={errors[activeProdiSteps[step - 4].key]}
               locale={locale}
             />
           ) : null}
 
-          {step === 11 ? (
+          {step === totalSteps ? (
             <motion.div key="step-11" {...stepMotion} className="space-y-4">
               <div className="editorial-shell rounded-[22px] border p-4 text-sm text-textMuted">
                 <p className="mb-2 text-textSecondary">{copy.profileReview}</p>
@@ -568,7 +623,7 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
             {copy.back}
           </button>
 
-          {step < 11 ? (
+          {step < totalSteps ? (
             <button type="button" onClick={goNext} className="apti-primary-button px-5 py-2.5 text-sm font-semibold">
               {copy.continue}
             </button>
