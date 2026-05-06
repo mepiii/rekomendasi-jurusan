@@ -1,0 +1,8 @@
+# Purpose: Backend development and test dependencies.
+# Callers: Local test setup and CI jobs running pytest.
+# Deps: requirements.txt runtime environment.
+# API: pip-installable dev dependency list.
+# Side effects: Installs test tooling into active backend environment.
+
+pytest
+pytest-cov
