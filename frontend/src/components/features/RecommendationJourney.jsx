@@ -55,7 +55,7 @@ const groupLabels = {
 };
 
 const toList = (value) => value.split(',').map((item) => item.trim()).filter(Boolean);
-const toContext = (value) => ({ note: value.trim() });
+const toContext = (value) => ({ selected: toList(value) });
 const slopeFor = (points) => {
   if (points.length < 2) return 0;
   const xMean = points.reduce((acc, [semester]) => acc + semester, 0) / points.length;
@@ -153,13 +153,9 @@ function ProdiTextStep({ config, value, onChange, error, locale }) {
               })}
             </div>
           ) : null}
-          <textarea
-            aria-label={label}
-            value={value}
-            onChange={(event) => onChange(config.key, event.target.value)}
-            className={`glass-input min-h-24 rounded-xl px-3 py-2 text-sm text-textPrimary outline-none ${error ? 'border-danger' : 'focus:border-accent'}`}
-            placeholder={config.placeholder[locale] || config.placeholder.en}
-          />
+          <div className={`rounded-xl border px-3 py-2 text-xs text-textSubtle ${error ? 'border-danger' : 'border-white/10'}`}>
+            {selectedValues.length ? selectedValues.join(' · ') : (locale === 'id' ? 'Pilih salah satu opsi di atas.' : 'Pick one option above.')}
+          </div>
         </div>
         {error ? <span className="mt-2 block text-xs text-danger">{error}</span> : null}
       </div>
@@ -211,7 +207,7 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
         setRaporScores(buildInitialRaporScores(trackKey, next));
         return next;
       }
-      if (prev.length >= 5) return prev;
+      if (prev.length >= 8) return prev;
       const next = [...prev, key];
       setRaporScores(buildInitialRaporScores(trackKey, next));
       return next;
@@ -254,8 +250,8 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
       semesters.forEach((semester) => subjects.forEach(([key, label]) => validateScore(`s${semester}_${key}`, `${label} S${semester}`)));
     });
 
-    if (trackKey === 'Merdeka' && (selectedElectives.length < 4 || selectedElectives.length > 5)) {
-      nextErrors.selectedElectives = locale === 'id' ? 'Pilih 4-5 mata pelajaran pilihan' : 'Pick 4-5 elective subjects';
+    if (trackKey === 'Merdeka' && (selectedElectives.length < 2 || selectedElectives.length > 8)) {
+      nextErrors.selectedElectives = locale === 'id' ? 'Pilih 2-8 mata pelajaran pilihan' : 'Pick 2-8 elective subjects';
     }
 
     if (interests.length < 3) nextErrors.interests = locale === 'id' ? 'Pilih minimal 3 minat' : 'Select at least 3 interests';
@@ -332,8 +328,8 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
       religion_related_major_preference: religionRelatedMajorPreference || 'Not relevant',
       academic_context: toContext(prodiContext.academic_context),
       subject_preferences: { preferred: toList(prodiContext.subject_preferences) },
-      interest_deep_dive: { note: prodiContext.interest_deep_dive.trim() },
-      career_direction: { note: prodiContext.career_direction.trim() },
+      interest_deep_dive: toContext(prodiContext.interest_deep_dive),
+      career_direction: toContext(prodiContext.career_direction),
       constraints: toContext(prodiContext.constraints),
       expected_prodi: prodiContext.expected_prodi.trim() || null,
       prodi_to_avoid: toList(prodiContext.prodi_to_avoid),
@@ -385,12 +381,12 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
                 <div className="space-y-3">
                   <div className="flex items-center justify-between gap-3">
                     <p className="text-sm text-textSecondary">{locale === 'id' ? 'Mata pelajaran pilihan' : 'Elective subjects'}</p>
-                    <span className="text-xs text-textSubtle">{selectedElectives.length}/5</span>
+                    <span className="text-xs text-textSubtle">{selectedElectives.length}/8</span>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {track.electiveSubjects.map(([key, label]) => {
                       const active = selectedElectives.includes(key);
-                      const blocked = !active && selectedElectives.length >= 5;
+                      const blocked = !active && selectedElectives.length >= 8;
                       return (
                         <motion.button
                           key={key}
@@ -401,7 +397,7 @@ export default function RecommendationJourney({ onSubmit, loading, error, helper
                           {...chipHover}
                           {...buttonTap}
                         >
-                          {label}
+                          {typeof label === 'object' ? (label[locale] || label.en) : label}
                         </motion.button>
                       );
                     })}

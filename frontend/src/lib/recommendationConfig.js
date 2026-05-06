@@ -5,7 +5,7 @@
 // Side effects: None.
 export const trackConfig = {
   IPA: {
-    label: { en: 'IPA', id: 'IPA' },
+    label: { en: 'Science (IPA)', id: 'IPA' },
     curriculumType: 'ipa',
     requiredSubjects: [
       ['religion', 'Pendidikan Agama'],
@@ -23,7 +23,7 @@ export const trackConfig = {
     optionalSubjects: [['informatics', 'Informatika'], ['prakarya', 'Prakarya']]
   },
   IPS: {
-    label: { en: 'IPS', id: 'IPS' },
+    label: { en: 'Social Studies (IPS)', id: 'IPS' },
     curriculumType: 'ips',
     requiredSubjects: [
       ['religion', 'Pendidikan Agama'],
@@ -41,7 +41,7 @@ export const trackConfig = {
     optionalSubjects: [['informatics', 'Informatika'], ['prakarya', 'Prakarya']]
   },
   Bahasa: {
-    label: { en: 'Bahasa', id: 'Bahasa' },
+    label: { en: 'Language', id: 'Bahasa' },
     curriculumType: 'bahasa',
     requiredSubjects: [
       ['religion', 'Pendidikan Agama'],
@@ -63,7 +63,7 @@ export const trackConfig = {
     ]
   },
   Merdeka: {
-    label: { en: 'Kurikulum Merdeka', id: 'Kurikulum Merdeka' },
+    label: { en: 'Independent Curriculum', id: 'Kurikulum Merdeka' },
     curriculumType: 'merdeka',
     requiredSubjects: [
       ['religion', 'Pendidikan Agama'],
@@ -76,17 +76,17 @@ export const trackConfig = {
     ],
     optionalSubjects: [['informatics', 'Informatika'], ['prakarya', 'Prakarya']],
     electiveSubjects: [
-      ['biology', 'Biologi'],
-      ['chemistry', 'Kimia'],
-      ['physics', 'Fisika'],
-      ['advanced_math', 'Matematika Lanjut'],
-      ['sociology', 'Sosiologi'],
-      ['economics', 'Ekonomi'],
-      ['geography', 'Geografi'],
-      ['anthropology', 'Antropologi'],
-      ['advanced_language', 'Bahasa Lanjut'],
-      ['foreign_language', 'Bahasa Asing'],
-      ['entrepreneurship', 'Kewirausahaan']
+      ['biology', { en: 'Biology', id: 'Biologi' }],
+      ['chemistry', { en: 'Chemistry', id: 'Kimia' }],
+      ['physics', { en: 'Physics', id: 'Fisika' }],
+      ['advanced_math', { en: 'Advanced Math', id: 'Matematika Lanjut' }],
+      ['sociology', { en: 'Sociology', id: 'Sosiologi' }],
+      ['economics', { en: 'Economics', id: 'Ekonomi' }],
+      ['geography', { en: 'Geography', id: 'Geografi' }],
+      ['anthropology', { en: 'Anthropology', id: 'Antropologi' }],
+      ['advanced_language', { en: 'Advanced Language', id: 'Bahasa Lanjut' }],
+      ['foreign_language', { en: 'Foreign Language', id: 'Bahasa Asing' }],
+      ['entrepreneurship', { en: 'Entrepreneurship', id: 'Kewirausahaan' }]
     ]
   }
 };
@@ -234,14 +234,14 @@ const prodiOptionSets = {
 };
 
 export const prodiIntakeSteps = [
-  { key: 'academic_context', required: true, optionMode: 'replace', options: prodiOptionSets.academic_context, label: { en: 'Academic context', id: 'Konteks akademik' }, helper: { en: 'Choose the closest academic signal, then add detail if needed.', id: 'Pilih sinyal akademik yang paling sesuai, lalu tambah detail jika perlu.' }, placeholder: { en: 'Optional detail after choosing an option...', id: 'Detail opsional setelah memilih opsi...' } },
-  { key: 'subject_preferences', required: true, optionMode: 'append', options: prodiOptionSets.subject_preferences, label: { en: 'Subject preferences', id: 'Preferensi mapel' }, helper: { en: 'Pick subjects you want more or less of in college.', id: 'Pilih mapel yang ingin lebih banyak atau lebih sedikit ditemui saat kuliah.' }, placeholder: { en: 'Optional detail or extra subject...', id: 'Detail opsional atau mapel tambahan...' } },
-  { key: 'interest_deep_dive', required: true, optionMode: 'replace', options: prodiOptionSets.interest_deep_dive, label: { en: 'Interest deep dive', id: 'Pendalaman minat' }, helper: { en: 'Pick the closest interest detail.', id: 'Pilih detail minat yang paling sesuai.' }, placeholder: { en: 'Optional interest detail...', id: 'Detail minat opsional...' } },
-  { key: 'career_direction', required: true, optionMode: 'replace', options: prodiOptionSets.career_direction, label: { en: 'Career direction', id: 'Arah karier' }, helper: { en: 'Pick the career direction you are considering.', id: 'Pilih arah karier yang kamu pertimbangkan.' }, placeholder: { en: 'Optional career detail...', id: 'Detail karier opsional...' } },
-  { key: 'constraints', required: true, optionMode: 'replace', options: prodiOptionSets.constraints, label: { en: 'Constraints', id: 'Batasan' }, helper: { en: 'Pick the main constraint Apti should consider.', id: 'Pilih batasan utama yang perlu dipertimbangkan Apti.' }, placeholder: { en: 'Optional constraint detail...', id: 'Detail batasan opsional...' } },
-  { key: 'expected_prodi', required: false, optionMode: 'replace', options: prodiOptionSets.expected_prodi, label: { en: 'Expected prodi', id: 'Prodi yang diharapkan' }, helper: { en: 'Optional. Pick one program you already expect or want to compare.', id: 'Opsional. Pilih satu prodi yang sudah kamu harapkan atau ingin bandingkan.' }, placeholder: { en: 'Optional custom program...', id: 'Prodi lain opsional...' } },
-  { key: 'prodi_to_avoid', required: false, optionMode: 'append', options: prodiOptionSets.prodi_to_avoid, label: { en: 'Prodi to avoid', id: 'Prodi yang dihindari' }, helper: { en: 'Optional. Pick programs Apti should avoid unless strongly justified.', id: 'Opsional. Pilih prodi yang sebaiknya dihindari kecuali sangat kuat alasannya.' }, placeholder: { en: 'Optional custom avoided program...', id: 'Prodi lain yang dihindari...' } },
-  { key: 'free_text_goal', required: false, optionMode: 'replace', options: prodiOptionSets.free_text_goal, label: { en: 'Free-text goal', id: 'Tujuan bebas' }, helper: { en: 'Optional. Pick the closest goal, then edit freely if needed.', id: 'Opsional. Pilih tujuan terdekat, lalu ubah bebas jika perlu.' }, placeholder: { en: 'Optional final context...', id: 'Konteks akhir opsional...' } }
+  { key: 'academic_context', required: true, optionMode: 'replace', options: prodiOptionSets.academic_context, label: { en: 'Academic context', id: 'Konteks akademik' }, helper: { en: 'Choose the closest academic signal.', id: 'Pilih sinyal akademik yang paling sesuai.' } },
+  { key: 'subject_preferences', required: true, optionMode: 'append', options: prodiOptionSets.subject_preferences, label: { en: 'Subject preferences', id: 'Preferensi mapel' }, helper: { en: 'Pick subjects you want more or less of in college.', id: 'Pilih mapel yang ingin lebih banyak atau lebih sedikit ditemui saat kuliah.' } },
+  { key: 'interest_deep_dive', required: true, optionMode: 'replace', options: prodiOptionSets.interest_deep_dive, label: { en: 'Interest deep dive', id: 'Pendalaman minat' }, helper: { en: 'Pick the closest interest detail.', id: 'Pilih detail minat yang paling sesuai.' } },
+  { key: 'career_direction', required: true, optionMode: 'replace', options: prodiOptionSets.career_direction, label: { en: 'Career direction', id: 'Arah karier' }, helper: { en: 'Pick the career direction you are considering.', id: 'Pilih arah karier yang kamu pertimbangkan.' } },
+  { key: 'constraints', required: true, optionMode: 'replace', options: prodiOptionSets.constraints, label: { en: 'Constraints', id: 'Batasan' }, helper: { en: 'Pick the main constraint Apti should consider.', id: 'Pilih batasan utama yang perlu dipertimbangkan Apti.' } },
+  { key: 'expected_prodi', required: false, optionMode: 'replace', options: prodiOptionSets.expected_prodi, label: { en: 'Expected prodi', id: 'Prodi yang diharapkan' }, helper: { en: 'Optional. Pick one program you already expect or want to compare.', id: 'Opsional. Pilih satu prodi yang sudah kamu harapkan atau ingin bandingkan.' } },
+  { key: 'prodi_to_avoid', required: false, optionMode: 'append', options: prodiOptionSets.prodi_to_avoid, label: { en: 'Prodi to avoid', id: 'Prodi yang dihindari' }, helper: { en: 'Optional. Pick programs Apti should avoid unless strongly justified.', id: 'Opsional. Pilih prodi yang sebaiknya dihindari kecuali sangat kuat alasannya.' } },
+  { key: 'free_text_goal', required: false, optionMode: 'replace', options: prodiOptionSets.free_text_goal, label: { en: 'Goal', id: 'Tujuan' }, helper: { en: 'Optional. Pick the closest goal.', id: 'Opsional. Pilih tujuan terdekat.' } }
 ];
 
 export const commonKelas10Subjects = [
