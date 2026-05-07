@@ -61,6 +61,24 @@ describe('App intro orchestration', () => {
     );
   });
 
+  it('shows Indonesian returning-user greeting when Indonesian locale is stored', () => {
+    window.localStorage.setItem('apti-locale', 'id');
+    window.localStorage.setItem(
+      'apti-intro-state',
+      JSON.stringify({
+        completed: true,
+        name: 'Raka',
+        goal: 'understand-strengths',
+        confidence: 'very-unsure'
+      })
+    );
+
+    render(<App />);
+
+    expect(screen.getByText(/selamat datang kembali, raka/i)).toBeTruthy();
+    expect(screen.queryByText(/welcome back, raka/i)).toBeNull();
+  });
+
   it('uses sensible default helper copy when intro confidence is missing', () => {
     window.localStorage.setItem(
       'apti-intro-state',

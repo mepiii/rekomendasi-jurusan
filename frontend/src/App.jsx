@@ -18,12 +18,9 @@ const getShellContent = (introState, onRestartIntro, localeCopy) => {
   if (!introState.completed) return { title: '', subtitle: '', actions: null };
 
   return {
-    title:
-      introState.name && localeCopy.introFallbackTitle !== 'Selamat datang kembali'
-        ? `Welcome back, ${introState.name}`
-        : introState.name
-          ? `Selamat datang kembali, ${introState.name}`
-          : localeCopy.introFallbackTitle,
+    title: introState.name
+      ? `${localeCopy.introGreeting}, ${introState.name}`
+      : localeCopy.introFallbackTitle,
     subtitle: localeCopy.goals[introState.goal] || localeCopy.goals['find-fit'],
     actions: (
       <button type="button" onClick={onRestartIntro} className="apti-secondary-button rounded-xl px-4 py-2 text-sm text-textSecondary">
