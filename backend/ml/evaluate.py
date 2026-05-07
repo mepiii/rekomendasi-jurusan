@@ -15,6 +15,7 @@ ROOT_DIR = Path(__file__).resolve().parents[1]
 DEFAULT_DATASET = ROOT_DIR / "ml" / "data" / "training_dataset.csv"
 DEFAULT_MODEL = ROOT_DIR / "ml" / "models" / "rf_v1.0.pkl"
 DEFAULT_ENCODER = ROOT_DIR / "ml" / "models" / "label_encoder.pkl"
+DEFAULT_METRICS = ROOT_DIR / "ml" / "data" / "metrics" / "training_metrics.json"
 DEFAULT_REPORT = ROOT_DIR / "ml" / "data" / "metrics" / "evaluation_report.json"
 MIN_TOP1_ACCURACY = 0.60
 MIN_TOP5_ACCURACY = 0.90
@@ -40,16 +41,40 @@ def _dataset_summary(dataset_path: Path) -> dict[str, Any]:
     }
 
 
-def evaluate_readiness(dataset_path: Path = DEFAULT_DATASET, model_path: Path = DEFAULT_MODEL, encoder_path: Path = DEFAULT_ENCODER) -> dict[str, Any]:
+def _metrics_summary(metrics_path: Path) -> dict[str, Any]:
+    if not metrics_path.exists():
+        return {"path": str(metrics_path), "exists": False, "top1_accuracy": None, "top5_accuracy": None, "macro_f1": None}
+    payload = json.loads(metrics_path.read_text(encoding="utf-8"))
+    return {
+        "path": str(metrics_path),
+        "exists": True,
+        "version": payload.get("version"),
+        "selected_model": payload.get("selected_model"),
+        "top1_accuracy": payload.get("top1_accuracy"),
+        "top5_accuracy": payload.get("top5_accuracy"),
+        "macro_f1": payload.get("macro_f1"),
+        "production_swap_allowed": bool(payload.get("production_swap_allowed", False)),
+    }
+
+
+def evaluate_readiness(
+    dataset_path: Path = DEFAULT_DATASET,
+    model_path: Path = DEFAULT_MODEL,
+    encoder_path: Path = DEFAULT_ENCODER,
+    metrics_path: Path = DEFAULT_METRICS,
+) -> dict[str, Any]:
     dataset = _dataset_summary(dataset_path)
     artifacts = {"model": _artifact_status(model_path), "encoder": _artifact_status(encoder_path)}
-    metrics = {"top1_accuracy": None, "top5_accuracy": None, "macro_f1": None}
+    metrics = _metrics_summary(metrics_path)
+    top1 = float(metrics["top1_accuracy"] or 0)
+    top5 = float(metrics["top5_accuracy"] or 0)
+    metrics_pass = metrics["exists"] and top1 >= MIN_TOP1_ACCURACY and top5 >= MIN_TOP5_ACCURACY
     gates = {
         "dataset_present": dataset["exists"],
         "model_artifacts_present": artifacts["model"]["exists"] and artifacts["encoder"]["exists"],
-        "metrics_present": False,
-        "metrics_pass": False,
-        "production_swap_allowed": False,
+        "metrics_present": metrics["exists"],
+        "metrics_pass": metrics_pass,
+        "production_swap_allowed": dataset["exists"] and artifacts["model"]["exists"] and artifacts["encoder"]["exists"] and metrics_pass,
     }
     return {
         "version": "apti_evaluation_gate_v1",
@@ -59,7 +84,7 @@ def evaluate_readiness(dataset_path: Path = DEFAULT_DATASET, model_path: Path = 
         "thresholds": {"top1_accuracy": MIN_TOP1_ACCURACY, "top5_accuracy": MIN_TOP5_ACCURACY},
         "metrics": metrics,
         "gates": gates,
-        "recommendation": "Keep current production model/fallback. Train/evaluate v3 before artifact swap.",
+        "recommendation": "Production artifact swap allowed." if gates["production_swap_allowed"] else "Keep current production model/fallback. Train/evaluate v3 before artifact swap.",
     }
 
 
@@ -68,6 +93,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--dataset", type=Path, default=DEFAULT_DATASET)
     parser.add_argument("--model", type=Path, default=DEFAULT_MODEL)
     parser.add_argument("--encoder", type=Path, default=DEFAULT_ENCODER)
+    parser.add_argument("--metrics", type=Path, default=DEFAULT_METRICS)
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)
     parser.add_argument("--write-report", action="store_true")
     return parser.parse_args()
@@ -75,7 +101,7 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
-    report = evaluate_readiness(args.dataset, args.model, args.encoder)
+    report = evaluate_readiness(args.dataset, args.model, args.encoder, args.metrics)
     if args.write_report:
         args.report.parent.mkdir(parents=True, exist_ok=True)
         args.report.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n")

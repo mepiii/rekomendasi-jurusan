@@ -88,7 +88,7 @@ def test_model_health_route_exposes_evaluation_gate(monkeypatch):
     assert data["app"] == "apti"
     assert data["fallback_available"] is True
     assert data["evaluation_gate"]["version"] == "apti_evaluation_gate_v1"
-    assert data["evaluation_gate"]["gates"]["production_swap_allowed"] is False
+    assert "production_swap_allowed" in data["evaluation_gate"]["gates"]
 
 
 
@@ -561,16 +561,40 @@ def test_phase2_thresholds_and_trend_affect_prodi_scoring(monkeypatch):
     assert low_item.supporting_subjects["threshold_gaps"][0]["gap"] < 0
 
 
-def test_evaluation_gate_blocks_production_swap_without_metrics():
-    from ml.evaluate import evaluate_readiness
+def test_evaluation_gate_blocks_production_swap_without_metrics(tmp_path):
+    from ml.evaluate import DEFAULT_DATASET, DEFAULT_ENCODER, DEFAULT_MODEL, evaluate_readiness
 
-    report = evaluate_readiness()
+    report = evaluate_readiness(DEFAULT_DATASET, DEFAULT_MODEL, DEFAULT_ENCODER, tmp_path / "missing_metrics.json")
 
     assert report["version"] == "apti_evaluation_gate_v1"
     assert report["thresholds"] == {"top1_accuracy": 0.6, "top5_accuracy": 0.9}
     assert report["gates"]["production_swap_allowed"] is False
     assert "fallback" in report["recommendation"].lower()
 
+
+def test_evaluation_gate_allows_swap_when_metrics_and_artifacts_pass(tmp_path):
+    from ml.evaluate import evaluate_readiness
+
+    dataset_path = tmp_path / "training_dataset.csv"
+    model_path = tmp_path / "model.pkl"
+    encoder_path = tmp_path / "encoder.pkl"
+    metrics_path = tmp_path / "training_metrics.json"
+    dataset_path.write_text("kelompok_prodi,s1_math,math_trend\nKomputer,88,0.2\nBisnis,80,0.1\n", encoding="utf-8")
+    model_path.write_bytes(b"model")
+    encoder_path.write_bytes(b"encoder")
+    metrics_path.write_text(json.dumps({"version": "apti_training_metrics_v2", "selected_model": "extra_trees", "top1_accuracy": 0.61, "top5_accuracy": 0.91, "macro_f1": 0.6}), encoding="utf-8")
+
+    report = evaluate_readiness(dataset_path, model_path, encoder_path, metrics_path)
+
+    assert report["status"] == "passed"
+    assert report["metrics"]["selected_model"] == "extra_trees"
+    assert report["gates"] == {
+        "dataset_present": True,
+        "model_artifacts_present": True,
+        "metrics_present": True,
+        "metrics_pass": True,
+        "production_swap_allowed": True,
+    }
 
 
 def test_load_missing_artifacts_does_not_raise(monkeypatch):
